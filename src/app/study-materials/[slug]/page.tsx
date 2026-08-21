@@ -1,0 +1,399 @@
+'use client';
+import { useState, useRef, use } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useProduct } from '@/hooks/useProducts';
+import { useCart } from '@/contexts/CartContext';
+import { useWishlist } from '@/contexts/WishlistContext';
+import { useToast } from '@/contexts/ToastContext';
+import { formatPrice, getLanguageDisplay } from '@/lib/utils';
+import { Truck, ShieldCheck, PackageCheck, Mail, Heart, Check } from 'lucide-react';
+import styles from './product-detail.module.css';
+
+interface PageProps {
+  params: Promise<{ slug: string }>;
+}
+
+export default function ProductDetailPage({ params }: PageProps) {
+  const { slug } = use(params);
+  const router = useRouter();
+  const { product, loading } = useProduct(slug);
+  const { addItem } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
+  const toast = useToast();
+
+  const [selectedLang, setSelectedLang] = useState('');
+  const [quantity, setQuantity] = useState(1);
+  const [langError, setLangError] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const galleryRef = useRef<HTMLDivElement | null>(null);
+  const mediumSectionRef = useRef<HTMLDivElement | null>(null);
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: 'center', padding: '120px 20px' }}>
+        <div style={{ fontSize: '1.5rem', color: 'var(--color-text-muted)' }}>Loading product...</div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div style={{ textAlign: 'center', padding: '120px 20px' }}>
+        <div style={{ fontSize: '4rem', marginBottom: '16px' }}>📖</div>
+        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.5rem', marginBottom: '8px' }}>Product Not Found</h1>
+        <p style={{ color: 'var(--color-text-muted)', marginBottom: '24px' }}>The product you are looking for does not exist.</p>
+        <Link href="/study-materials" className="btn btn-primary">Browse Study Materials</Link>
+      </div>
+    );
+  }
+
+  const inWishlist = isInWishlist(product.id);
+  const imageList = product.images && product.images.length > 0 ? product.images : [product.image];
+
+  const handleScroll = () => {
+    if (galleryRef.current) {
+      const scrollLeft = galleryRef.current.scrollLeft;
+      const width = galleryRef.current.offsetWidth;
+      if (width > 0) {
+        const newIndex = Math.round(scrollLeft / width);
+        if (newIndex >= 0 && newIndex < imageList.length && newIndex !== currentSlide) {
+          setCurrentSlide(newIndex);
+        }
+      }
+    }
+  };
+
+  const scrollToSlide = (index: number) => {
+    if (galleryRef.current) {
+      const width = galleryRef.current.offsetWidth;
+      galleryRef.current.scrollTo({
+        left: index * width,
+        behavior: 'smooth'
+      });
+      setCurrentSlide(index);
+    }
+  };
+
+  const handleAddToCart = () => {
+    if (!selectedLang) {
+      setLangError(true);
+      toast.warning('Please select a medium before adding to cart');
+      if (mediumSectionRef.current) {
+        mediumSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+    setLangError(false);
+    addItem(product, selectedLang, quantity);
+    toast.success(`${product.name} added to cart`);
+  };
+
+  const handleBuyNow = () => {
+    if (!selectedLang) {
+      setLangError(true);
+      toast.warning('Please select a medium before proceeding');
+      if (mediumSectionRef.current) {
+        mediumSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+    setLangError(false);
+    addItem(product, selectedLang, quantity);
+    router.push('/cart');
+  };
+
+  const handleWishlist = () => {
+    const added = toggleWishlist(product);
+    toast.success(added ? 'Added to wishlist' : 'Removed from wishlist');
+  };
+
+  return (
+    <div className={styles.container}>
+      {/* Breadcrumb */}
+      <div className={`container ${styles.breadcrumbWrap}`}>
+        <div className={styles.breadcrumb}>
+          <Link href="/" className={styles.breadcrumbLink}>Home</Link>
+          <span>/</span>
+          <Link href="/study-materials" className={styles.breadcrumbLink}>Study Materials</Link>
+          <span>/</span>
+          <span className={styles.breadcrumbCurrent}>{product.name}</span>
+        </div>
+      </div>
+
+      <div className="container">
+        <div className={styles.productLayout}>
+          {/* Side-by-Side Scrolling Gallery */}
+          <div className={styles.imageCol}>
+            <div className={styles.galleryContainer}>
+              <div
+                ref={galleryRef}
+                onScroll={handleScroll}
+                className={styles.galleryScrollTrack}
+              >
+                {imageList.map((imgSrc, idx) => (
+                  <div key={idx} className={styles.gallerySlide}>
+                    <img
+                      src={imgSrc}
+                      alt={`${product.name} image ${idx + 1}`}
+                      className={styles.galleryProductImg}
+                      loading={idx === 0 ? 'eager' : 'lazy'}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Scroll Counter Badge & Navigation Buttons */}
+              {imageList.length > 1 && (
+                <>
+                  <span className={styles.galleryCounterBadge}>
+                    {currentSlide + 1}/{imageList.length}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => scrollToSlide(currentSlide > 0 ? currentSlide - 1 : imageList.length - 1)}
+                    className={`${styles.galleryNavBtn} ${styles.galleryPrevBtn}`}
+                    aria-label="Previous image"
+                  >
+                    ‹
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => scrollToSlide(currentSlide < imageList.length - 1 ? currentSlide + 1 : 0)}
+                    className={`${styles.galleryNavBtn} ${styles.galleryNextBtn}`}
+                    aria-label="Next image"
+                  >
+                    ›
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Product Info */}
+          <div className={styles.productInfo}>
+            {/* Badge */}
+            {product.badge && (
+              <span className={`badge badge-blue ${styles.badge}`}>
+                {product.badge}
+              </span>
+            )}
+
+            <h1 className={styles.productTitle}>
+              {product.name}
+            </h1>
+
+            <p className={styles.category}>
+              {product.bundleTitle || product.category}
+            </p>
+
+            {/* Price */}
+            <div className={styles.price}>
+              {formatPrice(product.price)}
+            </div>
+
+            {/* Bundle Specification Overview */}
+            <div className={styles.bundleSummaryBox}>
+              <div className={styles.bundleSummaryGrid}>
+                <div className={styles.bundleSummaryItem}>
+                  <span className={styles.bundleSummaryLabel}>Bundle Details</span>
+                  <span className={styles.bundleSummaryValue}>Includes {product.booksIncluded || 2} Books</span>
+                </div>
+                <div className={styles.bundleSummaryItem}>
+                  <span className={styles.bundleSummaryLabel}>Edition</span>
+                  <span className={styles.bundleSummaryValue}>{product.edition || 'First Edition'}</span>
+                </div>
+                {product.examCoverage && (
+                  <div className={styles.bundleSummaryItem} style={{ gridColumn: '1 / -1' }}>
+                    <span className={styles.bundleSummaryLabel}>Exam Coverage</span>
+                    <span className={styles.bundleSummaryValue}>{product.examCoverage}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Stock Status */}
+            <div className={styles.stockRow}>
+              <div
+                className={styles.stockDot}
+                style={{
+                  background: product.stock > 0 ? 'var(--color-success)' : 'var(--color-error)',
+                }}
+              />
+              <span
+                className={styles.stockText}
+                style={{
+                  color: product.stock > 0 ? 'var(--color-success)' : 'var(--color-error)',
+                }}
+              >
+                {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
+              </span>
+            </div>
+
+            {/* Description */}
+            <p className={styles.description}>
+              {product.description}
+            </p>
+
+            {/* Features */}
+            {product.features && (
+              <div className={styles.featuresWrap}>
+                <h3 className={styles.featuresTitle}>
+                  What&apos;s Included in This {product.booksIncluded || 2}-Book Bundle
+                </h3>
+                <ul className={styles.featuresList}>
+                  {product.features.map((f, i) => (
+                    <li key={i} className={styles.featureItem}>
+                      <span className={styles.featureCheck}>✓</span> {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <hr className="divider" />
+
+            {/* Language Selection */}
+            <div className={styles.sectionBlock} ref={mediumSectionRef}>
+              <h3
+                className={styles.sectionLabel}
+                style={{
+                  color: langError ? 'var(--color-error)' : 'var(--color-text-primary)',
+                }}
+              >
+                Select Medium <span style={{ color: 'var(--color-error)' }}>*</span>
+              </h3>
+              <div className={styles.langButtons}>
+                {((product.languages && product.languages.length > 0) ? product.languages : [{ code: 'en', name: 'English' }]).map(lang => (
+                  <button
+                    key={lang.code}
+                    onClick={() => { setSelectedLang(lang.code); setLangError(false); }}
+                    className={styles.langBtn}
+                    style={{
+                      border: `2px solid ${selectedLang === lang.code ? 'var(--color-text-primary)' : langError ? 'var(--color-error)' : 'var(--color-border)'}`,
+                      background: selectedLang === lang.code ? 'var(--color-text-primary)' : 'var(--color-white)',
+                      color: selectedLang === lang.code ? 'var(--color-text-inverse)' : 'var(--color-text-primary)',
+                    }}
+                  >
+                    {getLanguageDisplay(lang.code)}
+                  </button>
+                ))}
+              </div>
+              {langError && (
+                <p className={styles.langErrorText}>
+                  Please select a medium to continue
+                </p>
+              )}
+            </div>
+
+            {/* Quantity */}
+            <div className={styles.sectionBlock}>
+              <h3 className={styles.sectionLabel}>
+                Quantity
+              </h3>
+              <div className={styles.quantityWrap}>
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  disabled={quantity <= 1}
+                  className={styles.qtyBtn}
+                  style={{ opacity: quantity <= 1 ? 0.4 : 1 }}
+                  aria-label="Decrease quantity"
+                >
+                  −
+                </button>
+                <span className={styles.qtyVal}>
+                  {quantity}
+                </span>
+                <button
+                  onClick={() => setQuantity(quantity + 1)}
+                  className={styles.qtyBtn}
+                  aria-label="Increase quantity"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className={styles.actionRow}>
+              <button onClick={handleAddToCart} className={`btn btn-primary btn-lg ${styles.actionBtn}`}>
+                Add to Cart
+              </button>
+              <button onClick={handleBuyNow} className={`btn btn-accent btn-lg ${styles.actionBtn}`}>
+                Buy Now
+              </button>
+            </div>
+
+            <button onClick={handleWishlist} className={`btn btn-ghost ${styles.wishlistBtn}`}>
+              {inWishlist ? (
+                <>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="#E53935" stroke="#E53935" strokeWidth="1"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                  Remove from Wishlist
+                </>
+              ) : (
+                <>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                  Add to Wishlist
+                </>
+              )}
+            </button>
+
+            {/* Delivery & Payment Trust Strip (#4) */}
+            <div className={styles.trustStrip}>
+              <div className={styles.trustItem}>
+                <Truck size={18} color="var(--color-primary)" />
+                <span>Speed Post Delivery across India</span>
+              </div>
+              <div className={styles.trustItem}>
+                <ShieldCheck size={18} color="#10B981" />
+                <span>100% Secure UPI / Card Payment</span>
+              </div>
+              <div className={styles.trustItem}>
+                <PackageCheck size={18} color="var(--color-primary)" />
+                <span>Transit Damage Replacement</span>
+              </div>
+            </div>
+
+            {/* Support */}
+            <div className={styles.supportBox}>
+              <Mail size={18} color="var(--color-pastel-blue-deeper)" />
+              <div>
+                <strong>Need help?</strong>{' '}
+                <a href="mailto:tenaliexampublishers@gmail.com" style={{ color: 'var(--color-pastel-blue-deeper)', fontWeight: 500 }}>
+                  tenaliexampublishers@gmail.com
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Sticky "Buy Now" Action Bar (#1) */}
+      <div className={styles.mobileStickyBar}>
+        <div className={styles.stickyPriceGroup}>
+          <div className={styles.stickyPrice}>{formatPrice(product.price)}</div>
+          <div className={styles.stickyMediumTag}>
+            {selectedLang ? `Medium: ${getLanguageDisplay(selectedLang)}` : 'Select Medium'}
+          </div>
+        </div>
+
+        <div className={styles.stickyActions}>
+          <button
+            onClick={handleAddToCart}
+            className={`btn btn-secondary ${styles.stickyCartBtn}`}
+          >
+            + Cart
+          </button>
+          <button
+            onClick={handleBuyNow}
+            className={`btn btn-accent ${styles.stickyBuyBtn}`}
+          >
+            Buy Now
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

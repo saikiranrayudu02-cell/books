@@ -1,0 +1,231 @@
+.container {
+  padding-bottom: 80px;
+}
+
+.backRow {
+  margin-bottom: 24px;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  min-height: 44px;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+}
+
+.backBtn:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+/* EXAM SELECTOR */
+.examSelectorWrap {
+  margin-bottom: 36px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 28px 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 640px) {
+  .examSelectorWrap {
+    padding: 20px 16px;
+  }
+}
+
+.selectorHeader {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.selectorTitle {
+  font-family: var(--font-heading);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 768px) {
+  .selectorTitle {
+    font-size: 1.85rem;
+  }
+}
+
+.selectorSubtitle {
+  font-size: 0.92rem;
+  color: var(--color-text-secondary);
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.examGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .examGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+}
+
+@media (max-width: 520px) {
+  .examGrid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+.examCard {
+  background: var(--color-bg-page);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px 18px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: 140px;
+  touch-action: manipulation;
+  outline: none;
+}
+
+.examCard:hover {
+  background: var(--color-white);
+  border-color: var(--color-primary);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(26, 43, 76, 0.08);
+}
+
+.examCardActive {
+  background: var(--color-white);
+  border-color: var(--color-primary);
+  box-shadow: 0 8px 24px rgba(26, 43, 76, 0.12), inset 0 0 0 1px var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.cardTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.examIconWrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--color-white);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--color-border);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.examCardActive .examIconWrap,
+.examCard:hover .examIconWrap {
+  background: var(--color-primary);
+  color: var(--color-accent);
+  border-color: var(--color-primary);
+}
+
+.activeIndicator {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-white);
+  background: var(--color-primary);
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.examName {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+.examSubtitle {
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+  line-height: 1.35;
+  margin-top: auto;
+}
+
+.resetWrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+.resetBtn {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s ease;
+}
+
+.resetBtn:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+/* RESULTS HEADER */
+.resultsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.resultsTitle {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.resultsBadge {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}

@@ -1,0 +1,136 @@
+.footer {
+  background: var(--color-primary);
+  color: var(--color-white);
+  padding: var(--space-16) 0 var(--space-8);
+  margin-top: var(--space-20);
+}
+
+.footerGrid {
+  display: grid;
+  grid-template-columns: 1.3fr repeat(3, 1fr);
+  gap: var(--space-10);
+  margin-bottom: var(--space-12);
+}
+
+.footerBrand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.footerLogo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.footerLogoImg {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: rgba(255,255,255,0.1);
+}
+
+.footerLogoText {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+}
+
+.footerTagline {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.6);
+  line-height: var(--leading-relaxed);
+  max-width: 280px;
+}
+
+.footerEmail {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.8);
+  padding: var(--space-2) var(--space-4);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+  margin-top: var(--space-2);
+}
+
+.footerEmail:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.footerSection h4 {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: var(--space-5);
+}
+
+.footerLink {
+  display: block;
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.75);
+  padding: var(--space-1) 0;
+  transition: color var(--transition-fast);
+}
+
+.footerLink:hover {
+  color: var(--color-text-inverse);
+}
+
+.footerBottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: var(--space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.footerCopy {
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.footerBottomLinks {
+  display: flex;
+  gap: var(--space-6);
+}
+
+.footerBottomLink {
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.4);
+  transition: color var(--transition-fast);
+}
+
+.footerBottomLink:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+@media (max-width: 768px) {
+  .footerGrid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+  }
+
+  .footerBrand {
+    grid-column: 1 / -1;
+  }
+
+  .footerBottom {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .footerGrid {
+    grid-template-columns: 1fr;
+  }
+}

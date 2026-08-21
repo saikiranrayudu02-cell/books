@@ -1,0 +1,290 @@
+.checkoutContainer {
+  padding-bottom: 80px;
+}
+
+.checkoutInner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.stepsWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  padding: 0 4px;
+}
+
+@media (min-width: 640px) {
+  .stepsWrap {
+    margin-bottom: 40px;
+  }
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+}
+
+.stepBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  padding: 6px 4px;
+  font: inherit;
+  min-height: 44px;
+  cursor: default;
+}
+
+.stepBtnActive {
+  cursor: pointer;
+}
+
+.stepNumber {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.stepLabel {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 380px) {
+  .stepLabel {
+    font-size: 0.8rem;
+  }
+}
+
+.stepDivider {
+  width: 20px;
+  height: 2px;
+  margin: 0 6px;
+  flex-shrink: 0;
+}
+
+@media (min-width: 480px) {
+  .stepDivider {
+    width: 44px;
+    margin: 0 10px;
+  }
+}
+
+@media (min-width: 640px) {
+  .stepDivider {
+    width: 60px;
+    margin: 0 12px;
+  }
+}
+
+.card {
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+@media (min-width: 640px) {
+  .card {
+    padding: 32px;
+  }
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.cardTitle {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+@media (min-width: 640px) {
+  .cardTitle {
+    font-size: 1.25rem;
+    margin-bottom: 24px;
+  }
+}
+
+.cardTitleInHeader {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0;
+}
+
+@media (min-width: 640px) {
+  .cardTitleInHeader {
+    font-size: 1.25rem;
+  }
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .formGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.continueBtn {
+  min-height: 48px;
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .continueBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.addressReviewText {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+.reviewItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.reviewItemImg {
+  width: 48px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.reviewItemDetails {
+  flex: 1;
+  min-width: 0;
+}
+
+.reviewItemName {
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+.reviewItemMeta {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.reviewItemPrice {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.summaryList {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+}
+
+.deliveryFeeCol {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.strikethroughFee {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.freeFee {
+  color: #047857;
+  font-weight: 800;
+  font-size: 0.88rem;
+  background: rgba(16, 185, 129, 0.12);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.freeDeliveryBanner {
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  color: #065F46;
+  font-size: 0.8rem;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  margin-top: 4px;
+}
+
+.summaryTotal {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+.reviewActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+@media (max-width: 440px) {
+  .reviewActions {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+}
+
+.backBtn {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.payBtn {
+  flex: 1;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
