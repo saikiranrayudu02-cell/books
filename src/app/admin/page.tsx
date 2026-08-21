@@ -80,7 +80,7 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="space-y-8 animate-fadeIn text-(--color-text-primary)">
+    <div className="space-y-10 animate-fadeIn text-(--color-text-primary)">
       
       {/* Premium Dashboard Greeting Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-slate-900 via-slate-950 to-indigo-950 p-8 text-white shadow-xl shadow-slate-900/10">
@@ -113,7 +113,7 @@ export default function AdminDashboardPage() {
       </div>
       
       {/* Metric Stats Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-7">
         
         {/* Stat Card 1: Total Revenue */}
         <div className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-emerald-500/20">
@@ -185,7 +185,7 @@ export default function AdminDashboardPage() {
       </div>
       
       {/* Split Widget Area */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         
         {/* Left Column: Recent Orders Table & Activity List */}
         <div className="lg:col-span-2 space-y-8">
