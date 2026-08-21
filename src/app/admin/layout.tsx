@@ -74,7 +74,7 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
 
   if (!mounted || isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-950 text-slate-500">
+      <div className="flex h-screen items-center justify-center bg-(--color-bg-page) text-(--color-text-muted)">
         <div className="flex flex-col items-center gap-3">
           <div className="size-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
           <span className="text-sm font-semibold tracking-wide">Loading Admin Panel...</span>
@@ -85,12 +85,12 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
 
   if (!isAuthenticated || user?.role !== 'admin') {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 dark:bg-slate-950 p-6 text-center">
-        <div className="inline-flex p-6 bg-rose-50 dark:bg-rose-950/20 rounded-full mb-6 text-rose-500 animate-bounce">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-(--color-bg-page) p-6 text-center">
+        <div className="inline-flex p-6 bg-(--color-error-bg) rounded-full mb-6 text-(--color-error) animate-bounce">
           <ShieldAlert size={48} strokeWidth={1.5} />
         </div>
-        <h1 className="text-2xl font-black text-slate-900 dark:text-slate-100 mb-2">Access Denied</h1>
-        <p className="text-slate-500 dark:text-slate-400 mb-6 max-w-sm text-sm leading-relaxed">
+        <h1 className="text-2xl font-black text-(--color-text-primary) mb-2">Access Denied</h1>
+        <p className="text-(--color-text-secondary) mb-6 max-w-sm text-sm leading-relaxed">
           You do not have administrative permissions to access the control panel.
         </p>
         <Link href="/" className="px-6 py-2.5 bg-linear-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold shadow-md shadow-blue-500/20 transition-all hover:scale-105">
@@ -132,7 +132,7 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
                     <span className="block text-sm font-bold text-(--color-text-primary) truncate max-w-30">
                       {user.name}
                     </span>
-                    <span className="flex items-center gap-1 text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider mt-0.5">
+                    <span className="flex items-center gap-1 text-[10px] text-(--color-success) font-bold uppercase tracking-wider mt-0.5">
                       <ShieldCheck size={10} /> Admin
                     </span>
                   </div>
@@ -246,10 +246,10 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
                 <Menu size={20} />
               </button>
 
-              <span className="text-xs font-extrabold uppercase tracking-wider text-slate-400 dark:text-slate-500 hidden sm:inline-block">
+              <span className="text-xs font-extrabold uppercase tracking-wider text-(--color-text-muted) hidden sm:inline-block">
                 System Status:
               </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20 rounded-full">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[10px] font-bold text-(--color-success) bg-(--color-success-bg) rounded-full">
                 <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 Operational
               </span>

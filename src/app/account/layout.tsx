@@ -44,13 +44,12 @@ export default function AccountLayout({ children }: { children: ReactNode }): Re
         <h1 className="page-title" style={{ fontSize: '1.75rem', fontWeight: 800, fontFamily: 'var(--font-heading)' }}>My Account</h1>
       </div>
 
-      <div className="container">
-        <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: '32px', alignItems: 'start' }}>
+      <div className="container px-4 md:px-0">
+        <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-8 items-start">
           
           {/* Sidebar */}
-          <div className="card" style={{ 
+          <div className="card md:sticky" style={{ 
             padding: '20px', 
-            position: 'sticky', 
             top: 'calc(var(--navbar-height) + 24px)',
             borderRadius: '20px',
             border: '1px solid var(--color-border-light)',
