@@ -24,15 +24,15 @@ export default function AboutPage(): React.JSX.Element {
 
       <div className="container-narrow">
         {/* Mission & Vision */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '48px' }}>
-          <div className="card" style={{ padding: '32px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+          <div className="card p-6 md:p-8">
             <div style={{ fontSize: '2rem', marginBottom: '16px' }}>🎯</div>
             <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.2rem', fontWeight: 700, marginBottom: '12px' }}>Our Mission</h2>
             <p style={{ color: 'var(--color-text-secondary)', lineHeight: 1.7, fontSize: '0.95rem' }}>
               To provide accessible and high-quality exam preparation materials that help aspirants prepare with confidence.
             </p>
           </div>
-          <div className="card" style={{ padding: '32px' }}>
+          <div className="card p-6 md:p-8">
             <div style={{ fontSize: '2rem', marginBottom: '16px' }}>🌟</div>
             <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.2rem', fontWeight: 700, marginBottom: '12px' }}>Our Vision</h2>
             <p style={{ color: 'var(--color-text-secondary)', lineHeight: 1.7, fontSize: '0.95rem' }}>
@@ -42,11 +42,7 @@ export default function AboutPage(): React.JSX.Element {
         </div>
 
         {/* Founder Section */}
-        <div className="card" style={{
-          padding: '48px 40px',
-          textAlign: 'center',
-          marginBottom: '48px',
-        }}>
+        <div className="card p-6 md:p-12 mb-12 text-center">
           <div style={{
             width: '120px', height: '120px',
             borderRadius: '50%',
@@ -84,13 +80,13 @@ export default function AboutPage(): React.JSX.Element {
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.5rem', fontWeight: 700, textAlign: 'center', marginBottom: '28px' }}>
             What We Offer
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
             {([
               { icon: '📚', title: 'Quality Content', desc: 'Carefully researched and compiled study materials.' },
               { icon: '🌐', title: 'Multilingual', desc: 'Materials in English, Telugu, and Hindi.' },
               { icon: '📦', title: 'Doorstep Delivery', desc: 'Reliable shipping across India.' },
             ] as OfferItem[]).map((item, i) => (
-              <div key={i} className="card" style={{ padding: '28px', textAlign: 'center' }}>
+              <div key={i} className="card p-6 text-center">
                 <div style={{ fontSize: '1.8rem', marginBottom: '12px' }}>{item.icon}</div>
                 <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '0.95rem', fontWeight: 600, marginBottom: '8px' }}>{item.title}</h3>
                 <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)' }}>{item.desc}</p>
@@ -100,11 +96,7 @@ export default function AboutPage(): React.JSX.Element {
         </div>
 
         {/* Contact */}
-        <div style={{
-          textAlign: 'center', padding: '32px',
-          background: 'var(--color-white)', borderRadius: 'var(--radius-lg)',
-          border: '1px solid var(--color-border-light)',
-        }}>
+        <div className="p-6 md:p-8 text-center bg-(--color-bg-card) border border-(--color-border-light) rounded-2xl">
           <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '8px' }}>Get in Touch</h3>
           <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', marginBottom: '16px' }}>
             Have questions? We&apos;d love to hear from you.

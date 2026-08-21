@@ -158,11 +158,7 @@ function StudyMaterialsContent() {
       </div>
 
       {/* Product Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-        gap: '24px',
-      }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {loading ? (
           <div style={{ padding: '40px', textAlign: 'center', gridColumn: '1 / -1' }}>Loading...</div>
         ) : (

@@ -125,13 +125,13 @@ export default function AdminProfilePage() {
       <div style={{ display: 'grid', gap: '32px' }}>
         
         {/* Personal Details */}
-        <form onSubmit={handleProfileSubmit} className="card" style={{ padding: '24px' }}>
+        <form onSubmit={handleProfileSubmit} className="card p-6 md:p-8">
           <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <ShieldCheck size={20} color="var(--color-success)" />
             Personal Details
           </h3>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
             <div className="form-group" style={{ gridColumn: '1 / -1' }}>
               <label className="form-label">Full Name</label>
               <input required name="name" value={profileData.name} onChange={handleProfileChange} className="form-input" />
@@ -156,13 +156,13 @@ export default function AdminProfilePage() {
         </form>
 
         {/* Change Password */}
-        <form onSubmit={handlePasswordSubmit} className="card" style={{ padding: '24px' }}>
+        <form onSubmit={handlePasswordSubmit} className="card p-6 md:p-8">
           <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <KeyRound size={20} color="var(--color-primary)" />
             Change Password
           </h3>
           
-          <div style={{ display: 'grid', gap: '20px', marginBottom: '24px', maxWidth: '400px' }}>
+          <div className="grid grid-cols-1 gap-5 mb-6 max-w-100">
             <div className="form-group">
               <label className="form-label">Current Password</label>
               <input required type="password" name="currentPassword" value={pwData.currentPassword} onChange={handlePwChange} className="form-input" />

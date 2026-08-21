@@ -31,12 +31,8 @@ export default function LanguagesPage(): React.JSX.Element {
         </p>
       </div>
 
-      <div className="container" style={{ maxWidth: '860px' }}>
-        <div className="responsive-grid-3" style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '24px',
-        }}>
+      <div className="container px-4" style={{ maxWidth: '860px' }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {LANGUAGES.map(lang => (
             <Link key={lang.code} href={`/study-materials?lang=${lang.code}`} className="card card-interactive" style={{
               padding: '40px 24px',

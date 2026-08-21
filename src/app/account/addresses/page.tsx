@@ -142,9 +142,9 @@ export default function AddressesPage(): React.JSX.Element {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSave} className="card" style={{ padding: '28px', marginBottom: '20px' }}>
+        <form onSubmit={handleSave} className="card p-6 md:p-8 mb-5">
           <h3 style={{ marginBottom: '16px', fontSize: '1rem' }}>Add New Address</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <input required name="fullName" value={formData.fullName} onChange={handleChange} placeholder="Full Name" style={inputStyle} />
             <input required name="mobile" value={formData.mobile} onChange={handleChange} placeholder="Mobile Number" style={inputStyle} />
             <input name="email" value={formData.email} onChange={handleChange} placeholder="Email" type="email" style={inputStyle} />

@@ -107,8 +107,8 @@ export default function EditProductPage({ params }: PageProps) {
         </h2>
       </div>
 
-      <form onSubmit={handleSubmit} className="card" style={{ padding: '24px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '24px' }}>
+      <form onSubmit={handleSubmit} className="card p-6 md:p-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
           
           <div className="form-group" style={{ gridColumn: '1 / -1' }}>
             <label className="form-label">Product Name</label>

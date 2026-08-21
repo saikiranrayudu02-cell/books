@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import OrderTimeline from '@/components/ui/OrderTimeline';
 import { SUPPORT_EMAIL } from '@/lib/data';
-
 interface TrackingResult {
   id: string;
   status: string;
@@ -52,7 +51,7 @@ export default function TrackOrderPage(): React.JSX.Element {
 
       <div className="container-narrow" style={{ maxWidth: '600px' }}>
         {/* Track Form */}
-        <div className="card" style={{ padding: '32px' }}>
+        <div className="card p-6 md:p-8">
           <form onSubmit={handleTrack}>
             <div className="form-group" style={{ marginBottom: '16px' }}>
               <label className="form-label" htmlFor="orderId">Order ID</label>
@@ -96,7 +95,7 @@ export default function TrackOrderPage(): React.JSX.Element {
 
         {/* Tracking Result */}
         {tracking && (
-          <div className="card" style={{ padding: '32px', marginTop: '24px' }}>
+          <div className="card p-6 md:p-8 mt-6">
             <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.1rem', fontWeight: 700, marginBottom: '24px' }}>
               Order #{tracking.id}
             </h2>
@@ -116,11 +115,7 @@ export default function TrackOrderPage(): React.JSX.Element {
         )}
 
         {/* Support */}
-        <div style={{
-          textAlign: 'center', marginTop: '40px', padding: '24px',
-          background: 'var(--color-white)', borderRadius: 'var(--radius-md)',
-          border: '1px solid var(--color-border-light)',
-        }}>
+        <div className="p-6 md:p-8 mt-10 text-center bg-(--color-bg-card) border border-(--color-border-light) rounded-2xl">
           <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '8px' }}>Need Help With Your Order?</h3>
           <p style={{ fontSize: '0.85rem', color: 'var(--color-text-secondary)', marginBottom: '16px' }}>
             For order tracking, delivery, payment, product, or general queries, contact:
