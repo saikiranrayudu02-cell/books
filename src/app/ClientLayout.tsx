@@ -23,7 +23,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
           <ToastProvider>
             {!isAdminOrDemo && <Navbar onSearchOpen={() => setSearchOpen(true)} />}
             {!isAdminOrDemo && <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />}
-            <main style={isAdminOrDemo ? {} : { minHeight: 'calc(100vh - var(--navbar-height))' }}>
+            <main style={isAdminOrDemo ? {} : { minHeight: 'calc(100dvh - var(--navbar-height))' }}>
               {children}
             </main>
             {!isAdminOrDemo && !isAccount && <Footer />}

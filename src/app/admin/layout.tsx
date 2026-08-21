@@ -74,7 +74,7 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
 
   if (!mounted || isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-(--color-bg-page) text-(--color-text-muted)">
+      <div className="flex h-dvh items-center justify-center bg-(--color-bg-page) text-(--color-text-muted)">
         <div className="flex flex-col items-center gap-3">
           <div className="size-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
           <span className="text-sm font-semibold tracking-wide">Loading Admin Panel...</span>
@@ -85,7 +85,7 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
 
   if (!isAuthenticated || user?.role !== 'admin') {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-(--color-bg-page) p-6 text-center">
+      <div className="flex min-h-dvh flex-col items-center justify-center bg-(--color-bg-page) p-6 text-center">
         <div className="inline-flex p-6 bg-(--color-error-bg) rounded-full mb-6 text-(--color-error) animate-bounce">
           <ShieldAlert size={48} strokeWidth={1.5} />
         </div>
@@ -103,7 +103,7 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
   const firstLetter = user.name ? user.name.charAt(0).toUpperCase() : 'A';
 
   return (
-    <div className={`flex min-h-screen w-full ${isDark ? 'dark' : ''}`}>
+    <div className={`flex min-h-dvh w-full ${isDark ? 'dark' : ''}`}>
       <div className="flex w-full bg-(--color-bg-page) text-(--color-text-primary)">
         
         {/* Mobile Sidebar Backdrop Overlay */}
@@ -116,7 +116,7 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
 
         {/* Collapsible Sidebar */}
         <nav
-          className={`fixed md:sticky top-0 h-screen shrink-0 border-r transition-all duration-300 ease-in-out z-50 border-(--color-border) bg-(--color-bg-card) p-3 shadow-sm flex flex-col ${
+          className={`fixed md:sticky top-0 h-dvh shrink-0 border-r transition-all duration-300 ease-in-out z-50 border-(--color-border) bg-(--color-bg-card) p-3 shadow-sm flex flex-col ${
             open ? 'w-64' : 'w-20'
           } ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
         >
@@ -232,7 +232,7 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
         </nav>
 
         {/* Content Area */}
-        <div className="flex-1 flex flex-col h-screen overflow-hidden bg-(--color-bg-page) text-(--color-text-primary)">
+        <div className="flex-1 flex flex-col h-dvh overflow-hidden bg-(--color-bg-page) text-(--color-text-primary)">
           
           {/* Top Admin Navbar */}
           <header className="h-16 border-b border-(--color-border) bg-(--color-bg-card) px-4 md:px-8 flex items-center justify-between shrink-0">

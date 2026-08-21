@@ -97,7 +97,7 @@ function LoginContent() {
 
   return (
     <div style={{
-      minHeight: 'calc(100vh - var(--navbar-height) - 140px)',
+      minHeight: 'calc(100dvh - var(--navbar-height) - 140px)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
