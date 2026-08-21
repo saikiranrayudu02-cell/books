@@ -232,7 +232,7 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
         </nav>
 
         {/* Content Area */}
-        <div className="flex-1 flex flex-col h-dvh overflow-hidden bg-(--color-bg-page) text-(--color-text-primary)">
+        <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-(--color-bg-page) text-(--color-text-primary)">
           
           {/* Top Admin Navbar */}
           <header className="h-16 border-b border-(--color-border) bg-(--color-bg-card) px-4 md:px-8 flex items-center justify-between shrink-0">
