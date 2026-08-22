@@ -9,6 +9,22 @@ import { formatPrice, getLanguageDisplay, isValidEmail, isValidMobile, isValidPi
 import { DELIVERY_CHARGE, ORIGINAL_DELIVERY_CHARGE, INDIAN_STATES } from '@/lib/data';
 import { Address, Order } from '@/types';
 import styles from './checkout.module.css';
+import { 
+  MapPin, 
+  ClipboardList, 
+  Check, 
+  User, 
+  Phone, 
+  Mail, 
+  Home, 
+  Map, 
+  Hash, 
+  AlertCircle, 
+  ArrowLeft, 
+  CreditCard,
+  Lock,
+  ShoppingBag
+} from 'lucide-react';
 
 const STEPS = ['Delivery Address', 'Order Review'];
 
@@ -63,15 +79,17 @@ export default function CheckoutPage() {
 
   if (!isAuthenticated) {
     return (
-      <div style={{ textAlign: 'center', padding: '100px 20px' }}>
-        <div style={{ fontSize: '3.5rem', marginBottom: '16px' }}>🔒</div>
+      <div style={{ textAlign: 'center', padding: '100px 20px', maxWidth: '400px', margin: '0 auto' }}>
+        <div style={{ display: 'inline-flex', padding: '24px', background: 'var(--color-bg-page)', borderRadius: '50%', marginBottom: '24px', color: 'var(--color-primary)' }}>
+          <Lock size={48} strokeWidth={1.5} />
+        </div>
         <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.5rem', marginBottom: '8px' }}>
           Authentication Required
         </h1>
         <p style={{ color: 'var(--color-text-muted)', marginBottom: '24px' }}>
           Please log in or create an account to proceed with your order.
         </p>
-        <Link href="/login?redirect=/checkout" className="btn btn-primary btn-lg">
+        <Link href="/login?redirect=/checkout" className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center' }}>
           Sign In to Continue Checkout
         </Link>
       </div>
@@ -81,11 +99,13 @@ export default function CheckoutPage() {
   // Redirect if cart is empty
   if (items.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '100px 20px' }}>
-        <div style={{ fontSize: '4rem', marginBottom: '16px' }}>🛒</div>
+      <div style={{ textAlign: 'center', padding: '100px 20px', maxWidth: '450px', margin: '0 auto' }}>
+        <div style={{ display: 'inline-flex', padding: '24px', background: 'var(--color-bg-page)', borderRadius: '50%', marginBottom: '24px', color: 'var(--color-primary)' }}>
+          <ShoppingBag size={48} strokeWidth={1.5} />
+        </div>
         <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.5rem', marginBottom: '8px' }}>Your Cart is Empty</h1>
         <p style={{ color: 'var(--color-text-muted)', marginBottom: '24px' }}>Add items to continue with checkout</p>
-        <Link href="/study-materials" className="btn btn-primary btn-lg">Browse Study Materials</Link>
+        <Link href="/study-materials" className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center' }}>Browse Study Materials</Link>
       </div>
     );
   }
@@ -181,79 +201,130 @@ export default function CheckoutPage() {
     if (addressErrors[field]) setAddressErrors(prev => ({ ...prev, [field]: '' }));
   };
 
-  const renderField = (id: string, label: string, field: keyof Address, type = 'text', placeholder = '') => (
-    <div className="form-group">
-      <label className="form-label" htmlFor={id}>{label} *</label>
-      {field === 'state' ? (
-        <select id={id} className={`form-select ${addressErrors[field] ? 'error' : ''}`} value={address[field]} onChange={e => handleAddressChange(field, e.target.value)}>
-          <option value="">Select State</option>
-          {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-        </select>
-      ) : (
-        <input id={id} type={type} className={`form-input ${addressErrors[field] ? 'error' : ''}`} placeholder={placeholder} value={address[field]} onChange={e => handleAddressChange(field, e.target.value)} />
-      )}
-      {addressErrors[field] && <span className="form-error">{addressErrors[field]}</span>}
-    </div>
-  );
+  const getFieldIcon = (field: keyof Address) => {
+    switch (field) {
+      case 'fullName': return <User size={18} />;
+      case 'mobile': return <Phone size={18} />;
+      case 'email': return <Mail size={18} />;
+      case 'houseOrFlat': return <Home size={18} />;
+      case 'street': return <MapPin size={18} />;
+      case 'area': return <MapPin size={18} />;
+      case 'city': return <Map size={18} />;
+      case 'state': return <Map size={18} />;
+      case 'pinCode': return <Hash size={18} />;
+      default: return null;
+    }
+  };
+
+  const renderField = (id: string, label: string, field: keyof Address, type = 'text', placeholder = '') => {
+    const icon = getFieldIcon(field);
+    return (
+      <div className={styles.formGroup}>
+        <label className={styles.formLabel} htmlFor={id}>{label} *</label>
+        <div className={styles.inputWrapper}>
+          {icon && <span className={styles.inputIcon}>{icon}</span>}
+          {field === 'state' ? (
+            <select 
+              id={id} 
+              className={`${styles.formSelect} ${addressErrors[field] ? styles.error : ''}`} 
+              value={address[field]} 
+              onChange={e => handleAddressChange(field, e.target.value)}
+            >
+              <option value="">Select State</option>
+              {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          ) : (
+            <input 
+              id={id} 
+              type={type} 
+              className={`${styles.formInput} ${addressErrors[field] ? styles.error : ''}`} 
+              placeholder={placeholder} 
+              value={address[field]} 
+              onChange={e => handleAddressChange(field, e.target.value)} 
+            />
+          )}
+        </div>
+        {addressErrors[field] && (
+          <span className={styles.formError}>
+            <AlertCircle size={14} style={{ flexShrink: 0 }} />
+            {addressErrors[field]}
+          </span>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className={styles.checkoutContainer}>
-      <div className="page-header">
-        <h1 className="page-title">Checkout</h1>
+      <div className="page-header" style={{ padding: '24px 0 0 0', marginBottom: '24px' }}>
+        <h1 className="page-title" style={{ fontSize: '1.75rem', fontWeight: 800, fontFamily: 'var(--font-heading)', marginBottom: '0px' }}>Checkout</h1>
       </div>
 
       <div className={`container ${styles.checkoutInner}`}>
         {/* Progress Steps */}
         <div className={styles.stepsWrap}>
-          {STEPS.map((s, i) => (
-            <div key={i} className={styles.stepItem}>
-              <button
-                type="button"
-                className={`${styles.stepBtn} ${i < step ? styles.stepBtnActive : ''}`}
-                onClick={() => i < step && setStep(i)}
-                aria-label={`Step ${i + 1}: ${s}`}
-              >
-                <div
-                  className={styles.stepNumber}
-                  style={{
-                    background: i <= step ? 'var(--color-text-primary)' : 'var(--color-border-light)',
-                    color: i <= step ? 'var(--color-text-inverse)' : 'var(--color-text-muted)',
-                  }}
+          {STEPS.map((s, i) => {
+            const isCompleted = i < step;
+            const isActive = i === step;
+            
+            const getStepIcon = () => {
+              if (isCompleted) return <Check size={18} strokeWidth={3} />;
+              return i === 0 ? <MapPin size={18} /> : <ClipboardList size={18} />;
+            };
+
+            return (
+              <div key={i} className={styles.stepItem}>
+                <button
+                  type="button"
+                  className={`${styles.stepBtn} ${isCompleted ? styles.stepBtnActive : ''}`}
+                  onClick={() => isCompleted && setStep(i)}
+                  aria-label={`Step ${i + 1}: ${s}`}
                 >
-                  {i < step ? '✓' : i + 1}
-                </div>
-                <span
-                  className={styles.stepLabel}
-                  style={{
-                    fontWeight: i === step ? 600 : 400,
-                    color: i <= step ? 'var(--color-text-primary)' : 'var(--color-text-muted)',
-                  }}
-                >
-                  {s}
-                </span>
-              </button>
-              {i < STEPS.length - 1 && (
-                <div
-                  className={styles.stepDivider}
-                  style={{
-                    background: i < step ? 'var(--color-text-primary)' : 'var(--color-border-light)',
-                  }}
-                />
-              )}
-            </div>
-          ))}
+                  <div
+                    className={styles.stepNumber}
+                    style={{
+                      background: isCompleted 
+                        ? '#10B981' 
+                        : (isActive ? 'linear-gradient(135deg, #1a2b4c 0%, #3b82f6 100%)' : 'var(--color-white)'),
+                      border: (!isCompleted && !isActive) ? '1.5px solid var(--color-border)' : 'none',
+                      color: (isCompleted || isActive) ? '#ffffff' : 'var(--color-text-muted)',
+                      boxShadow: isActive ? '0 4px 12px rgba(59, 130, 246, 0.25)' : 'none',
+                    }}
+                  >
+                    {getStepIcon()}
+                  </div>
+                  <span
+                    className={styles.stepLabel}
+                    style={{
+                      color: (isCompleted || isActive) ? 'var(--color-text-primary)' : 'var(--color-text-muted)',
+                    }}
+                  >
+                    {s}
+                  </span>
+                </button>
+                {i < STEPS.length - 1 && (
+                  <div
+                    className={styles.stepDivider}
+                    style={{
+                      background: isCompleted ? '#10B981' : 'var(--color-border)',
+                    }}
+                  />
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Step 1: Address */}
         {step === 0 && (
           <div className={`card ${styles.card}`}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
               <h2 className={styles.cardTitle} style={{ margin: 0 }}>
                 Delivery Address
               </h2>
               {user && (
-                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', background: 'var(--color-bg-page)', padding: '3px 8px', borderRadius: '4px', border: '1px solid var(--color-border)' }}>
-                  Logged in as <strong>{user.name}</strong>
+                <span style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', background: 'var(--color-bg-page)', padding: '6px 12px', borderRadius: '12px', border: '1px solid var(--color-border-light)', fontWeight: 500 }}>
+                  Logged in as <strong style={{ color: 'var(--color-text-primary)' }}>{user.name}</strong>
                 </span>
               )}
             </div>
@@ -271,7 +342,7 @@ export default function CheckoutPage() {
             </div>
             <div className={styles.formActions}>
               <button onClick={handleAddressContinue} className={`btn btn-primary btn-lg ${styles.continueBtn}`}>
-                Continue to Review →
+                Continue to Review
               </button>
             </div>
           </div>
@@ -285,16 +356,29 @@ export default function CheckoutPage() {
                 <h2 className={styles.cardTitleInHeader}>
                   Delivery Address
                 </h2>
-                <button onClick={() => setStep(0)} className="btn btn-ghost btn-sm" style={{ minHeight: '36px' }}>
+                <button onClick={() => setStep(0)} className="btn btn-ghost btn-sm" style={{ minHeight: '36px', borderRadius: '10px' }}>
                   Edit
                 </button>
               </div>
               <div className={styles.addressReviewText}>
-                <strong>{address.fullName}</strong><br />
-                {address.houseOrFlat}, {address.street}<br />
-                {address.area && <>{address.area}<br /></>}
-                {address.city}, {address.state} — {address.pinCode}<br />
-                📱 {address.mobile} &nbsp; 📧 {address.email}
+                <div style={{ fontWeight: 700, fontSize: '1.05rem', color: 'var(--color-text-primary)', marginBottom: '8px' }}>
+                  {address.fullName}
+                </div>
+                <div style={{ color: 'var(--color-text-secondary)', marginBottom: '16px', fontSize: '0.925rem' }}>
+                  {address.houseOrFlat}, {address.street}<br />
+                  {address.area && <>{address.area}<br /></>}
+                  {address.city}, {address.state} — {address.pinCode}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderTop: '1px solid var(--color-border-light)', paddingTop: '12px', fontSize: '0.9rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-text-secondary)' }}>
+                    <Phone size={16} color="var(--color-primary)" />
+                    <span>{address.mobile}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-text-secondary)' }}>
+                    <Mail size={16} color="var(--color-primary)" />
+                    <span>{address.email}</span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -308,7 +392,7 @@ export default function CheckoutPage() {
                   <img src={item.productImage} alt="" className={styles.reviewItemImg} />
                   <div className={styles.reviewItemDetails}>
                     <div className={styles.reviewItemName}>{item.productName}</div>
-                    <div style={{ fontSize: '0.78rem', color: 'var(--color-primary)', fontWeight: 600 }}>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--color-primary)', fontWeight: 650, marginTop: '2px' }}>
                       {item.bundleTitle || (item.productId === 'p1' ? '2-Book Preparation Set' : '3-Book Preparation Set')} (Includes {item.booksIncluded || (item.productId === 'p1' ? 2 : 3)} Books)
                     </div>
                     <div className={styles.reviewItemMeta}>
@@ -333,9 +417,10 @@ export default function CheckoutPage() {
                   </div>
                 </div>
                 <div className={styles.freeDeliveryBanner}>
-                  🎉 <strong>Special Offer:</strong> Free Postal Delivery Applied!
+                  <Check size={16} strokeWidth={3} />
+                  <span><strong>Special Offer:</strong> Free Postal Delivery Applied!</span>
                 </div>
-                <hr className="divider" style={{ margin: '4px 0' }} />
+                <hr className="divider" style={{ margin: '4px 0', borderTop: '1px solid var(--color-border-light)' }} />
                 <div className={styles.summaryTotal}>
                   <span>Total Amount</span>
                   <span style={{ fontFamily: 'var(--font-heading)' }}>{formatPrice(total)}</span>
@@ -344,10 +429,18 @@ export default function CheckoutPage() {
 
               <div className={styles.reviewActions}>
                 <button onClick={() => setStep(0)} className={`btn btn-secondary btn-lg ${styles.backBtn}`}>
-                  ← Back
+                  <ArrowLeft size={18} style={{ marginRight: '8px' }} />
+                  Back
                 </button>
                 <button onClick={handlePlaceOrder} disabled={loading} className={`btn btn-primary btn-lg ${styles.payBtn}`}>
-                  {loading ? 'Processing Order...' : `Pay ${formatPrice(total)}`}
+                  {loading ? (
+                    'Processing Order...'
+                  ) : (
+                    <>
+                      <CreditCard size={18} style={{ marginRight: '8px' }} />
+                      Pay {formatPrice(total)}
+                    </>
+                  )}
                 </button>
               </div>
             </div>
