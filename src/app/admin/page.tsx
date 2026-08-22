@@ -188,7 +188,7 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         
         {/* Left Column: Recent Orders Table & Activity List */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-12">
           
           {/* Recent Orders Widget */}
           <div className="rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 shadow-xs">
@@ -304,7 +304,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Right Column: Performance Indicators & Top Products */}
-        <div className="space-y-8">
+        <div className="space-y-12">
           
           {/* Performance Quick Stats panel */}
           <div className="rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 shadow-xs">
