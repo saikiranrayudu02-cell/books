@@ -112,8 +112,8 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
           <Link href="/wishlist" className={styles.wishlistNavBtn} aria-label={`Wishlist with ${wishlistCount} items`}>
             <Heart
               size={20}
-              color={wishlistCount > 0 ? '#E53E3E' : 'currentColor'}
-              fill={wishlistCount > 0 ? '#E53E3E' : 'none'}
+              color={wishlistCount > 0 ? 'var(--color-primary)' : 'currentColor'}
+              fill={wishlistCount > 0 ? 'var(--color-primary)' : 'none'}
               strokeWidth={2}
               className={styles.wishlistSvg}
             />
@@ -233,11 +233,11 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
             >
               <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Heart size={18} color={wishlistCount > 0 ? '#E53E3E' : 'currentColor'} fill={wishlistCount > 0 ? '#E53E3E' : 'none'} />
+                <Heart size={18} color={wishlistCount > 0 ? 'var(--color-primary)' : 'currentColor'} fill={wishlistCount > 0 ? 'var(--color-primary)' : 'none'} />
                 My Wishlist
               </span>
               {wishlistCount > 0 && (
-                <span style={{ background: '#E53E3E', color: '#fff', fontSize: '0.72rem', fontWeight: 700, padding: '2px 8px', borderRadius: '12px' }}>
+                <span style={{ background: 'var(--color-primary)', color: '#fff', fontSize: '0.72rem', fontWeight: 700, padding: '2px 8px', borderRadius: '12px' }}>
                   {wishlistCount}
                 </span>
               )}
