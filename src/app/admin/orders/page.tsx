@@ -68,7 +68,7 @@ export default function AdminOrdersPage() {
   }
 
   return (
-    <div>
+    <div className="space-y-8">
       {/* Page Header */}
       <div className="admin-page-header">
         <div>

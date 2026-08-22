@@ -103,7 +103,7 @@ export default function EditProductPage({ params }: PageProps) {
   }
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-4xl space-y-8">
       {/* Page Header */}
       <div className="admin-page-header">
         <div className="flex items-center gap-3">

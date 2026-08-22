@@ -114,7 +114,7 @@ export default function AdminProfilePage() {
   };
 
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-3xl space-y-8">
       {/* Page Header */}
       <div className="admin-page-header">
         <div>
