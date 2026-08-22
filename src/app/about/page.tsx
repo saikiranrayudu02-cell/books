@@ -96,7 +96,7 @@ export default function AboutPage(): React.JSX.Element {
         </div>
 
         {/* Contact */}
-        <div className="p-6 md:p-8 text-center bg-(--color-bg-card) border border-(--color-border-light) rounded-2xl">
+        <div className="p-6 md:p-8 text-center bg-(--color-bg-card) border border-[color:var(--color-border-light)] rounded-2xl">
           <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '8px' }}>Get in Touch</h3>
           <p style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)', marginBottom: '16px' }}>
             Have questions? We&apos;d love to hear from you.

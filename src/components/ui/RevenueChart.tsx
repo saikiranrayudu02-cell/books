@@ -31,7 +31,7 @@ export default function RevenueChart({ data, loading = false }: RevenueChartProp
 
   if (loading || !data || data.length === 0) {
     return (
-      <div className="flex h-55 w-full items-center justify-center bg-(--color-bg-card) border border-(--color-border) rounded-2xl">
+      <div className="flex h-55 w-full items-center justify-center bg-(--color-bg-card) border border-[color:var(--color-border)] rounded-2xl">
         {loading ? (
           <div className="flex flex-col items-center gap-3">
             <div className="size-8 border-3 border-blue-500 border-t-transparent rounded-full animate-spin" />

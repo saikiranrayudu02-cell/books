@@ -154,7 +154,7 @@ export default function AdminProfilePage() {
             </div>
           </div>
 
-          <div className="flex justify-end pt-4 border-t border-(--color-border)">
+          <div className="flex justify-end pt-4 border-t border-[color:var(--color-border)]">
             <button type="submit" disabled={loading} className="btn btn-primary w-full sm:w-auto justify-center">
               {loading ? 'Saving...' : 'Save Profile Changes'}
             </button>
@@ -187,7 +187,7 @@ export default function AdminProfilePage() {
             </div>
           </div>
 
-          <div className="flex justify-start pt-4 border-t border-(--color-border)">
+          <div className="flex justify-start pt-4 border-t border-[color:var(--color-border)]">
             <button type="submit" disabled={pwLoading} className="btn btn-secondary w-full sm:w-auto justify-center">
               {pwLoading ? 'Updating...' : 'Change Password'}
             </button>
