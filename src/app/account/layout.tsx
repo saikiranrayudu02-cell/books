@@ -48,7 +48,7 @@ export default function AccountLayout({ children }: { children: ReactNode }): Re
         <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-8 items-start">
           
           {/* Sidebar */}
-          <div className="card md:sticky" style={{ 
+          <div className="hidden md:block card md:sticky" style={{ 
             padding: '20px', 
             top: 'calc(var(--navbar-height) + 24px)',
             borderRadius: '20px',

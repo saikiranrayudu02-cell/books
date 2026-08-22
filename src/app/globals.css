@@ -2,7 +2,7 @@
 @import "tailwindcss/theme";
 @import "tailwindcss/utilities";
 
-@variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* ============================================
    TENALI EXAM PUBLISHER — DESIGN SYSTEM

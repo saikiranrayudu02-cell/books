@@ -265,7 +265,13 @@ export default function Navbar({ onSearchOpen }: NavbarProps) {
                   </Link>
                 )}
                 <Link href="/account/orders" onClick={() => setMobileMenuOpen(false)} className={styles.mobileNavLink}>
-                  Order History
+                  My Orders
+                </Link>
+                <Link href="/account/wishlist" onClick={() => setMobileMenuOpen(false)} className={styles.mobileNavLink}>
+                  Wishlist
+                </Link>
+                <Link href="/account/addresses" onClick={() => setMobileMenuOpen(false)} className={styles.mobileNavLink}>
+                  Addresses
                 </Link>
                 <button onClick={handleLogout} className={styles.mobileLogoutBtn}>
                   Log Out

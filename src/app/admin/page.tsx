@@ -147,14 +147,14 @@ export default function AdminDashboardPage() {
     <div className="flex flex-col gap-8 animate-fadeIn text-(--color-text-primary)">
       
       {/* Premium Dashboard Greeting Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-slate-900 via-slate-950 to-indigo-950 p-8 text-white shadow-xl shadow-slate-900/10">
+      <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-slate-900 via-zinc-900 to-indigo-950 p-6 sm:p-8 text-white shadow-xl shadow-slate-950/20">
         {/* Abstract vector accents */}
-        <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-10 w-60 h-60 rounded-full bg-indigo-500/5 blur-2xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-indigo-500/15 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-10 w-60 h-60 rounded-full bg-violet-500/8 blur-2xl pointer-events-none" />
         
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="flex items-center gap-2 text-blue-400 font-bold text-xs uppercase tracking-widest mb-2" style={{ color: '#60a5fa' }}>
+            <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs uppercase tracking-widest mb-2" style={{ color: '#818cf8' }}>
               <Sparkles size={14} className="animate-pulse" />
               Publisher Portal Control Center
             </div>
@@ -167,7 +167,7 @@ export default function AdminDashboardPage() {
           </div>
           
           <div className="shrink-0 flex items-center gap-3 bg-white/5 backdrop-blur-md border border-white/10 px-5 py-3 rounded-2xl">
-            <Calendar size={18} className="text-blue-400" style={{ color: '#60a5fa' }} />
+            <Calendar size={18} className="text-indigo-400" style={{ color: '#818cf8' }} />
             <div className="text-right">
               <span className="block text-[10px] uppercase font-extrabold tracking-wider text-slate-400" style={{ color: '#94a3b8' }}>Current Date</span>
               <span className="block text-xs font-bold text-slate-200" style={{ color: '#e2e8f0' }}>{getTodayDateString()}</span>
