@@ -114,73 +114,81 @@ export default function AdminProfilePage() {
   };
 
   return (
-    <div style={{ maxWidth: '800px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
-        <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.25rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <User size={24} color="var(--color-primary)" />
-          Admin Profile Settings
-        </h2>
+    <div className="max-w-3xl">
+      {/* Page Header */}
+      <div className="admin-page-header">
+        <div>
+          <h2 className="admin-page-title">
+            <User size={24} />
+            Admin Profile Settings
+          </h2>
+          <p className="admin-page-desc">Manage your personal credentials and security passwords</p>
+        </div>
       </div>
 
-      <div style={{ display: 'grid', gap: '32px' }}>
+      <div className="space-y-10">
         
         {/* Personal Details */}
-        <form onSubmit={handleProfileSubmit} className="card p-6 md:p-8">
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <ShieldCheck size={20} color="var(--color-success)" />
-            Personal Details
-          </h3>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
-            <div className="form-group" style={{ gridColumn: '1 / -1' }}>
-              <label className="form-label">Full Name</label>
-              <input required name="name" value={profileData.name} onChange={handleProfileChange} className="form-input" />
-            </div>
+        <form onSubmit={handleProfileSubmit} className="admin-card">
+          <div className="admin-form-section">
+            <h3 className="admin-form-section__title flex items-center gap-2">
+              <ShieldCheck size={18} className="text-(--color-success)" />
+              Personal Details
+            </h3>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="form-group sm:col-span-2">
+                <label className="form-label">Full Name</label>
+                <input required name="name" value={profileData.name} onChange={handleProfileChange} className="form-input" />
+              </div>
 
-            <div className="form-group">
-              <label className="form-label">Email Address</label>
-              <input required type="email" name="email" value={profileData.email} onChange={handleProfileChange} className="form-input" />
-            </div>
+              <div className="form-group">
+                <label className="form-label">Email Address</label>
+                <input required type="email" name="email" value={profileData.email} onChange={handleProfileChange} className="form-input" />
+              </div>
 
-            <div className="form-group">
-              <label className="form-label">Phone Number</label>
-              <input required name="phone" value={profileData.phone} onChange={handleProfileChange} className="form-input" />
+              <div className="form-group">
+                <label className="form-label">Phone Number</label>
+                <input required name="phone" value={profileData.phone} onChange={handleProfileChange} className="form-input" />
+              </div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <button type="submit" disabled={loading} className="btn btn-primary">
+          <div className="flex justify-end pt-4 border-t border-(--color-border)">
+            <button type="submit" disabled={loading} className="btn btn-primary w-full sm:w-auto justify-center">
               {loading ? 'Saving...' : 'Save Profile Changes'}
             </button>
           </div>
         </form>
 
         {/* Change Password */}
-        <form onSubmit={handlePasswordSubmit} className="card p-6 md:p-8">
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <KeyRound size={20} color="var(--color-primary)" />
-            Change Password
-          </h3>
-          
-          <div className="grid grid-cols-1 gap-5 mb-6 max-w-100">
-            <div className="form-group">
-              <label className="form-label">Current Password</label>
-              <input required type="password" name="currentPassword" value={pwData.currentPassword} onChange={handlePwChange} className="form-input" />
-            </div>
+        <form onSubmit={handlePasswordSubmit} className="admin-card">
+          <div className="admin-form-section">
+            <h3 className="admin-form-section__title flex items-center gap-2">
+              <KeyRound size={18} />
+              Change Password
+            </h3>
+            
+            <div className="grid grid-cols-1 gap-5 max-w-md">
+              <div className="form-group">
+                <label className="form-label">Current Password</label>
+                <input required type="password" name="currentPassword" value={pwData.currentPassword} onChange={handlePwChange} className="form-input" />
+              </div>
 
-            <div className="form-group">
-              <label className="form-label">New Password</label>
-              <input required type="password" name="newPassword" value={pwData.newPassword} onChange={handlePwChange} className="form-input" />
-            </div>
+              <div className="form-group">
+                <label className="form-label">New Password</label>
+                <input required type="password" name="newPassword" value={pwData.newPassword} onChange={handlePwChange} className="form-input" />
+              </div>
 
-            <div className="form-group">
-              <label className="form-label">Confirm New Password</label>
-              <input required type="password" name="confirmPassword" value={pwData.confirmPassword} onChange={handlePwChange} className="form-input" />
+              <div className="form-group">
+                <label className="form-label">Confirm New Password</label>
+                <input required type="password" name="confirmPassword" value={pwData.confirmPassword} onChange={handlePwChange} className="form-input" />
+              </div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
-            <button type="submit" disabled={pwLoading} className="btn btn-secondary">
+          <div className="flex justify-start pt-4 border-t border-(--color-border)">
+            <button type="submit" disabled={pwLoading} className="btn btn-secondary w-full sm:w-auto justify-center">
               {pwLoading ? 'Updating...' : 'Change Password'}
             </button>
           </div>

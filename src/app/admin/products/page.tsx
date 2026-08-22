@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/utils';
-import { Package, Plus, Edit, Trash2 } from 'lucide-react';
+import { Package, Plus, Edit, Trash2, RefreshCw } from 'lucide-react';
 import { useToast } from '@/contexts/ToastContext';
 
 export default function AdminProductsPage() {
@@ -43,88 +43,110 @@ export default function AdminProductsPage() {
     }
   };
 
-  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>Loading products...</div>;
+  if (loading) {
+    return (
+      <div className="admin-loading">
+        <div className="admin-loading__spinner" />
+        <span className="admin-loading__text">Loading products...</span>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.25rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Package size={24} color="var(--color-primary)" />
-          Manage Products
-        </h2>
-        <Link href="/admin/products/add" className="btn btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Plus size={18} /> Add Product
-        </Link>
+      {/* Page Header */}
+      <div className="admin-page-header">
+        <div>
+          <h2 className="admin-page-title">
+            <Package size={24} />
+            Manage Products
+          </h2>
+          <p className="admin-page-desc">Create, update, or remove items from your store catalog</p>
+        </div>
+        <div className="flex gap-2">
+          <button onClick={() => { setLoading(true); fetchProducts(); }} className="btn btn-ghost btn-sm">
+            <RefreshCw size={16} />
+          </button>
+          <Link href="/admin/products/add" className="btn btn-primary btn-sm md:btn-md">
+            <Plus size={16} /> Add Product
+          </Link>
+        </div>
       </div>
 
-      <div className="card" style={{ padding: '24px' }}>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
-            <thead>
-              <tr style={{ borderBottom: '2px solid var(--color-border-light)', textAlign: 'left', color: 'var(--color-text-muted)' }}>
-                <th style={{ padding: '12px 16px' }}>ID / Slug</th>
-                <th style={{ padding: '12px 16px' }}>Name</th>
-                <th style={{ padding: '12px 16px' }}>Category</th>
-                <th style={{ padding: '12px 16px' }}>Price</th>
-                <th style={{ padding: '12px 16px' }}>Stock Status</th>
-                <th style={{ padding: '12px 16px' }}>Units Sold</th>
-                <th style={{ padding: '12px 16px', textAlign: 'right' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.length === 0 ? (
-                <tr><td colSpan={7} style={{ padding: '24px', textAlign: 'center', color: 'var(--color-text-muted)' }}>No products found.</td></tr>
-              ) : (
-                products.map((product) => (
-                  <tr key={product.id} style={{ borderBottom: '1px solid var(--color-border-light)' }}>
-                    <td style={{ padding: '12px 16px' }}>
-                      <div style={{ fontWeight: 600 }}>{product.id}</div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{product.slug}</div>
+      {/* Grid Container */}
+      <div className="admin-card">
+        {products.length === 0 ? (
+          <div className="admin-empty">
+            <div className="admin-empty__icon">
+              <Package size={28} />
+            </div>
+            <div className="admin-empty__title">No products found</div>
+            <div className="admin-empty__desc">
+              Get started by creating your very first catalog product.
+            </div>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>ID / Slug</th>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Stock Status</th>
+                  <th>Units Sold</th>
+                  <th className="col-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map((product) => (
+                  <tr key={product.id}>
+                    <td>
+                      <div className="col-primary">{product.id}</div>
+                      <div className="col-muted">{product.slug}</div>
                     </td>
-                    <td style={{ padding: '12px 16px', fontWeight: 500 }}>{product.name}</td>
-                    <td style={{ padding: '12px 16px', textTransform: 'capitalize' }}>{product.category}</td>
-                    <td style={{ padding: '12px 16px', fontWeight: 600 }}>{formatPrice(product.price)}</td>
-                    <td style={{ padding: '12px 16px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ 
-                          width: '8px', 
-                          height: '8px', 
-                          borderRadius: '50%', 
-                          backgroundColor: product.stock > 0 ? 'var(--color-success, #10b981)' : 'var(--color-error, #ef4444)' 
-                        }} />
-                        <span style={{ 
-                          color: product.stock > 0 ? 'var(--color-success, #10b981)' : 'var(--color-error, #ef4444)',
-                          fontWeight: 500, fontSize: '0.85rem'
-                        }}>
-                          {product.stock > 0 ? `In Stock (${product.stock})` : 'Out of Stock (0)'}
-                        </span>
-                      </div>
+                    <td className="col-primary font-bold">{product.name}</td>
+                    <td className="capitalize">{product.category}</td>
+                    <td className="col-bold">{formatPrice(product.price)}</td>
+                    <td>
+                      <span className={`status-badge ${
+                        product.stock > 0 ? 'status-badge--success' : 'status-badge--error'
+                      }`}>
+                        {product.stock > 0 ? `In Stock (${product.stock})` : 'Out of Stock'}
+                      </span>
                     </td>
-                    <td style={{ padding: '12px 16px', fontWeight: 500 }}>
-                      <span className="badge" style={{ 
-                        backgroundColor: (product.totalSold || 0) > 0 ? 'var(--color-primary-light, #e0f2fe)' : 'var(--color-neutral-light, #f3f4f6)',
-                        color: (product.totalSold || 0) > 0 ? 'var(--color-primary, #0284c7)' : 'var(--color-text-muted, #6b7280)',
-                        padding: '4px 8px', borderRadius: '4px', fontWeight: 600
-                      }}>
+                    <td>
+                      <span className={`status-badge ${
+                        (product.totalSold || 0) > 0 ? 'status-badge--indigo' : 'status-badge--neutral'
+                      }`}>
                         {product.totalSold || 0}
                       </span>
                     </td>
-                    <td style={{ padding: '12px 16px', textAlign: 'right' }}>
-                      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
-                        <Link href={`/admin/products/${product.id}`} className="btn btn-ghost btn-sm" style={{ padding: '6px', color: 'var(--color-primary)' }}>
+                    <td>
+                      <div className="flex justify-end gap-2">
+                        <Link 
+                          href={`/admin/products/${product.id}`} 
+                          className="admin-action-btn admin-action-btn--edit"
+                          title="Edit Product"
+                        >
                           <Edit size={16} />
                         </Link>
-                        <button onClick={() => handleDelete(product.id)} className="btn btn-ghost btn-sm" style={{ padding: '6px', color: 'var(--color-error)' }}>
+                        <button 
+                          onClick={() => handleDelete(product.id)} 
+                          className="admin-action-btn admin-action-btn--delete"
+                          title="Delete Product"
+                        >
                           <Trash2 size={16} />
                         </button>
                       </div>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

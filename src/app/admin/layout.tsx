@@ -240,11 +240,20 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
               {/* Mobile hamburger menu toggle */}
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="p-2 -ml-2 text-(--color-text-secondary) hover:text-(--color-text-primary) md:hidden rounded-lg hover:bg-(--color-bg-hover)"
+                className="flex size-11 items-center justify-center -ml-3 text-(--color-text-secondary) hover:text-(--color-text-primary) md:hidden rounded-lg hover:bg-(--color-bg-hover)"
                 aria-label="Toggle Sidebar Menu"
               >
-                <Menu size={20} />
+                <Menu size={22} />
               </button>
+
+              <h1 className="text-lg font-black tracking-tight text-(--color-text-primary) mr-2 hidden md:block">
+                {pathname === '/admin' ? 'Dashboard' : 
+                 pathname.startsWith('/admin/orders') ? 'Orders Management' :
+                 pathname.startsWith('/admin/products') ? 'Products Management' :
+                 pathname.startsWith('/admin/profile') ? 'Admin Profile' : 'Admin Panel'}
+              </h1>
+
+              <div className="h-4 w-px bg-(--color-border) hidden md:block mr-2" />
 
               <span className="text-xs font-extrabold uppercase tracking-wider text-(--color-text-muted) hidden sm:inline-block">
                 System Status:

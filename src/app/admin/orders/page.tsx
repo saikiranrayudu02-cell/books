@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { formatPrice } from '@/lib/utils';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Package, RefreshCw } from 'lucide-react';
 import { useToast } from '@/contexts/ToastContext';
 
 export default function AdminOrdersPage() {
@@ -48,60 +48,87 @@ export default function AdminOrdersPage() {
 
   const statusOptions = ['placed', 'processing', 'packed', 'dispatched', 'out_for_delivery', 'delivered'];
 
-  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>Loading orders...</div>;
+  const getPaymentBadgeClass = (status: string) => {
+    switch (status) {
+      case 'paid': return 'status-badge status-badge--success';
+      case 'unpaid':
+      case 'failed': return 'status-badge status-badge--error';
+      case 'pending': return 'status-badge status-badge--warning';
+      default: return 'status-badge status-badge--neutral';
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="admin-loading">
+        <div className="admin-loading__spinner" />
+        <span className="admin-loading__text">Loading orders...</span>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.25rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <ShoppingCart size={24} color="var(--color-primary)" />
-          Manage Orders
-        </h2>
+      {/* Page Header */}
+      <div className="admin-page-header">
+        <div>
+          <h2 className="admin-page-title">
+            <ShoppingCart size={24} />
+            Manage Orders
+          </h2>
+          <p className="admin-page-desc">Review and update customer order statuses</p>
+        </div>
+        <button onClick={() => { setLoading(true); fetchOrders(); }} className="btn btn-ghost btn-sm">
+          <RefreshCw size={16} /> Refresh
+        </button>
       </div>
 
-      <div className="card" style={{ padding: '24px' }}>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
-            <thead>
-              <tr style={{ borderBottom: '2px solid var(--color-border-light)', textAlign: 'left', color: 'var(--color-text-muted)' }}>
-                <th style={{ padding: '12px 16px' }}>Order ID</th>
-                <th style={{ padding: '12px 16px' }}>Date</th>
-                <th style={{ padding: '12px 16px' }}>Customer</th>
-                <th style={{ padding: '12px 16px' }}>Total</th>
-                <th style={{ padding: '12px 16px' }}>Payment</th>
-                <th style={{ padding: '12px 16px' }}>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.length === 0 ? (
-                <tr><td colSpan={6} style={{ padding: '24px', textAlign: 'center', color: 'var(--color-text-muted)' }}>No orders found.</td></tr>
-              ) : (
-                orders.map((order) => (
-                  <tr key={order.id} style={{ borderBottom: '1px solid var(--color-border-light)' }}>
-                    <td style={{ padding: '12px 16px', fontWeight: 500 }}>{order.orderNumber}</td>
-                    <td style={{ padding: '12px 16px', color: 'var(--color-text-muted)' }}>{new Date(order.createdAt).toLocaleDateString()}</td>
-                    <td style={{ padding: '12px 16px' }}>
-                      <div style={{ fontWeight: 500 }}>{order.userName || 'Guest'}</div>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{order.userEmail}</div>
+      {/* Table Card */}
+      <div className="admin-card">
+        {orders.length === 0 ? (
+          <div className="admin-empty">
+            <div className="admin-empty__icon">
+              <Package size={28} />
+            </div>
+            <div className="admin-empty__title">No orders yet</div>
+            <div className="admin-empty__desc">
+              Orders will appear here when customers complete their first purchase.
+            </div>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th>Total</th>
+                  <th>Payment</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((order) => (
+                  <tr key={order.id}>
+                    <td className="col-primary">{order.orderNumber}</td>
+                    <td className="col-muted">{new Date(order.createdAt).toLocaleDateString()}</td>
+                    <td>
+                      <div className="col-primary">{order.userName || 'Guest'}</div>
+                      <div className="col-muted">{order.userEmail}</div>
                     </td>
-                    <td style={{ padding: '12px 16px', fontWeight: 600 }}>{formatPrice(order.total)}</td>
-                    <td style={{ padding: '12px 16px' }}>
-                      <span style={{ 
-                        background: order.paymentStatus === 'paid' ? 'rgba(56, 142, 60, 0.1)' : 'rgba(229, 57, 53, 0.1)', 
-                        color: order.paymentStatus === 'paid' ? 'var(--color-success)' : 'var(--color-error)', 
-                        padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase' 
-                      }}>
+                    <td className="col-bold">{formatPrice(order.total)}</td>
+                    <td>
+                      <span className={getPaymentBadgeClass(order.paymentStatus)}>
                         {order.paymentStatus}
                       </span>
                     </td>
-                    <td style={{ padding: '12px 16px' }}>
+                    <td>
                       <select 
                         value={order.status} 
                         onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                        style={{ 
-                          padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--color-border)', 
-                          fontSize: '0.85rem', background: 'var(--color-bg-page)', cursor: 'pointer' 
-                        }}
+                        className="form-select text-sm"
+                        style={{ minWidth: '140px' }}
                       >
                         {statusOptions.map(opt => (
                           <option key={opt} value={opt}>{opt.replace(/_/g, ' ')}</option>
@@ -109,11 +136,11 @@ export default function AdminOrdersPage() {
                       </select>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -15,7 +15,8 @@ import {
   Sparkles,
   Calendar,
   Layers,
-  Percent
+  Percent,
+  RefreshCw
 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
@@ -23,19 +24,21 @@ export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const fetchAnalytics = async () => {
+    try {
+      const res = await fetch('/api/admin/analytics');
+      if (!res.ok) throw new Error('Failed to fetch analytics');
+      const json = await res.json();
+      setData(json.data);
+      setError('');
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchAnalytics = async () => {
-      try {
-        const res = await fetch('/api/admin/analytics');
-        if (!res.ok) throw new Error('Failed to fetch analytics');
-        const json = await res.json();
-        setData(json.data);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchAnalytics();
   }, []);
 
@@ -61,10 +64,27 @@ export default function AdminDashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-100 items-center justify-center text-(--color-text-muted)">
-        <div className="flex flex-col items-center gap-3">
-          <div className="size-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm font-semibold tracking-wide">Loading dashboard data...</span>
+      <div className="space-y-10 animate-pulse">
+        {/* Banner Skeleton */}
+        <div className="h-44 bg-(--color-bg-card) border border-(--color-border) rounded-3xl" />
+        
+        {/* Metric Cards Skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 md:gap-10">
+          {[1, 2, 3, 4].map(n => (
+            <div key={n} className="h-36 bg-(--color-bg-card) border border-(--color-border) rounded-2xl p-6" />
+          ))}
+        </div>
+        
+        {/* Split widgets skeleton */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <div className="lg:col-span-2 space-y-12">
+            <div className="h-96 bg-(--color-bg-card) border border-(--color-border) rounded-2xl" />
+            <div className="h-96 bg-(--color-bg-card) border border-(--color-border) rounded-2xl" />
+          </div>
+          <div className="space-y-12">
+            <div className="h-64 bg-(--color-bg-card) border border-(--color-border) rounded-2xl" />
+            <div className="h-96 bg-(--color-bg-card) border border-(--color-border) rounded-2xl" />
+          </div>
         </div>
       </div>
     );
@@ -72,9 +92,17 @@ export default function AdminDashboardPage() {
 
   if (error) {
     return (
-      <div className="p-6 text-(--color-error) bg-(--color-error-bg) rounded-2xl border border-(--color-border) flex items-center gap-3">
-        <AlertCircle className="shrink-0" />
-        <span className="font-semibold">{error}</span>
+      <div className="p-6 text-(--color-error) bg-(--color-error-bg) rounded-2xl border border-(--color-border) flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <AlertCircle className="shrink-0 text-(--color-error)" />
+          <span className="font-semibold">{error}</span>
+        </div>
+        <button 
+          onClick={() => { setLoading(true); setError(''); fetchAnalytics(); }}
+          className="btn btn-danger btn-sm shrink-0 flex items-center gap-2"
+        >
+          <RefreshCw className="size-4" /> Retry Loading
+        </button>
       </div>
     );
   }
@@ -205,16 +233,16 @@ export default function AdminDashboardPage() {
             </div>
             
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse text-sm">
+              <table className="admin-table">
                 <thead>
-                  <tr className="border-b border-(--color-border) text-(--color-text-muted) font-bold text-[11px] uppercase tracking-wider">
-                    <th className="pb-3 pr-4">Order ID</th>
-                    <th className="pb-3 px-4">Customer</th>
-                    <th className="pb-3 px-4">Status</th>
-                    <th className="pb-3 pl-4 text-right">Total</th>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Status</th>
+                    <th className="col-right">Total</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-(--color-border)">
+                <tbody>
                   {data.recentOrders.length === 0 ? (
                     <tr>
                       <td colSpan={4} className="py-8 text-center text-(--color-text-muted)">
@@ -223,25 +251,19 @@ export default function AdminDashboardPage() {
                     </tr>
                   ) : (
                     data.recentOrders.map((order: any) => (
-                      <tr key={order.id} className="text-(--color-text-secondary) hover:bg-(--color-bg-hover) transition-colors">
-                        <td className="py-3.5 pr-4 font-bold text-(--color-text-primary)">
-                          {order.orderNumber}
-                        </td>
-                        <td className="py-3.5 px-4 font-semibold text-(--color-text-secondary)">
-                          {order.userName || 'Guest'}
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <span className={`inline-flex px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full border ${
+                      <tr key={order.id}>
+                        <td className="col-primary">{order.orderNumber}</td>
+                        <td>{order.userName || 'Guest'}</td>
+                        <td>
+                          <span className={`status-badge ${
                             order.status === 'delivered'
-                              ? 'bg-(--color-success-bg) text-(--color-success) border-(--color-success)'
-                              : 'bg-(--color-indigo-bg) text-(--color-indigo) border-(--color-indigo)'
+                              ? 'status-badge--success'
+                              : 'status-badge--indigo'
                           }`}>
                             {order.status}
                           </span>
                         </td>
-                        <td className="py-3.5 pl-4 text-right font-black text-(--color-text-primary)">
-                          {formatPrice(order.total)}
-                        </td>
+                        <td className="col-bold col-right">{formatPrice(order.total)}</td>
                       </tr>
                     ))
                   )}
