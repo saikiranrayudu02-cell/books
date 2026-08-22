@@ -1,13 +1,14 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { formatPrice } from '@/lib/utils';
-import { ShoppingCart, Package, RefreshCw } from 'lucide-react';
+import { ShoppingCart, Package, RefreshCw, Copy, Check } from 'lucide-react';
 import { useToast } from '@/contexts/ToastContext';
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const toast = useToast();
 
   const fetchOrders = async () => {
@@ -45,6 +46,15 @@ export default function AdminOrdersPage() {
     } catch (err) {
       toast.error('Failed to update status');
     }
+  };
+
+  const handleCopyDetails = (order: any) => {
+    if (!order.deliveryAddress) return;
+    const addr = order.deliveryAddress;
+    const text = `Order ID: ${order.orderNumber}\nCustomer: ${order.userName || 'Guest'}\n\nDelivery Address:\n${addr.fullName}\n${addr.houseOrFlat}, ${addr.street}\n${addr.area ? addr.area + '\n' : ''}${addr.city}, ${addr.state} - ${addr.pinCode}\nMob: ${addr.mobile}`;
+    navigator.clipboard.writeText(text);
+    setCopiedId(order.id);
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
   const statusOptions = ['placed', 'processing', 'packed', 'dispatched', 'out_for_delivery', 'delivered'];
@@ -219,19 +229,54 @@ export default function AdminOrdersPage() {
                           <div className="col-muted">{order.userEmail}</div>
                         </td>
                         <td>
-                          <div style={{ fontSize: '0.75rem', whiteSpace: 'pre-wrap', lineHeight: 1.4, color: 'var(--color-text-secondary)', maxWidth: '180px', userSelect: 'all' }}>
-                            {order.deliveryAddress ? (
-                              <>
-                                <strong>{order.deliveryAddress.full_name}</strong><br/>
-                                {order.deliveryAddress.house_or_flat}, {order.deliveryAddress.street}<br/>
+                          {order.deliveryAddress ? (
+                            <div style={{ 
+                              fontSize: '0.75rem', 
+                              lineHeight: 1.4, 
+                              color: 'var(--color-text-secondary)', 
+                              maxWidth: '220px', 
+                              background: 'var(--color-bg-page)', 
+                              padding: '12px 28px 12px 12px', 
+                              borderRadius: '12px', 
+                              border: '1px solid var(--color-border-light)',
+                              position: 'relative',
+                              userSelect: 'text'
+                            }}>
+                              <button
+                                onClick={() => handleCopyDetails(order)}
+                                style={{
+                                  position: 'absolute',
+                                  top: '8px',
+                                  right: '8px',
+                                  background: 'var(--color-white)',
+                                  border: '1px solid var(--color-border-light)',
+                                  borderRadius: '6px',
+                                  padding: '4px',
+                                  cursor: 'pointer',
+                                  color: copiedId === order.id ? '#10B981' : 'var(--color-text-muted)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+                                  transition: 'all 0.2s'
+                                }}
+                                title="Copy Address for Dispatch"
+                              >
+                                {copiedId === order.id ? <Check size={14} strokeWidth={3} /> : <Copy size={14} />}
+                              </button>
+                              <strong style={{ color: 'var(--color-text-primary)' }}>{order.orderNumber}</strong><br/>
+                              <span style={{ color: 'var(--color-text-muted)' }}>{order.userName || 'Guest'}</span>
+                              <div style={{ marginTop: '6px', paddingTop: '6px', borderTop: '1px dashed var(--color-border-light)', whiteSpace: 'pre-wrap' }}>
+                                <strong style={{ color: 'var(--color-text-primary)' }}>{order.deliveryAddress.fullName}</strong><br/>
+                                {order.deliveryAddress.houseOrFlat}, {order.deliveryAddress.street}<br/>
                                 {order.deliveryAddress.area && <>{order.deliveryAddress.area}<br/></>}
-                                {order.deliveryAddress.city}, {order.deliveryAddress.state} - {order.deliveryAddress.pin_code}<br/>
+                                {order.deliveryAddress.city}, {order.deliveryAddress.state} - {order.deliveryAddress.pinCode}<br/>
                                 Mob: {order.deliveryAddress.mobile}
-                              </>
-                            ) : (
-                              'N/A'
-                            )}
-                          </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="col-muted">N/A</span>
+                          )}
                         </td>
                         <td className="col-bold">{formatPrice(order.total)}</td>
                         <td>
