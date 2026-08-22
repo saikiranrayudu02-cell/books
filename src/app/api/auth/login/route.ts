@@ -33,7 +33,7 @@ export async function POST(request: Request) {
 
     if (users.length === 0) {
       return NextResponse.json(
-        { error: 'wrong username and the password' },
+        { error: 'the username or password is incorrect please enter the correct username and password to access your profile' },
         { status: 401 }
       );
     }
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     // Verify password
     if (!user.password_hash) {
        return NextResponse.json(
-        { error: 'wrong username and the password' },
+        { error: 'the username or password is incorrect please enter the correct username and password to access your profile' },
         { status: 401 }
       );
     }
@@ -52,7 +52,7 @@ export async function POST(request: Request) {
 
     if (!isMatch) {
       return NextResponse.json(
-        { error: 'wrong username and the password' },
+        { error: 'the username or password is incorrect please enter the correct username and password to access your profile' },
         { status: 401 }
       );
     }
