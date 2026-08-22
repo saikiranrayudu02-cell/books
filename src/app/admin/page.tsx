@@ -453,7 +453,7 @@ export default function AdminDashboardPage() {
                     <div key={i} className="relative flex items-start space-x-4 p-4 rounded-2xl bg-(--color-bg-hover) hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-all border border-(--color-border)">
                       
                       {/* Timeline Bullet Anchor Indicator */}
-                      <span className={`absolute -left-[25px] top-7 size-4 rounded-full border-4 border-(--color-bg-card) ${
+                      <span className={`absolute -left-6.25 top-7 size-4 rounded-full border-4 border-(--color-bg-card) ${
                         isSale ? 'bg-emerald-500' : 'bg-blue-500'
                       }`} />
 
