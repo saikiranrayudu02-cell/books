@@ -17,6 +17,7 @@ function LoginContent() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     identifier: '', // Username or Email
@@ -33,6 +34,7 @@ function LoginContent() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    if (formError) setFormError(null);
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -77,6 +79,7 @@ function LoginContent() {
         router.push(redirectUrl === '/' ? '/account' : redirectUrl);
       }
     } catch (err: any) {
+      setFormError(err.message || 'Authentication failed');
       toast.error(err.message || 'Authentication failed');
     } finally {
       setLoading(false);
@@ -334,6 +337,28 @@ function LoginContent() {
                   {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+            </div>
+          )}
+
+          {/* Form Error Message */}
+          {formError && (
+            <div style={{
+              padding: '12px 14px',
+              borderRadius: '12px',
+              background: 'rgba(239, 68, 68, 0.08)',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
+              color: '#dc2626',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              marginBottom: '20px',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '10px',
+              textAlign: 'left',
+              lineHeight: 1.4
+            }}>
+              <ShieldAlert size={18} style={{ flexShrink: 0, marginTop: '1px' }} />
+              <span>{formError}</span>
             </div>
           )}
 
