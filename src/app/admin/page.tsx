@@ -19,10 +19,20 @@ import {
   RefreshCw
 } from 'lucide-react';
 
+import RevenueChart from '@/components/ui/RevenueChart';
+
 export default function AdminDashboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  // Revenue Intelligence states
+  const [period, setPeriod] = useState<'daily' | 'weekly' | 'monthly'>('monthly');
+  const [range, setRange] = useState<string>('30days');
+  const [customDates, setCustomDates] = useState({ start: '', end: '' });
+  const [revenueData, setRevenueData] = useState<any>(null);
+  const [revenueLoading, setRevenueLoading] = useState(true);
+  const [revenueError, setRevenueError] = useState('');
 
   const fetchAnalytics = async () => {
     try {
@@ -38,9 +48,32 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const fetchRevenueAnalytics = async () => {
+    setRevenueLoading(true);
+    try {
+      let url = `/api/admin/analytics/revenue?period=${period}&range=${range}`;
+      if (range === 'custom' && customDates.start && customDates.end) {
+        url += `&startDate=${customDates.start}&endDate=${customDates.end}`;
+      }
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('Failed to fetch revenue analytics');
+      const json = await res.json();
+      setRevenueData(json.data);
+      setRevenueError('');
+    } catch (err: any) {
+      setRevenueError(err.message);
+    } finally {
+      setRevenueLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchAnalytics();
   }, []);
+
+  useEffect(() => {
+    fetchRevenueAnalytics();
+  }, [period, range, customDates]);
 
   const formatActivityTime = (timeString: string) => {
     try {
@@ -74,6 +107,9 @@ export default function AdminDashboardPage() {
             <div key={n} className="h-36 bg-(--color-bg-card) border border-(--color-border) rounded-2xl p-6" />
           ))}
         </div>
+
+        {/* Revenue Analytics Skeleton */}
+        <div className="h-[360px] bg-(--color-bg-card) border border-(--color-border) rounded-3xl" />
         
         {/* Split widgets skeleton */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -211,7 +247,133 @@ export default function AdminDashboardPage() {
           </p>
         </div>
       </div>
-      
+
+      {/* Revenue Intelligence Card */}
+      <div className="admin-card space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h3 className="text-lg font-extrabold text-(--color-text-primary) flex items-center gap-2.5">
+              <div className="p-1.5 bg-blue-50 dark:bg-blue-950/30 rounded-lg text-blue-500">
+                <TrendingUp size={18} />
+              </div>
+              Revenue Intelligence Analytics
+            </h3>
+            <p className="text-xs text-(--color-text-muted) mt-1">Track financial trends, transaction volume, and growth patterns</p>
+          </div>
+
+          {/* Filters */}
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Range Preset Filter */}
+            <select
+              value={range}
+              onChange={(e) => setRange(e.target.value)}
+              className="form-select text-xs py-1.5 px-3 min-w-32"
+            >
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="7days">Last 7 Days</option>
+              <option value="30days">Last 30 Days</option>
+              <option value="thismonth">This Month</option>
+              <option value="lastmonth">Last Month</option>
+              <option value="thisyear">This Year</option>
+              <option value="custom">Custom Range</option>
+            </select>
+
+            {/* Period Segmented Control */}
+            <div className="flex border border-(--color-border) rounded-xl overflow-hidden p-0.5 bg-(--color-bg-hover)">
+              {(['daily', 'weekly', 'monthly'] as const).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPeriod(p)}
+                  className={`px-3 py-1 text-xs font-bold capitalize transition-colors ${
+                    period === p
+                      ? 'bg-blue-500 text-white rounded-lg shadow-xs'
+                      : 'text-(--color-text-secondary) hover:text-(--color-text-primary)'
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Custom date range fields if 'custom' is selected */}
+        {range === 'custom' && (
+          <div className="flex flex-wrap gap-4 items-end p-4 bg-(--color-bg-hover) rounded-2xl border border-(--color-border)">
+            <div className="form-group">
+              <label className="form-label text-[10px] uppercase font-bold text-(--color-text-muted)">Start Date</label>
+              <input
+                type="date"
+                value={customDates.start}
+                onChange={(e) => setCustomDates(prev => ({ ...prev, start: e.target.value }))}
+                className="form-input text-xs py-1.5"
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label text-[10px] uppercase font-bold text-(--color-text-muted)">End Date</label>
+              <input
+                type="date"
+                value={customDates.end}
+                onChange={(e) => setCustomDates(prev => ({ ...prev, end: e.target.value }))}
+                className="form-input text-xs py-1.5"
+              />
+            </div>
+          </div>
+        )}
+
+        {revenueError ? (
+          <div className="p-6 text-(--color-error) bg-(--color-error-bg) rounded-2xl border border-(--color-border) flex items-center justify-between">
+            <span>{revenueError}</span>
+            <button onClick={fetchRevenueAnalytics} className="btn btn-danger btn-sm">Try Again</button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Summaries Column */}
+            <div className="flex flex-col justify-between gap-4 p-5 bg-(--color-bg-hover) border border-(--color-border) rounded-2xl">
+              <div>
+                <span className="block text-[10px] uppercase font-extrabold text-(--color-text-muted) tracking-wider text-slate-400">Total Revenue</span>
+                <span className="block text-2xl font-black text-(--color-text-primary) mt-1">
+                  {revenueLoading ? '...' : formatPrice(revenueData?.summary?.totalRevenue || 0)}
+                </span>
+                {!revenueLoading && (
+                  <span className={`inline-flex items-center gap-1 text-xs font-bold mt-2 ${
+                    (revenueData?.summary?.revenueGrowth || 0) >= 0 ? 'text-(--color-success)' : 'text-(--color-error)'
+                  }`}>
+                    {(revenueData?.summary?.revenueGrowth || 0) >= 0 ? '↑' : '↓'}{' '}
+                    {Math.abs(revenueData?.summary?.revenueGrowth || 0).toFixed(1)}%
+                    <span className="text-(--color-text-muted) font-medium"> vs previous</span>
+                  </span>
+                )}
+              </div>
+
+              <div className="h-px bg-(--color-border)" />
+
+              <div>
+                <span className="block text-[10px] uppercase font-extrabold text-(--color-text-muted) tracking-wider text-slate-400">Paid Transactions</span>
+                <span className="block text-xl font-black text-(--color-text-primary) mt-1">
+                  {revenueLoading ? '...' : `${revenueData?.summary?.orderCount || 0} orders`}
+                </span>
+              </div>
+
+              <div className="h-px bg-(--color-border)" />
+
+              <div>
+                <span className="block text-[10px] uppercase font-extrabold text-(--color-text-muted) tracking-wider text-slate-400">Average Ticket</span>
+                <span className="block text-xl font-black text-(--color-text-primary) mt-1">
+                  {revenueLoading ? '...' : formatPrice(revenueData?.summary?.averageRevenue || 0)}
+                </span>
+              </div>
+            </div>
+
+            {/* Graph Column */}
+            <div className="lg:col-span-3">
+              <RevenueChart data={revenueData?.chartData || []} loading={revenueLoading} />
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Split Widget Area */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         
