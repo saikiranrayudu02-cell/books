@@ -144,7 +144,7 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="space-y-12 animate-fadeIn text-(--color-text-primary)">
+    <div className="space-y-8 animate-fadeIn text-(--color-text-primary)">
       
       {/* Premium Dashboard Greeting Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-slate-900 via-slate-950 to-indigo-950 p-8 text-white shadow-xl shadow-slate-900/10">
@@ -177,7 +177,7 @@ export default function AdminDashboardPage() {
       </div>
       
       {/* Metric Stats Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8 md:gap-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8">
         
         {/* Stat Card 1: Total Revenue */}
         <div className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 md:p-7 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-emerald-500/20">
@@ -374,11 +374,10 @@ export default function AdminDashboardPage() {
         )}
       </div>
 
-      {/* Split Widget Area */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Left Column: Recent Orders Table & Activity List */}
-        <div className="lg:col-span-2 space-y-12">
+        <div className="lg:col-span-2 space-y-8">
           
           {/* Recent Orders Widget */}
           <div className="admin-card">
@@ -454,7 +453,7 @@ export default function AdminDashboardPage() {
                     <div key={i} className="relative flex items-start space-x-4 p-4 rounded-2xl bg-(--color-bg-hover) hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-all border border-(--color-border)">
                       
                       {/* Timeline Bullet Anchor Indicator */}
-                      <span className={`absolute -left-8.75 top-7 size-4 rounded-full border-4 border-(--color-bg-card) ${
+                      <span className={`absolute -left-[25px] top-7 size-4 rounded-full border-4 border-(--color-bg-card) ${
                         isSale ? 'bg-emerald-500' : 'bg-blue-500'
                       }`} />
 
@@ -488,7 +487,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Right Column: Performance Indicators & Top Products */}
-        <div className="space-y-12">
+        <div className="space-y-8">
           
           {/* Performance Quick Stats panel */}
           <div className="admin-card">
