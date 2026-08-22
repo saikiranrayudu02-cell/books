@@ -115,12 +115,12 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
         )}
 
         <nav
-          className={`fixed md:sticky top-0 h-dvh shrink-0 border-r transition-all duration-300 ease-in-out z-50 border-[color:var(--color-border)] bg-(--color-bg-card) p-3 shadow-sm flex flex-col ${
+          className={`fixed md:sticky top-0 h-dvh shrink-0 border-r transition-all duration-300 ease-in-out z-50 border-(--color-border) bg-(--color-bg-card) p-3 shadow-sm flex flex-col ${
             mobileOpen ? 'w-64' : (open ? 'w-64' : 'w-20')
           } ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
         >
           {/* Logo & Profile section */}
-          <div className="mb-6 border-b border-[color:var(--color-border)] pb-4">
+          <div className="mb-6 border-b border-(--color-border) pb-4">
             <div className="flex items-center justify-between rounded-2xl p-2 hover:bg-(--color-bg-hover) transition-all">
               <div className="flex items-center gap-3 min-w-0">
                 <div className="grid size-10 shrink-0 place-content-center rounded-xl bg-linear-to-br from-blue-600 to-indigo-600 shadow-md shadow-blue-500/20 text-white">
@@ -179,7 +179,7 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
           </div>
 
           {/* Footer Controls (Theme & Logout) */}
-          <div className="border-t border-[color:var(--color-border)] pt-4 space-y-1.5 mb-14">
+          <div className="border-t border-(--color-border) pt-4 space-y-1.5 mb-14">
             
             {/* Store Front Link */}
             <Link
@@ -211,7 +211,7 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
           {/* Toggle Close Button (Hidden on Mobile) */}
           <button
             onClick={() => setOpen(!open)}
-            className="absolute bottom-0 left-0 right-0 border-t border-[color:var(--color-border)] hover:bg-(--color-bg-hover) transition-colors bg-(--color-bg-card) text-(--color-text-muted) hidden md:block"
+            className="absolute bottom-0 left-0 right-0 border-t border-(--color-border) hover:bg-(--color-bg-hover) transition-colors bg-(--color-bg-card) text-(--color-text-muted) hidden md:block"
           >
             <div className="flex items-center p-3.5">
               <div className="grid size-10 place-content-center">
@@ -234,7 +234,7 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
         <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-(--color-bg-page) text-(--color-text-primary)">
           
           {/* Top Admin Navbar */}
-          <header className="h-16 border-b border-[color:var(--color-border)] bg-(--color-bg-card) px-4 md:px-8 flex items-center justify-between shrink-0">
+          <header className="h-16 border-b border-(--color-border) bg-(--color-bg-card) px-4 md:px-8 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
               {/* Mobile hamburger menu toggle */}
               <button

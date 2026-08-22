@@ -99,27 +99,27 @@ export default function AdminDashboardPage() {
     return (
       <div className="space-y-10 animate-pulse">
         {/* Banner Skeleton */}
-        <div className="h-44 bg-(--color-bg-card) border border-[color:var(--color-border)] rounded-3xl" />
+        <div className="h-44 bg-(--color-bg-card) border border-(--color-border) rounded-3xl" />
         
         {/* Metric Cards Skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 md:gap-10">
           {[1, 2, 3, 4].map(n => (
-            <div key={n} className="h-36 bg-(--color-bg-card) border border-[color:var(--color-border)] rounded-2xl p-6" />
+            <div key={n} className="h-36 bg-(--color-bg-card) border border-(--color-border) rounded-2xl p-6" />
           ))}
         </div>
 
         {/* Revenue Analytics Skeleton */}
-        <div className="h-90 bg-(--color-bg-card) border border-[color:var(--color-border)] rounded-3xl" />
+        <div className="h-90 bg-(--color-bg-card) border border-(--color-border) rounded-3xl" />
         
         {/* Split widgets skeleton */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-12">
-            <div className="h-96 bg-(--color-bg-card) border border-[color:var(--color-border)] rounded-2xl" />
-            <div className="h-96 bg-(--color-bg-card) border border-[color:var(--color-border)] rounded-2xl" />
+            <div className="h-96 bg-(--color-bg-card) border border-(--color-border) rounded-2xl" />
+            <div className="h-96 bg-(--color-bg-card) border border-(--color-border) rounded-2xl" />
           </div>
           <div className="space-y-12">
-            <div className="h-64 bg-(--color-bg-card) border border-[color:var(--color-border)] rounded-2xl" />
-            <div className="h-96 bg-(--color-bg-card) border border-[color:var(--color-border)] rounded-2xl" />
+            <div className="h-64 bg-(--color-bg-card) border border-(--color-border) rounded-2xl" />
+            <div className="h-96 bg-(--color-bg-card) border border-(--color-border) rounded-2xl" />
           </div>
         </div>
       </div>
@@ -128,7 +128,7 @@ export default function AdminDashboardPage() {
 
   if (error) {
     return (
-      <div className="p-6 text-(--color-error) bg-(--color-error-bg) rounded-2xl border border-[color:var(--color-border)] flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="p-6 text-(--color-error) bg-(--color-error-bg) rounded-2xl border border-(--color-border) flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <AlertCircle className="shrink-0 text-(--color-error)" />
           <span className="font-semibold">{error}</span>
@@ -180,7 +180,7 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8">
         
         {/* Stat Card 1: Total Revenue */}
-        <div className="group relative overflow-hidden rounded-2xl border border-[color:var(--color-border)] bg-(--color-bg-card) p-6 md:p-7 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-emerald-500/20">
+        <div className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 md:p-7 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-emerald-500/20">
           <div className="flex items-center justify-between mb-5">
             <div className="p-3 bg-(--color-success-bg) text-(--color-success) rounded-xl transition-colors group-hover:bg-emerald-500 group-hover:text-white">
               <DollarSign className="h-5 w-5" />
@@ -195,7 +195,7 @@ export default function AdminDashboardPage() {
         </div>
         
         {/* Stat Card 2: Active Users */}
-        <div className="group relative overflow-hidden rounded-2xl border border-[color:var(--color-border)] bg-(--color-bg-card) p-6 md:p-7 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-blue-500/20">
+        <div className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 md:p-7 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-blue-500/20">
           <div className="flex items-center justify-between mb-5">
             <div className="p-3 bg-(--color-info-bg) text-(--color-info) rounded-xl transition-colors group-hover:bg-blue-500 group-hover:text-white">
               <Users className="h-5 w-5" />
@@ -210,7 +210,7 @@ export default function AdminDashboardPage() {
         </div>
         
         {/* Stat Card 3: Total Orders */}
-        <div className="group relative overflow-hidden rounded-2xl border border-[color:var(--color-border)] bg-(--color-bg-card) p-6 md:p-7 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-indigo-500/20">
+        <div className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 md:p-7 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-indigo-500/20">
           <div className="flex items-center justify-between mb-5">
             <div className="p-3 bg-(--color-indigo-bg) text-(--color-indigo) rounded-xl transition-colors group-hover:bg-indigo-500 group-hover:text-white">
               <ShoppingBag className="h-5 w-5" />
@@ -225,7 +225,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Stat Card 4: Product Count */}
-        <div className="group relative overflow-hidden rounded-2xl border border-[color:var(--color-border)] bg-(--color-bg-card) p-6 md:p-7 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-amber-500/20">
+        <div className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 md:p-7 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-amber-500/20">
           <div className="flex items-center justify-between mb-5">
             <div className="p-3 bg-(--color-warning-bg) text-(--color-warning) rounded-xl transition-colors group-hover:bg-amber-500 group-hover:text-white">
               <Package className="h-5 w-5" />
@@ -280,7 +280,7 @@ export default function AdminDashboardPage() {
             </select>
 
             {/* Period Segmented Control */}
-            <div className="flex border border-[color:var(--color-border)] rounded-xl overflow-hidden p-0.5 bg-(--color-bg-hover)">
+            <div className="flex border border-(--color-border) rounded-xl overflow-hidden p-0.5 bg-(--color-bg-hover)">
               {(['daily', 'weekly', 'monthly'] as const).map((p) => (
                 <button
                   key={p}
@@ -300,7 +300,7 @@ export default function AdminDashboardPage() {
 
         {/* Custom date range fields if 'custom' is selected */}
         {range === 'custom' && (
-          <div className="flex flex-wrap gap-4 items-end p-4 bg-(--color-bg-hover) rounded-2xl border border-[color:var(--color-border)]">
+          <div className="flex flex-wrap gap-4 items-end p-4 bg-(--color-bg-hover) rounded-2xl border border-(--color-border)">
             <div className="form-group">
               <label className="form-label text-[10px] uppercase font-bold text-(--color-text-muted)">Start Date</label>
               <input
@@ -323,14 +323,14 @@ export default function AdminDashboardPage() {
         )}
 
         {revenueError ? (
-          <div className="p-6 text-(--color-error) bg-(--color-error-bg) rounded-2xl border border-[color:var(--color-border)] flex items-center justify-between">
+          <div className="p-6 text-(--color-error) bg-(--color-error-bg) rounded-2xl border border-(--color-border) flex items-center justify-between">
             <span>{revenueError}</span>
             <button onClick={fetchRevenueAnalytics} className="btn btn-danger btn-sm">Try Again</button>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Summaries Column */}
-            <div className="flex flex-col justify-between gap-4 p-5 bg-(--color-bg-hover) border border-[color:var(--color-border)] rounded-2xl">
+            <div className="flex flex-col justify-between gap-4 p-5 bg-(--color-bg-hover) border border-(--color-border) rounded-2xl">
               <div>
                 <span className="block text-[10px] uppercase font-extrabold text-(--color-text-muted) tracking-wider">Total Revenue</span>
                 <span className="block text-2xl font-black text-(--color-text-primary) mt-1">
@@ -442,7 +442,7 @@ export default function AdminDashboardPage() {
               Real-time Activity Stream
             </h3>
             
-            <div className="relative pl-6 border-l-2 border-[color:var(--color-border)] space-y-6 ml-3">
+            <div className="relative pl-6 border-l-2 border-(--color-border) space-y-6 ml-3">
               {data.recentActivity.length === 0 ? (
                 <p className="text-center py-6 text-(--color-text-muted)">No activity recorded yet.</p>
               ) : (
@@ -450,7 +450,7 @@ export default function AdminDashboardPage() {
                   const Icon = activity.type === 'sale' ? DollarSign : User;
                   const isSale = activity.type === 'sale';
                   return (
-                    <div key={i} className="relative flex items-start space-x-4 p-4 rounded-2xl bg-(--color-bg-hover) hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-all border border-[color:var(--color-border)]">
+                    <div key={i} className="relative flex items-start space-x-4 p-4 rounded-2xl bg-(--color-bg-hover) hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-all border border-(--color-border)">
                       
                       {/* Timeline Bullet Anchor Indicator */}
                       <span className={`absolute -left-6.25 top-7 size-4 rounded-full border-4 border-(--color-bg-card) ${
@@ -551,7 +551,7 @@ export default function AdminDashboardPage() {
                 <p className="text-center py-6 text-(--color-text-muted) text-sm">No items sold yet.</p>
               ) : (
                 data.topProducts.map((prod: any, i: number) => (
-                  <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-(--color-bg-hover) border border-[color:var(--color-border)] transition-colors">
+                  <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-(--color-bg-hover) border border-(--color-border) transition-colors">
                     <div className="min-w-0">
                       <span className="block text-sm font-bold text-(--color-text-primary) truncate pr-2">
                         {prod.name}

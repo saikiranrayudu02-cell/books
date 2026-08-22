@@ -190,7 +190,7 @@ export default function EditProductPage({ params }: PageProps) {
         </div>
 
         {/* Action Controls */}
-        <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4 border-t border-[color:var(--color-border)]">
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-4 border-t border-(--color-border)">
           <Link href="/admin/products" className="btn btn-secondary w-full sm:w-auto text-center justify-center">
             Cancel
           </Link>
