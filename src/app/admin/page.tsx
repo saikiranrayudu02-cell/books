@@ -442,7 +442,7 @@ export default function AdminDashboardPage() {
               Real-time Activity Stream
             </h3>
             
-            <div className="relative pl-6 border-l-2 border-(--color-border) space-y-6 ml-3">
+            <div className="relative pl-6 border-l-2 border-(--color-border) flex flex-col gap-6 ml-3">
               {data.recentActivity.length === 0 ? (
                 <p className="text-center py-6 text-(--color-text-muted)">No activity recorded yet.</p>
               ) : (
@@ -546,7 +546,7 @@ export default function AdminDashboardPage() {
               Best Sellers
             </h3>
             
-            <div className="space-y-3">
+            <div className="flex flex-col gap-3">
               {data.topProducts.length === 0 ? (
                 <p className="text-center py-6 text-(--color-text-muted) text-sm">No items sold yet.</p>
               ) : (
