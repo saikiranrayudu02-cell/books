@@ -34,22 +34,46 @@ export default function OrderConfirmationPage(): React.JSX.Element {
       margin: '0 auto',
       animation: 'fadeIn 0.4s ease'
     }}>
+      <style>{`
+        @keyframes successScalePop {
+          0% { transform: scale(0.5); opacity: 0; }
+          70% { transform: scale(1.1); }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes drawStroke {
+          0% { stroke-dashoffset: 100; }
+          100% { stroke-dashoffset: 0; }
+        }
+        .animate-success-pop {
+          animation: successScalePop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        .animate-checkmark-draw path {
+          stroke-dasharray: 100;
+          stroke-dashoffset: 100;
+          animation: drawStroke 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s forwards;
+        }
+      `}</style>
+
       {/* Premium Checkmark Badge */}
-      <div style={{
-        width: '90px', 
-        height: '90px',
-        borderRadius: '50%',
-        background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%)',
-        border: '1.5px solid rgba(16, 185, 129, 0.25)',
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        margin: '0 auto 28px',
-        color: '#10B981',
-        boxShadow: '0 8px 24px rgba(16, 185, 129, 0.08)',
-        animation: 'pulseBeacon 2s infinite'
-      }}>
-        <CheckCircle2 size={46} strokeWidth={1.75} />
+      <div 
+        className="animate-success-pop"
+        style={{
+          width: '90px', 
+          height: '90px',
+          borderRadius: '50%',
+          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%)',
+          border: '1.5px solid rgba(16, 185, 129, 0.25)',
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          margin: '0 auto 28px',
+          color: '#10B981',
+          boxShadow: '0 8px 24px rgba(16, 185, 129, 0.08)',
+        }}
+      >
+        <div className="animate-checkmark-draw" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <CheckCircle2 size={46} strokeWidth={1.75} />
+        </div>
       </div>
 
       <h1 style={{
@@ -105,6 +129,42 @@ export default function OrderConfirmationPage(): React.JSX.Element {
         >
           {copied ? <Check size={16} strokeWidth={3} /> : <Copy size={16} />}
         </button>
+      </div>
+
+      {/* Estimated Delivery Promise Card */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '14px',
+        padding: '16px 20px',
+        background: '#EFF6FF',
+        border: '1px solid #BFDBFE',
+        borderRadius: '16px',
+        marginBottom: '32px',
+        textAlign: 'left',
+        boxShadow: '0 4px 14px rgba(59, 130, 246, 0.04)',
+      }}>
+        <div style={{
+          width: '36px',
+          height: '36px',
+          borderRadius: '10px',
+          background: '#3B82F6',
+          color: '#ffffff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0
+        }}>
+          <Truck size={20} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontWeight: 750, fontSize: '0.9rem', color: '#1E3A8A', marginBottom: '2px' }}>
+            Estimated Delivery
+          </div>
+          <div style={{ fontSize: '0.825rem', color: '#1E40AF', fontWeight: 555, lineHeight: 1.4 }}>
+            Your product will be received in <strong style={{ fontWeight: 750 }}>5 to 7 working days</strong>.
+          </div>
+        </div>
       </div>
 
       {/* Visual Tracking Stepper */}
