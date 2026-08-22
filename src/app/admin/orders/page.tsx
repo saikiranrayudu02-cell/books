@@ -202,6 +202,7 @@ export default function AdminOrdersPage() {
                       <th>Order ID</th>
                       <th>Date</th>
                       <th>Customer</th>
+                      <th>Details</th>
                       <th>Total</th>
                       <th>Payment</th>
                       <th>Status</th>
@@ -216,6 +217,21 @@ export default function AdminOrdersPage() {
                         <td>
                           <div className="col-primary">{order.userName || 'Guest'}</div>
                           <div className="col-muted">{order.userEmail}</div>
+                        </td>
+                        <td>
+                          <div style={{ fontSize: '0.75rem', whiteSpace: 'pre-wrap', lineHeight: 1.4, color: 'var(--color-text-secondary)', maxWidth: '180px', userSelect: 'all' }}>
+                            {order.deliveryAddress ? (
+                              <>
+                                <strong>{order.deliveryAddress.full_name}</strong><br/>
+                                {order.deliveryAddress.house_or_flat}, {order.deliveryAddress.street}<br/>
+                                {order.deliveryAddress.area && <>{order.deliveryAddress.area}<br/></>}
+                                {order.deliveryAddress.city}, {order.deliveryAddress.state} - {order.deliveryAddress.pin_code}<br/>
+                                Mob: {order.deliveryAddress.mobile}
+                              </>
+                            ) : (
+                              'N/A'
+                            )}
+                          </div>
                         </td>
                         <td className="col-bold">{formatPrice(order.total)}</td>
                         <td>

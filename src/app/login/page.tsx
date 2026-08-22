@@ -3,7 +3,7 @@ import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
-import { Lock, Mail, ShieldAlert, KeyRound, Sparkles } from 'lucide-react';
+import { Lock, Mail, ShieldAlert, KeyRound, Sparkles, Eye, EyeOff } from 'lucide-react';
 
 function LoginContent() {
   const router = useRouter();
@@ -15,6 +15,8 @@ function LoginContent() {
   
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const [formData, setFormData] = useState({
     identifier: '', // Username or Email
@@ -237,7 +239,7 @@ function LoginContent() {
                 <KeyRound size={18} />
               </span>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
@@ -246,7 +248,7 @@ function LoginContent() {
                 placeholder="Enter your password"
                 style={{
                   width: '100%', 
-                  padding: '12px 14px 12px 42px', 
+                  padding: '12px 42px 12px 42px', 
                   borderRadius: '12px',
                   border: focusedField === 'password' ? '1.5px solid #2563eb' : '1.5px solid rgba(226, 232, 240, 0.9)', 
                   outline: 'none',
@@ -258,6 +260,25 @@ function LoginContent() {
                 }}
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '14px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  color: '#94a3b8',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: 0
+                }}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 
@@ -272,7 +293,7 @@ function LoginContent() {
                   <ShieldAlert size={18} />
                 </span>
                 <input
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
@@ -281,7 +302,7 @@ function LoginContent() {
                   placeholder="Confirm your password"
                   style={{
                     width: '100%', 
-                    padding: '12px 14px 12px 42px', 
+                    padding: '12px 42px 12px 42px', 
                     borderRadius: '12px',
                     border: focusedField === 'confirmPassword' ? '1.5px solid #2563eb' : '1.5px solid rgba(226, 232, 240, 0.9)', 
                     outline: 'none',
@@ -293,6 +314,25 @@ function LoginContent() {
                   }}
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '14px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    color: '#94a3b8',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: 0
+                  }}
+                >
+                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
             </div>
           )}
