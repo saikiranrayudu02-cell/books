@@ -40,8 +40,8 @@ export default function AccountLayout({ children }: { children: ReactNode }): Re
 
   return (
     <div style={{ paddingBottom: '80px' }}>
-      <div className="page-header" style={{ marginBottom: '32px' }}>
-        <h1 className="page-title" style={{ fontSize: '1.75rem', fontWeight: 800, fontFamily: 'var(--font-heading)' }}>My Account</h1>
+      <div className="page-header" style={{ padding: '16px 0 0 0', marginBottom: '16px' }}>
+        <h1 className="page-title" style={{ fontSize: '1.75rem', fontWeight: 800, fontFamily: 'var(--font-heading)', marginBottom: '0px' }}>My Account</h1>
       </div>
 
       <div className="container px-4 md:px-0">

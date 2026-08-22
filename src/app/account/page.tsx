@@ -98,13 +98,14 @@ export default function AccountPage(): React.JSX.Element {
       
       {/* Premium Banner Profile Card */}
       <div style={{
-        background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #0284c7 100%)',
+        background: 'linear-gradient(135deg, #1a2b4c 0%, #2b4c7e 60%, #3b82f6 100%)',
         borderRadius: '24px',
         padding: '36px',
         color: '#ffffff',
         position: 'relative',
         overflow: 'hidden',
-        boxShadow: '0 10px 30px -10px rgba(59, 130, 246, 0.3)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        boxShadow: '0 12px 35px -10px rgba(26, 43, 76, 0.4)',
       }}>
         {/* Subtle decorative background circles */}
         <div style={{
@@ -166,7 +167,8 @@ export default function AccountPage(): React.JSX.Element {
                 fontSize: '1.8rem', 
                 fontWeight: 800, 
                 fontFamily: 'var(--font-heading)',
-                letterSpacing: '-0.5px' 
+                letterSpacing: '-0.5px',
+                color: '#ffffff'
               }}>
                 Welcome back, {user?.name || 'User'}!
               </h1>
@@ -182,7 +184,8 @@ export default function AccountPage(): React.JSX.Element {
                 letterSpacing: '0.5px',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '4px'
+                gap: '4px',
+                color: '#ffffff'
               }}>
                 <Shield size={12} /> {user?.role || 'Customer'}
               </span>
@@ -207,39 +210,96 @@ export default function AccountPage(): React.JSX.Element {
         gap: '20px' 
       }}>
         {/* Stat 1 */}
-        <div className="card" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '16px', border: '1px solid var(--color-border-light)' }}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(59, 130, 246, 0.1)', color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="card" style={{ 
+          padding: '24px', 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '16px', 
+          borderRadius: '20px',
+          border: '1px solid var(--color-border-light)',
+          background: 'var(--color-white)',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.02)',
+        }}>
+          <div style={{ 
+            width: '52px', 
+            height: '52px', 
+            borderRadius: '14px', 
+            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%)', 
+            color: '#3b82f6', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            boxShadow: '0 4px 10px rgba(59, 130, 246, 0.05)'
+          }}>
             <ShoppingBag size={22} />
           </div>
           <div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>Total Orders</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-text-primary)', marginTop: '2px' }}>
+            <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Total Orders</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--color-text-primary)', marginTop: '2px', fontFamily: 'var(--font-heading)' }}>
               {loadingStats ? '...' : ordersCount}
             </div>
           </div>
         </div>
 
         {/* Stat 2 */}
-        <div className="card" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '16px', border: '1px solid var(--color-border-light)' }}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(236, 72, 153, 0.1)', color: '#ec4899', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="card" style={{ 
+          padding: '24px', 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '16px', 
+          borderRadius: '20px',
+          border: '1px solid var(--color-border-light)',
+          background: 'var(--color-white)',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.02)',
+        }}>
+          <div style={{ 
+            width: '52px', 
+            height: '52px', 
+            borderRadius: '14px', 
+            background: 'linear-gradient(135deg, rgba(236, 72, 153, 0.15) 0%, rgba(236, 72, 153, 0.05) 100%)', 
+            color: '#ec4899', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            boxShadow: '0 4px 10px rgba(236, 72, 153, 0.05)'
+          }}>
             <Heart size={22} />
           </div>
           <div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>Wishlist Items</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-text-primary)', marginTop: '2px' }}>
+            <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Wishlist Items</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--color-text-primary)', marginTop: '2px', fontFamily: 'var(--font-heading)' }}>
               {wishlistItems.length}
             </div>
           </div>
         </div>
 
         {/* Stat 3 */}
-        <div className="card" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '16px', border: '1px solid var(--color-border-light)' }}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(16, 185, 129, 0.1)', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="card" style={{ 
+          padding: '24px', 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '16px', 
+          borderRadius: '20px',
+          border: '1px solid var(--color-border-light)',
+          background: 'var(--color-white)',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.02)',
+        }}>
+          <div style={{ 
+            width: '52px', 
+            height: '52px', 
+            borderRadius: '14px', 
+            background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%)', 
+            color: '#10b981', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            boxShadow: '0 4px 10px rgba(16, 185, 129, 0.05)'
+          }}>
             <MapPin size={22} />
           </div>
           <div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>Saved Addresses</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-text-primary)', marginTop: '2px' }}>
+            <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Saved Addresses</div>
+            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--color-text-primary)', marginTop: '2px', fontFamily: 'var(--font-heading)' }}>
               {loadingStats ? '...' : addressesCount}
             </div>
           </div>
@@ -254,7 +314,7 @@ export default function AccountPage(): React.JSX.Element {
       }}>
         
         {/* Left Side: Personal Information Card */}
-        <div className="card" style={{ padding: '28px', border: '1px solid var(--color-border-light)' }}>
+        <div className="card" style={{ padding: '28px', border: '1px solid var(--color-border-light)', borderRadius: '24px' }}>
           <h2 style={{ 
             fontFamily: 'var(--font-heading)', 
             fontSize: '1.15rem', 
@@ -269,55 +329,127 @@ export default function AccountPage(): React.JSX.Element {
             Profile Information
           </h2>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             
             {/* Field: Name */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'var(--color-bg-page)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)' }}>
-                <UserIcon size={16} />
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '16px',
+              padding: '12px 16px',
+              borderRadius: '16px',
+              background: 'var(--color-bg-page)',
+              border: '1px solid var(--color-border-light)',
+            }}>
+              <div style={{ 
+                width: '40px', 
+                height: '40px', 
+                borderRadius: '10px', 
+                background: 'var(--color-white)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                color: 'var(--color-primary)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+              }}>
+                <UserIcon size={18} />
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Full Name</div>
-                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-text-primary)', marginTop: '2px' }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Full Name</div>
+                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-text-primary)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {user?.name || '—'}
                 </div>
               </div>
             </div>
 
             {/* Field: Email */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'var(--color-bg-page)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)' }}>
-                <Mail size={16} />
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '16px',
+              padding: '12px 16px',
+              borderRadius: '16px',
+              background: 'var(--color-bg-page)',
+              border: '1px solid var(--color-border-light)',
+            }}>
+              <div style={{ 
+                width: '40px', 
+                height: '40px', 
+                borderRadius: '10px', 
+                background: 'var(--color-white)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                color: 'var(--color-primary)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+              }}>
+                <Mail size={18} />
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Email Address</div>
-                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-text-primary)', marginTop: '2px', wordBreak: 'break-all' }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Email Address</div>
+                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-text-primary)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {user?.email || '—'}
                 </div>
               </div>
             </div>
 
             {/* Field: Phone */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'var(--color-bg-page)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)' }}>
-                <Phone size={16} />
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '16px',
+              padding: '12px 16px',
+              borderRadius: '16px',
+              background: 'var(--color-bg-page)',
+              border: '1px solid var(--color-border-light)',
+            }}>
+              <div style={{ 
+                width: '40px', 
+                height: '40px', 
+                borderRadius: '10px', 
+                background: 'var(--color-white)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                color: 'var(--color-primary)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+              }}>
+                <Phone size={18} />
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Mobile Number</div>
-                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-text-primary)', marginTop: '2px' }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Mobile Number</div>
+                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-text-primary)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {user?.phone || '—'}
                 </div>
               </div>
             </div>
 
             {/* Field: Role */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: 'var(--color-bg-page)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-text-muted)' }}>
-                <Shield size={16} />
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '16px',
+              padding: '12px 16px',
+              borderRadius: '16px',
+              background: 'var(--color-bg-page)',
+              border: '1px solid var(--color-border-light)',
+            }}>
+              <div style={{ 
+                width: '40px', 
+                height: '40px', 
+                borderRadius: '10px', 
+                background: 'var(--color-white)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                color: 'var(--color-primary)',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+              }}>
+                <Shield size={18} />
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Account Authority</div>
-                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-text-primary)', marginTop: '2px', textTransform: 'capitalize' }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Account Authority</div>
+                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-text-primary)', marginTop: '2px', textTransform: 'capitalize', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {user?.role || 'Customer'}
                 </div>
               </div>
@@ -353,7 +485,7 @@ export default function AccountPage(): React.JSX.Element {
                   border: '1px solid var(--color-border-light)',
                   boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
                   transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                  borderRadius: '16px'
+                  borderRadius: '20px'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'translateY(-2px)';
