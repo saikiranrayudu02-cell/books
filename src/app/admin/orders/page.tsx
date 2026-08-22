@@ -205,6 +205,7 @@ export default function AdminOrdersPage() {
                       <th>Total</th>
                       <th>Payment</th>
                       <th>Status</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -223,12 +224,18 @@ export default function AdminOrdersPage() {
                           </span>
                         </td>
                         <td>
+                          <span className="status-badge" style={{ background: 'var(--color-bg-page)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border-light)' }}>
+                            {getStatusLabel(order.status)}
+                          </span>
+                        </td>
+                        <td>
                           <select 
                             value={order.status} 
                             onChange={(e) => handleStatusChange(order.id, e.target.value)}
                             className="form-select text-sm"
-                            style={{ minWidth: '140px' }}
+                            style={{ minWidth: '130px', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer' }}
                           >
+                            <option value="" disabled>Update Status</option>
                             {statusOptions.map(opt => (
                               <option key={opt} value={opt}>{opt.replace(/_/g, ' ')}</option>
                             ))}
