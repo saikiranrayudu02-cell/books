@@ -109,7 +109,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Revenue Analytics Skeleton */}
-        <div className="h-[360px] bg-(--color-bg-card) border border-(--color-border) rounded-3xl" />
+        <div className="h-90 bg-(--color-bg-card) border border-(--color-border) rounded-3xl" />
         
         {/* Split widgets skeleton */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -253,7 +253,7 @@ export default function AdminDashboardPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h3 className="text-lg font-extrabold text-(--color-text-primary) flex items-center gap-2.5">
-              <div className="p-1.5 bg-blue-50 dark:bg-blue-950/30 rounded-lg text-blue-500">
+              <div className="p-1.5 bg-(--color-info-bg) text-(--color-info) rounded-lg">
                 <TrendingUp size={18} />
               </div>
               Revenue Intelligence Analytics
@@ -332,7 +332,7 @@ export default function AdminDashboardPage() {
             {/* Summaries Column */}
             <div className="flex flex-col justify-between gap-4 p-5 bg-(--color-bg-hover) border border-(--color-border) rounded-2xl">
               <div>
-                <span className="block text-[10px] uppercase font-extrabold text-(--color-text-muted) tracking-wider text-slate-400">Total Revenue</span>
+                <span className="block text-[10px] uppercase font-extrabold text-(--color-text-muted) tracking-wider">Total Revenue</span>
                 <span className="block text-2xl font-black text-(--color-text-primary) mt-1">
                   {revenueLoading ? '...' : formatPrice(revenueData?.summary?.totalRevenue || 0)}
                 </span>
@@ -350,7 +350,7 @@ export default function AdminDashboardPage() {
               <div className="h-px bg-(--color-border)" />
 
               <div>
-                <span className="block text-[10px] uppercase font-extrabold text-(--color-text-muted) tracking-wider text-slate-400">Paid Transactions</span>
+                <span className="block text-[10px] uppercase font-extrabold text-(--color-text-muted) tracking-wider">Paid Transactions</span>
                 <span className="block text-xl font-black text-(--color-text-primary) mt-1">
                   {revenueLoading ? '...' : `${revenueData?.summary?.orderCount || 0} orders`}
                 </span>
@@ -359,7 +359,7 @@ export default function AdminDashboardPage() {
               <div className="h-px bg-(--color-border)" />
 
               <div>
-                <span className="block text-[10px] uppercase font-extrabold text-(--color-text-muted) tracking-wider text-slate-400">Average Ticket</span>
+                <span className="block text-[10px] uppercase font-extrabold text-(--color-text-muted) tracking-wider">Average Ticket</span>
                 <span className="block text-xl font-black text-(--color-text-primary) mt-1">
                   {revenueLoading ? '...' : formatPrice(revenueData?.summary?.averageRevenue || 0)}
                 </span>
