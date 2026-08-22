@@ -271,7 +271,7 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
 
           {/* Scrollable Children with responsive padding */}
           <div className="flex-1 overflow-auto p-4 md:p-8 bg-(--color-bg-page) text-(--color-text-primary)">
-            <div className="max-w-6xl mx-auto">
+            <div className="max-w-7xl mx-auto">
               {children}
             </div>
           </div>
