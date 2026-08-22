@@ -180,7 +180,7 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 md:gap-10">
         
         {/* Stat Card 1: Total Revenue */}
-        <div className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-emerald-500/20">
+        <div className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 md:p-7 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-emerald-500/20">
           <div className="flex items-center justify-between mb-5">
             <div className="p-3 bg-(--color-success-bg) text-(--color-success) rounded-xl transition-colors group-hover:bg-emerald-500 group-hover:text-white">
               <DollarSign className="h-5 w-5" />
@@ -195,7 +195,7 @@ export default function AdminDashboardPage() {
         </div>
         
         {/* Stat Card 2: Active Users */}
-        <div className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-blue-500/20">
+        <div className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 md:p-7 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-blue-500/20">
           <div className="flex items-center justify-between mb-5">
             <div className="p-3 bg-(--color-info-bg) text-(--color-info) rounded-xl transition-colors group-hover:bg-blue-500 group-hover:text-white">
               <Users className="h-5 w-5" />
@@ -210,7 +210,7 @@ export default function AdminDashboardPage() {
         </div>
         
         {/* Stat Card 3: Total Orders */}
-        <div className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-indigo-500/20">
+        <div className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 md:p-7 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-indigo-500/20">
           <div className="flex items-center justify-between mb-5">
             <div className="p-3 bg-(--color-indigo-bg) text-(--color-indigo) rounded-xl transition-colors group-hover:bg-indigo-500 group-hover:text-white">
               <ShoppingBag className="h-5 w-5" />
@@ -225,7 +225,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Stat Card 4: Product Count */}
-        <div className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-amber-500/20">
+        <div className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 md:p-7 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-amber-500/20">
           <div className="flex items-center justify-between mb-5">
             <div className="p-3 bg-(--color-warning-bg) text-(--color-warning) rounded-xl transition-colors group-hover:bg-amber-500 group-hover:text-white">
               <Package className="h-5 w-5" />
@@ -381,7 +381,7 @@ export default function AdminDashboardPage() {
         <div className="lg:col-span-2 space-y-12">
           
           {/* Recent Orders Widget */}
-          <div className="rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 shadow-xs">
+          <div className="admin-card">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-extrabold text-(--color-text-primary) flex items-center gap-2.5">
                 <div className="p-1.5 bg-(--color-info-bg) rounded-lg text-(--color-info)">
@@ -435,7 +435,7 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Recent Activity Timeline Widget */}
-          <div className="rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 shadow-xs">
+          <div className="admin-card">
             <h3 className="text-lg font-extrabold text-(--color-text-primary) mb-6 flex items-center gap-2.5">
               <div className="p-1.5 bg-(--color-success-bg) rounded-lg text-(--color-success)">
                 <Activity size={18} />
@@ -491,7 +491,7 @@ export default function AdminDashboardPage() {
         <div className="space-y-12">
           
           {/* Performance Quick Stats panel */}
-          <div className="rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 shadow-xs">
+          <div className="admin-card">
             <h3 className="text-lg font-extrabold text-(--color-text-primary) mb-6 flex items-center gap-2.5">
               <div className="p-1.5 bg-(--color-indigo-bg) rounded-lg text-(--color-indigo)">
                 <Percent size={18} />
@@ -539,7 +539,7 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Top Selling Products List Widget */}
-          <div className="rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 shadow-xs">
+          <div className="admin-card">
             <h3 className="text-lg font-extrabold text-(--color-text-primary) mb-6 flex items-center gap-2.5">
               <div className="p-1.5 bg-(--color-warning-bg) rounded-lg text-(--color-warning)">
                 <Layers size={18} />
