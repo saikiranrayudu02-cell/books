@@ -144,7 +144,7 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="space-y-8 animate-fadeIn text-(--color-text-primary)">
+    <div className="flex flex-col gap-8 animate-fadeIn text-(--color-text-primary)">
       
       {/* Premium Dashboard Greeting Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-slate-900 via-slate-950 to-indigo-950 p-8 text-white shadow-xl shadow-slate-900/10">
