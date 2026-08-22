@@ -126,7 +126,7 @@ export default function AdminProfilePage() {
         </div>
       </div>
 
-      <div className="space-y-10">
+      <div className="flex flex-col gap-12 mt-6">
         
         {/* Personal Details */}
         <form onSubmit={handleProfileSubmit} className="admin-card">
