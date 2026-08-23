@@ -256,7 +256,7 @@ export default function AdminDashboardPage() {
               <div className="p-1.5 bg-(--color-info-bg) text-(--color-info) rounded-lg">
                 <TrendingUp size={18} />
               </div>
-              Revenue Intelligence Analytics
+              Revenue Intelligence
             </h3>
             <p className="text-xs text-(--color-text-muted) mt-1">Track financial trends, transaction volume, and growth patterns</p>
           </div>
@@ -543,7 +543,7 @@ export default function AdminDashboardPage() {
               <div className="p-1.5 bg-(--color-warning-bg) rounded-lg text-(--color-warning)">
                 <Layers size={18} />
               </div>
-              Best Sellers
+              Stock Management
             </h3>
             
             <div className="flex flex-col gap-3">
