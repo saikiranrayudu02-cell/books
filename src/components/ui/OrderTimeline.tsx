@@ -21,11 +21,7 @@ interface OrderTimelineProps {
 const STATUS_STEPS = [
   { key: 'placed', label: 'Order Placed', Icon: Package },
   { key: 'payment_confirmed', label: 'Payment Confirmed', Icon: CreditCard },
-  { key: 'processing', label: 'Processing', Icon: Clock },
-  { key: 'packed', label: 'Packed & Ready', Icon: Package },
   { key: 'dispatched', label: 'Dispatched via Speed Post', Icon: Truck },
-  { key: 'out_for_delivery', label: 'Out for Delivery', Icon: Truck },
-  { key: 'delivered', label: 'Delivered', Icon: CheckCircle },
 ];
 
 const SPECIAL_STATUSES: Record<string, { label: string; color: string; Icon: any }> = {

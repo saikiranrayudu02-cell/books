@@ -60,7 +60,7 @@ export default function AdminOrdersPage() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const statusOptions = ['placed', 'processing', 'packed', 'dispatched', 'out_for_delivery', 'delivered'];
+  const statusOptions = ['placed', 'payment_confirmed', 'dispatched'];
 
   const filteredOrders = orders.filter(o => {
     // Status Filter

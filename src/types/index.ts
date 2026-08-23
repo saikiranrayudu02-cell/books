@@ -76,11 +76,7 @@ export interface Address {
 export type OrderStatus =
   | 'placed'
   | 'payment_confirmed'
-  | 'processing'
-  | 'packed'
-  | 'dispatched'
-  | 'out_for_delivery'
-  | 'delivered';
+  | 'dispatched';
 
 export type PaymentStatus =
   | 'pending'
