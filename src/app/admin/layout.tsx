@@ -19,7 +19,8 @@ import {
   Home,
   ShieldCheck,
   Menu,
-  X
+  X,
+  Settings,
 } from 'lucide-react';
 
 interface MenuItem {
@@ -34,6 +35,7 @@ const MENU: MenuItem[] = [
   { href: '/admin/products', label: 'Products', icon: <Package size={18} /> },
   { href: '/admin/profile', label: 'Profile', icon: <User size={18} /> },
   { href: '/admin/users', label: 'Users', icon: <Users size={18} /> },
+  { href: '/admin/settings', label: 'Settings', icon: <Settings size={18} /> },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }): React.JSX.Element {

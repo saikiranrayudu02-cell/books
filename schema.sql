@@ -121,3 +121,11 @@ CREATE TRIGGER update_orders_modtime
     BEFORE UPDATE ON orders
     FOR EACH ROW
     EXECUTE FUNCTION update_modified_column();
+
+CREATE TABLE IF NOT EXISTS settings (
+  key VARCHAR PRIMARY KEY,
+  value VARCHAR NOT NULL,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO settings (key, value) VALUES ('maintenance_mode', 'false') ON CONFLICT (key) DO NOTHING;
