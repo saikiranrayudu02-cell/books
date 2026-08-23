@@ -330,7 +330,7 @@ export default function AdminDashboardPage() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {/* Summaries Column */}
-            <div className="flex flex-col justify-between gap-4 p-5 bg-(--color-bg-hover) border border-(--color-border) rounded-2xl">
+            <div className="flex flex-col gap-6 p-5 bg-(--color-bg-hover) border border-(--color-border) rounded-2xl h-fit">
               <div>
                 <span className="block text-[10px] uppercase font-extrabold text-(--color-text-muted) tracking-wider">Total Revenue</span>
                 <span className="block text-2xl font-black text-(--color-text-primary) mt-1">
