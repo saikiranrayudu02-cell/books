@@ -1,7 +1,7 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { formatPrice } from '@/lib/utils';
-import { ShoppingCart, Package, RefreshCw, Copy, Check, Search, Calendar as CalendarIcon, Eye, X } from 'lucide-react';
+import { ShoppingCart, Package, RefreshCw, Copy, Check, Search, Calendar as CalendarIcon, Eye, X, Filter, Download } from 'lucide-react';
 import { useToast } from '@/contexts/ToastContext';
 
 export default function AdminOrdersPage() {
@@ -11,8 +11,62 @@ export default function AdminOrdersPage() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDate, setFilterDate] = useState('');
+  const [timeRange, setTimeRange] = useState('all');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isDownloadOpen, setIsDownloadOpen] = useState(false);
   const [detailsModalOrder, setDetailsModalOrder] = useState<any | null>(null);
+  const filterRef = useRef<HTMLDivElement>(null);
+  const downloadRef = useRef<HTMLDivElement>(null);
   const toast = useToast();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setIsFilterOpen(false);
+      }
+      if (downloadRef.current && !downloadRef.current.contains(event.target as Node)) {
+        setIsDownloadOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const downloadCSV = (data: any[], type: string) => {
+    try {
+      const headers = ['Order ID', 'Date', 'Customer Name', 'Email', 'Items', 'Total', 'Payment Status', 'Order Status', 'Delivery Address'];
+      const rows = data.map(order => {
+        const address = order.deliveryAddress ? `${order.deliveryAddress.houseOrFlat} ${order.deliveryAddress.street}, ${order.deliveryAddress.city}, ${order.deliveryAddress.state} - ${order.deliveryAddress.pinCode}` : '';
+        const items = order.items ? order.items.map((i:any) => `${i.productName} (${i.language}) x${i.quantity}`).join('; ') : '';
+        return [
+          order.orderNumber,
+          new Date(order.createdAt).toLocaleDateString(),
+          order.userName || 'Guest',
+          order.userEmail || '',
+          items,
+          order.total,
+          order.paymentStatus,
+          order.status,
+          address
+        ];
+      });
+      
+      const csvContent = [
+        headers.join(','),
+        ...rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      ].join('\n');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `orders_${type}_${new Date().toISOString().split('T')[0]}.csv`;
+      link.click();
+      toast.success(`Downloaded ${type} orders CSV`);
+      setIsDownloadOpen(false);
+    } catch (err) {
+      toast.error('Failed to generate CSV');
+    }
+  };
 
   const fetchOrders = async () => {
     try {
@@ -74,10 +128,26 @@ export default function AdminOrdersPage() {
       if (!orderId.includes(term) && !customer.includes(term)) return false;
     }
 
-    // Date Filter (by created_at)
-    if (filterDate) {
-      const orderDate = new Date(o.createdAt).toISOString().split('T')[0];
-      if (orderDate !== filterDate) return false;
+    // Time Range Filter
+    const orderDate = new Date(o.createdAt);
+    const today = new Date();
+    
+    if (timeRange === 'today') {
+      if (orderDate.toDateString() !== today.toDateString()) return false;
+    } else if (timeRange === 'yesterday') {
+      const yesterday = new Date();
+      yesterday.setDate(today.getDate() - 1);
+      if (orderDate.toDateString() !== yesterday.toDateString()) return false;
+    } else if (timeRange === 'lastWeek') {
+      const lastWeek = new Date();
+      lastWeek.setDate(today.getDate() - 7);
+      if (orderDate < lastWeek) return false;
+    } else if (timeRange === 'lastMonth') {
+      const lastMonth = new Date();
+      lastMonth.setMonth(today.getMonth() - 1);
+      if (orderDate < lastMonth) return false;
+    } else if (timeRange === 'custom' && filterDate) {
+      if (orderDate.toISOString().split('T')[0] !== filterDate) return false;
     }
 
     return true;
@@ -124,9 +194,9 @@ export default function AdminOrdersPage() {
           <p className="admin-page-desc">Review and update customer order statuses</p>
         </div>
         
-        <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+        <div className="flex flex-col sm:flex-row flex-wrap items-center gap-3 w-full md:w-auto">
           {/* Search Input */}
-          <div className="relative w-full sm:w-72 group">
+          <div className="relative w-full sm:w-80 group">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
               <Search size={16} className="text-(--color-text-muted) group-focus-within:text-blue-500 transition-colors" />
             </div>
@@ -148,19 +218,107 @@ export default function AdminOrdersPage() {
             )}
           </div>
 
-          {/* Date Filter */}
-          <div className="relative w-full sm:w-44 group">
-            <input
-              type="date"
-              value={filterDate}
-              onChange={(e) => setFilterDate(e.target.value)}
-              className="w-full px-4 py-2.5 bg-(--color-bg-page) hover:bg-(--color-bg-hover) border border-(--color-border) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 rounded-xl text-sm font-medium text-(--color-text-primary) transition-all outline-none cursor-pointer"
-            />
+          {/* Custom Filter Dropdown */}
+          <div className="relative" ref={filterRef}>
+            <button 
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              className="btn flex items-center gap-2"
+              style={{ padding: '8px 12px', background: 'var(--color-bg-page)', border: '1px solid var(--color-border)', borderRadius: '12px', fontSize: '0.85rem' }}
+            >
+              <Filter size={16} /> Filter
+            </button>
+            
+            {isFilterOpen && (
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-[#1a1b1e] rounded-xl shadow-xl border border-(--color-border) z-50 overflow-hidden">
+                <div className="p-2 border-b border-(--color-border) bg-(--color-bg-hover)">
+                  <span className="text-xs font-bold text-(--color-text-muted) px-2 uppercase tracking-wider">Time Range</span>
+                </div>
+                <div className="flex flex-col py-1">
+                  {[
+                    { val: 'all', label: 'All Time' },
+                    { val: 'today', label: 'Today' },
+                    { val: 'yesterday', label: 'Yesterday' },
+                    { val: 'lastWeek', label: 'Last Week' },
+                    { val: 'lastMonth', label: 'Last Month' },
+                    { val: 'custom', label: 'Custom Date' }
+                  ].map((opt) => (
+                    <button
+                      key={opt.val}
+                      onClick={() => { setTimeRange(opt.val); if (opt.val !== 'custom') setIsFilterOpen(false); }}
+                      className={`text-left px-4 py-2.5 text-sm hover:bg-(--color-bg-hover) flex items-center justify-between transition-colors ${timeRange === opt.val ? 'text-blue-500 font-bold bg-blue-500/5' : 'text-(--color-text-secondary)'}`}
+                    >
+                      {opt.label}
+                      {timeRange === opt.val && <Check size={16} strokeWidth={3} />}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
+
+          {/* Active Filter Pill */}
+          {timeRange !== 'all' && (
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg text-sm font-semibold border border-blue-100 dark:border-blue-800/30">
+              <span className="text-xs text-blue-400 dark:text-blue-500 uppercase tracking-wider">Time:</span>
+              <span>{
+                { today: 'Today', yesterday: 'Yesterday', lastWeek: 'Last Week', lastMonth: 'Last Month', custom: 'Custom Date' }[timeRange as string]
+              }</span>
+              <button onClick={() => setTimeRange('all')} className="ml-1 hover:text-blue-800 dark:hover:text-blue-300 transition-colors" aria-label="Clear filter">
+                <X size={14} strokeWidth={3} />
+              </button>
+            </div>
+          )}
+
+          {/* Custom Date Filter */}
+          {timeRange === 'custom' && (
+            <div className="relative w-full sm:w-36 group">
+              <input
+                type="date"
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+                className="w-full px-3 py-2 bg-(--color-bg-page) hover:bg-(--color-bg-hover) border border-(--color-border) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 rounded-xl text-sm font-medium text-(--color-text-primary) transition-all outline-none cursor-pointer"
+              />
+            </div>
+          )}
 
           <button onClick={() => { setLoading(true); fetchOrders(); }} className="btn btn-ghost btn-sm shrink-0">
             <RefreshCw size={16} /> Refresh
           </button>
+
+          {/* Download CSV Dropdown */}
+          <div className="relative ml-auto" ref={downloadRef}>
+            <button 
+              onClick={() => setIsDownloadOpen(!isDownloadOpen)}
+              className="btn flex items-center gap-2 text-emerald-600 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800/30"
+              style={{ padding: '8px 12px', borderRadius: '12px', fontSize: '0.85rem' }}
+            >
+              <Download size={16} /> Export
+            </button>
+            
+            {isDownloadOpen && (
+              <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-[#1a1b1e] rounded-xl shadow-xl border border-(--color-border) z-50 overflow-hidden">
+                <div className="p-2 border-b border-(--color-border) bg-(--color-bg-hover)">
+                  <span className="text-xs font-bold text-(--color-text-muted) px-2 uppercase tracking-wider">Export to CSV</span>
+                </div>
+                <div className="flex flex-col py-1">
+                  <button
+                    onClick={() => downloadCSV(filteredOrders, 'filtered')}
+                    className="text-left px-4 py-2.5 text-sm hover:bg-(--color-bg-hover) flex items-center justify-between transition-colors text-(--color-text-secondary)"
+                  >
+                    <span>Filtered Data</span>
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-(--color-bg-page) border border-(--color-border-light)">{filteredOrders.length}</span>
+                  </button>
+                  <button
+                    onClick={() => downloadCSV(orders, 'all')}
+                    className="text-left px-4 py-2.5 text-sm hover:bg-(--color-bg-hover) flex items-center justify-between transition-colors text-(--color-text-secondary)"
+                  >
+                    <span>All Order Data</span>
+                    <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-(--color-bg-page) border border-(--color-border-light)">{orders.length}</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
