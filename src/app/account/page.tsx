@@ -97,65 +97,29 @@ export default function AccountPage(): React.JSX.Element {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
       
       {/* Premium Banner Profile Card */}
-      <div style={{
-        background: 'linear-gradient(135deg, #1a2b4c 0%, #2b4c7e 60%, #3b82f6 100%)',
-        borderRadius: '24px',
-        padding: '36px',
-        color: '#ffffff',
-        position: 'relative',
-        overflow: 'hidden',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        boxShadow: '0 12px 35px -10px rgba(26, 43, 76, 0.4)',
-      }}>
-        {/* Subtle decorative background circles */}
-        <div style={{
-          position: 'absolute',
-          top: '-20px',
-          right: '-20px',
-          width: '180px',
-          height: '180px',
-          borderRadius: '50%',
-          background: 'rgba(255, 255, 255, 0.08)',
-          filter: 'blur(10px)',
-          pointerEvents: 'none'
-        }} />
-        <div style={{
-          position: 'absolute',
-          bottom: '-50px',
-          left: '20%',
-          width: '120px',
-          height: '120px',
-          borderRadius: '50%',
-          background: 'rgba(255, 255, 255, 0.05)',
-          filter: 'blur(15px)',
-          pointerEvents: 'none'
-        }} />
-
+      <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-gray-100 to-gray-200 dark:from-slate-800 dark:to-slate-900 p-6 sm:p-8 shadow-xs border border-gray-200 dark:border-slate-700/50">
         <div style={{
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
-          gap: '28px',
+          gap: '24px',
           flexWrap: 'wrap',
           position: 'relative',
           zIndex: 2,
         }}>
-          {/* Avatar Glassmorphism container */}
+          {/* Avatar container */}
           <div style={{
-            width: '90px',
-            height: '90px',
+            width: '80px',
+            height: '80px',
             borderRadius: '50%',
-            background: 'rgba(255, 255, 255, 0.15)',
-            backdropFilter: 'blur(10px)',
-            border: '2px solid rgba(255, 255, 255, 0.4)',
+            background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '2.5rem',
+            fontSize: '2rem',
             fontWeight: 800,
             color: '#ffffff',
-            textShadow: '0 2px 4px rgba(0,0,0,0.1)',
-            boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
+            boxShadow: '0 8px 20px rgba(59, 130, 246, 0.25)',
           }}>
             {firstLetter}
           </div>
@@ -164,18 +128,17 @@ export default function AccountPage(): React.JSX.Element {
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
               <h1 style={{ 
                 margin: 0, 
-                fontSize: '1.8rem', 
+                fontSize: '1.4rem', 
                 fontWeight: 800, 
                 fontFamily: 'var(--font-heading)',
                 letterSpacing: '-0.5px',
-                color: '#ffffff'
+                color: 'var(--color-text-primary)'
               }}>
                 Welcome back, {user?.name || 'User'}!
               </h1>
               <span style={{
-                background: 'rgba(255, 255, 255, 0.2)',
-                backdropFilter: 'blur(8px)',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
+                background: 'var(--color-bg-page)',
+                border: '1px solid var(--color-border-light)',
                 padding: '4px 12px',
                 borderRadius: '9999px',
                 fontSize: '0.75rem',
@@ -185,14 +148,14 @@ export default function AccountPage(): React.JSX.Element {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '4px',
-                color: '#ffffff'
+                color: 'var(--color-text-secondary)'
               }}>
                 <Shield size={12} /> {user?.role || 'Customer'}
               </span>
             </div>
             <p style={{ 
               margin: '8px 0 0 0', 
-              color: 'rgba(255, 255, 255, 0.85)', 
+              color: 'var(--color-text-secondary)', 
               fontSize: '0.95rem',
               lineHeight: 1.5,
               maxWidth: '560px'
