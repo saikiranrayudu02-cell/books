@@ -356,14 +356,6 @@ export default function AdminDashboardPage() {
                 </span>
               </div>
 
-              <div className="h-px bg-(--color-border)" />
-
-              <div>
-                <span className="block text-[10px] uppercase font-extrabold text-(--color-text-muted) tracking-wider">Average Ticket</span>
-                <span className="block text-xl font-black text-(--color-text-primary) mt-1">
-                  {revenueLoading ? '...' : formatPrice(revenueData?.summary?.averageRevenue || 0)}
-                </span>
-              </div>
             </div>
 
             {/* Graph Column */}
