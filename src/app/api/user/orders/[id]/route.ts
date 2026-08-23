@@ -9,14 +9,26 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
        return NextResponse.json({ error: 'Order ID required' }, { status: 400 });
     }
 
-    const orderResult = await sql`
-      SELECT id, order_number as "orderNumber", subtotal, delivery_charge as "deliveryCharge", total,
-             status, payment_status as "paymentStatus", tracking_number as "trackingNumber",
-             carrier, created_at as "createdAt", delivery_address as "deliveryAddress"
-      FROM orders
-      WHERE id = ${orderId} OR order_number = ${orderId}
-      LIMIT 1
-    `;
+    // Check if orderId is a valid UUID format
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orderId);
+
+    const orderResult = isUUID
+      ? await sql`
+        SELECT id, order_number as "orderNumber", subtotal, delivery_charge as "deliveryCharge", total,
+               status, payment_status as "paymentStatus", tracking_number as "trackingNumber",
+               carrier, created_at as "createdAt", delivery_address as "deliveryAddress"
+        FROM orders
+        WHERE id = ${orderId}::uuid OR order_number = ${orderId}
+        LIMIT 1
+      `
+      : await sql`
+        SELECT id, order_number as "orderNumber", subtotal, delivery_charge as "deliveryCharge", total,
+               status, payment_status as "paymentStatus", tracking_number as "trackingNumber",
+               carrier, created_at as "createdAt", delivery_address as "deliveryAddress"
+        FROM orders
+        WHERE order_number = ${orderId}
+        LIMIT 1
+      `;
 
     if (orderResult.length === 0) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
