@@ -14,7 +14,11 @@ import {
   Phone, 
   Shield, 
   ShoppingBag,
-  ExternalLink
+  ExternalLink,
+  Edit2,
+  Save,
+  X as XIcon,
+  Loader2
 } from 'lucide-react';
 
 interface QuickLinkCard {
@@ -26,11 +30,47 @@ interface QuickLinkCard {
 }
 
 export default function AccountPage(): React.JSX.Element {
-  const { user } = useAuth();
+  const { user, login } = useAuth();
   const { items: wishlistItems } = useWishlist();
   const [ordersCount, setOrdersCount] = useState<number>(0);
   const [addressesCount, setAddressesCount] = useState<number>(0);
   const [loadingStats, setLoadingStats] = useState<boolean>(true);
+
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [editName, setEditName] = useState(user?.name || '');
+  const [editPhone, setEditPhone] = useState(user?.phone || '');
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setEditName(user.name || '');
+      setEditPhone(user.phone || '');
+    }
+  }, [user]);
+
+  const handleSaveProfile = async () => {
+    if (!user?.id) return;
+    setIsSavingProfile(true);
+    try {
+      const res = await fetch('/api/user/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id, name: editName, phone: editPhone })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        login({ ...user, name: editName, phone: editPhone });
+        setIsEditingProfile(false);
+      } else {
+        alert(data.error || 'Failed to update profile');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error saving profile');
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
 
   useEffect(() => {
     if (!user?.id) return;
@@ -278,19 +318,50 @@ export default function AccountPage(): React.JSX.Element {
         
         {/* Left Side: Personal Information Card */}
         <div className="card" style={{ padding: '28px', border: '1px solid var(--color-border-light)', borderRadius: '24px' }}>
-          <h2 style={{ 
-            fontFamily: 'var(--font-heading)', 
-            fontSize: '1.15rem', 
-            fontWeight: 700, 
-            marginBottom: '24px',
-            color: 'var(--color-text-primary)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}>
-            <UserIcon size={20} color="var(--color-primary)" />
-            Profile Information
-          </h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+            <h2 style={{ 
+              fontFamily: 'var(--font-heading)', 
+              fontSize: '1.15rem', 
+              fontWeight: 700, 
+              color: 'var(--color-text-primary)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              margin: 0
+            }}>
+              <UserIcon size={20} color="var(--color-primary)" />
+              Profile Information
+            </h2>
+            
+            {isEditingProfile ? (
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button 
+                  onClick={() => setIsEditingProfile(false)}
+                  disabled={isSavingProfile}
+                  className="btn btn-secondary btn-sm"
+                  style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+                >
+                  <XIcon size={14} className="mr-1" /> Cancel
+                </button>
+                <button 
+                  onClick={handleSaveProfile}
+                  disabled={isSavingProfile}
+                  className="btn btn-primary btn-sm"
+                  style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+                >
+                  {isSavingProfile ? <Loader2 size={14} className="animate-spin mr-1" /> : <Save size={14} className="mr-1" />} Save
+                </button>
+              </div>
+            ) : (
+              <button 
+                onClick={() => setIsEditingProfile(true)}
+                className="btn btn-secondary btn-sm"
+                style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+              >
+                <Edit2 size={14} className="mr-1" /> Edit
+              </button>
+            )}
+          </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             
@@ -319,9 +390,20 @@ export default function AccountPage(): React.JSX.Element {
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Full Name</div>
-                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-text-primary)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {user?.name || '—'}
-                </div>
+                {isEditingProfile ? (
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="form-input mt-1"
+                    style={{ padding: '6px 12px', fontSize: '0.9rem', width: '100%' }}
+                    placeholder="Enter your name"
+                  />
+                ) : (
+                  <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-text-primary)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {user?.name || '—'}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -381,9 +463,20 @@ export default function AccountPage(): React.JSX.Element {
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Mobile Number</div>
-                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-text-primary)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {user?.phone || '—'}
-                </div>
+                {isEditingProfile ? (
+                  <input
+                    type="tel"
+                    value={editPhone}
+                    onChange={(e) => setEditPhone(e.target.value)}
+                    className="form-input mt-1"
+                    style={{ padding: '6px 12px', fontSize: '0.9rem', width: '100%' }}
+                    placeholder="Enter mobile number"
+                  />
+                ) : (
+                  <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-text-primary)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {user?.phone || '—'}
+                  </div>
+                )}
               </div>
             </div>
 
