@@ -65,11 +65,43 @@ export async function POST(request: Request) {
       `;
 
       // Decrement the stock in products table
-      await sql`
-        UPDATE products
-        SET stock = GREATEST(0, stock - ${quantity})
-        WHERE id = ${productId}
-      `;
+      const productRows = await sql`SELECT languages, stock FROM products WHERE id = ${productId}`;
+      if (productRows.length > 0) {
+        let currentLanguages = productRows[0].languages;
+        let currentStock = parseInt(productRows[0].stock || '0');
+        
+        // Ensure languages is parsed if it's a string
+        if (typeof currentLanguages === 'string') {
+          try {
+            currentLanguages = JSON.parse(currentLanguages);
+          } catch (e) {
+            currentLanguages = [];
+          }
+        }
+        
+        // Update language-specific stock
+        if (Array.isArray(currentLanguages)) {
+          // Normalize language string (e.g. 'Telugu' -> 'te')
+          const itemLangLower = (item.language || 'English').toLowerCase();
+          const targetLang = currentLanguages.find((l: any) => 
+            l.code === itemLangLower || l.name.toLowerCase() === itemLangLower
+          );
+          
+          if (targetLang) {
+            targetLang.stock = Math.max(0, (targetLang.stock || 0) - quantity);
+          }
+        }
+        
+        // Update total stock
+        const newStock = Math.max(0, currentStock - quantity);
+
+        await sql`
+          UPDATE products
+          SET stock = ${newStock},
+              languages = ${JSON.stringify(currentLanguages)}::jsonb
+          WHERE id = ${productId}
+        `;
+      }
     }
 
     return NextResponse.json({

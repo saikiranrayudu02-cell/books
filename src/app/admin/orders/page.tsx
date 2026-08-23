@@ -268,6 +268,7 @@ export default function AdminOrdersPage() {
                       <th>Order ID</th>
                       <th>Date</th>
                       <th>Customer</th>
+                      <th>Items</th>
                       <th>Details</th>
                       <th>Total</th>
                       <th>Payment</th>
@@ -283,6 +284,19 @@ export default function AdminOrdersPage() {
                         <td>
                           <div className="col-primary">{order.userName || 'Guest'}</div>
                           <div className="col-muted">{order.userEmail}</div>
+                        </td>
+                        <td>
+                          {order.items && order.items.length > 0 ? (
+                            <div className="flex flex-col gap-1 max-w-50">
+                              {order.items.map((item: any, idx: number) => (
+                                <div key={idx} className="text-xs truncate" title={`${item.quantity}x ${item.productName} (${item.language})`}>
+                                  <span className="font-bold">{item.quantity}x</span> {item.productName} <span className="text-(--color-text-muted)">({item.language})</span>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="col-muted text-xs">No items</span>
+                          )}
                         </td>
                         <td>
                           {order.deliveryAddress ? (
@@ -368,6 +382,29 @@ export default function AdminOrdersPage() {
               <div className="mb-4">
                 <div className="text-xs font-bold text-(--color-text-muted) uppercase tracking-wider mb-1">Customer</div>
                 <div className="font-medium text-(--color-text-primary)">{detailsModalOrder.userName || 'Guest'}</div>
+              </div>
+
+              <div className="mb-4">
+                <div className="text-xs font-bold text-(--color-text-muted) uppercase tracking-wider mb-2">Items Ordered</div>
+                <div className="p-3 bg-(--color-bg-page) border border-(--color-border-light) rounded-xl">
+                  {detailsModalOrder.items && detailsModalOrder.items.length > 0 ? (
+                    <ul className="space-y-2">
+                      {detailsModalOrder.items.map((item: any, idx: number) => (
+                        <li key={idx} className="flex justify-between items-start text-sm">
+                          <div>
+                            <span className="font-bold text-(--color-text-primary)">{item.quantity}x</span>{' '}
+                            <span className="font-medium text-(--color-text-primary)">{item.productName}</span>
+                          </div>
+                          <span className="text-xs font-bold px-2 py-1 bg-(--color-bg-hover) text-(--color-text-secondary) rounded-md ml-2 shrink-0">
+                            {item.language}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-sm text-(--color-text-muted)">No items found</span>
+                  )}
+                </div>
               </div>
 
               <div>
