@@ -121,7 +121,7 @@ export default function AdminSettingsPage() {
           <button 
             onClick={saveSettings}
             disabled={saving}
-            className="btn btn-primary min-w-[120px]"
+            className="btn btn-primary min-w-30"
           >
             {saving ? (
               <><Loader2 size={18} className="animate-spin" /> Saving...</>
