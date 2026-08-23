@@ -83,6 +83,33 @@
   transition: all 0.3s ease;
 }
 
+@media (max-width: 480px) {
+  .stepsWrap {
+    padding: 12px;
+    border-radius: 20px;
+  }
+  
+  .stepBtn {
+    gap: 8px;
+    padding: 4px 8px;
+  }
+  
+  .stepNumber {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+  }
+  
+  .stepLabel {
+    font-size: 0.8rem;
+  }
+  
+  .stepDivider {
+    width: 20px;
+    margin: 0 4px;
+  }
+}
+
 @media (min-width: 480px) {
   .stepDivider {
     width: 60px;

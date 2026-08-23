@@ -242,7 +242,7 @@ export default function AdminDashboardPage() {
           </div>
           <h3 className="font-bold text-(--color-text-muted) text-[10px] uppercase tracking-wider mb-1">Products</h3>
           <p className="text-3xl font-black text-(--color-text-primary) tracking-tight">{data.totalProducts}</p>
-          <p className="text-xs text-(--color-error) mt-2 font-semibold">
+          <p className={`text-xs mt-2 font-semibold ${data.lowStockProducts === 0 ? 'text-green-600 dark:text-green-400' : 'text-(--color-error)'}`}>
             {data.lowStockProducts} items require replenishment
           </p>
         </div>

@@ -256,7 +256,10 @@ export default function CheckoutPage() {
 
   return (
     <div className={styles.checkoutContainer}>
-      <div className="page-header" style={{ padding: '24px 0 0 0', marginBottom: '24px' }}>
+      <div className="page-header" style={{ padding: '24px 0 0 0', marginBottom: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
+        <Link href="/cart" style={{ position: 'absolute', left: '20px', top: '24px', display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-text-muted)', fontSize: '0.9rem', fontWeight: 600, textDecoration: 'none' }}>
+          <ArrowLeft size={16} /> Back
+        </Link>
         <h1 className="page-title" style={{ fontSize: '1.75rem', fontWeight: 800, fontFamily: 'var(--font-heading)', marginBottom: '0px' }}>Checkout</h1>
       </div>
 

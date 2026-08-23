@@ -15,19 +15,21 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isAdminOrDemo = pathname.startsWith('/admin') || pathname.startsWith('/demo') || pathname.startsWith('/login');
   const isAccount = pathname.startsWith('/account');
+  const isCheckout = pathname.startsWith('/checkout');
+  const hideNavbarAndFooter = isAdminOrDemo || isCheckout;
 
   return (
     <AuthProvider>
       <CartProvider>
         <WishlistProvider>
           <ToastProvider>
-            {!isAdminOrDemo && <Navbar onSearchOpen={() => setSearchOpen(true)} />}
-            {!isAdminOrDemo && <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />}
+            {!hideNavbarAndFooter && <Navbar onSearchOpen={() => setSearchOpen(true)} />}
+            {!hideNavbarAndFooter && <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />}
             <main style={isAdminOrDemo ? {} : { minHeight: 'calc(100dvh - var(--navbar-height))' }}>
               {children}
             </main>
-            {!isAdminOrDemo && !isAccount && <Footer />}
-            {!isAdminOrDemo && <FloatingSupport />}
+            {!hideNavbarAndFooter && !isAccount && <Footer />}
+            {!hideNavbarAndFooter && <FloatingSupport />}
           </ToastProvider>
         </WishlistProvider>
       </CartProvider>
