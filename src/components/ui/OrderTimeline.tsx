@@ -20,7 +20,6 @@ interface OrderTimelineProps {
 
 const STATUS_STEPS = [
   { key: 'placed', label: 'Order Placed', Icon: Package },
-  { key: 'payment_confirmed', label: 'Payment Confirmed', Icon: CreditCard },
   { key: 'dispatched', label: 'Dispatched via Speed Post', Icon: Truck },
 ];
 

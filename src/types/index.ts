@@ -75,7 +75,6 @@ export interface Address {
 
 export type OrderStatus =
   | 'placed'
-  | 'payment_confirmed'
   | 'dispatched';
 
 export type PaymentStatus =
