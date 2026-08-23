@@ -7,7 +7,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useToast } from '@/contexts/ToastContext';
 import { formatPrice, getLanguageDisplay } from '@/lib/utils';
-import { Truck, ShieldCheck, PackageCheck, Mail, Heart, Check } from 'lucide-react';
+import { Truck, ShieldCheck, PackageCheck, Mail, Heart, Check, ArrowLeft } from 'lucide-react';
 import styles from './product-detail.module.css';
 
 interface PageProps {
@@ -39,7 +39,10 @@ export default function ProductDetailPage({ params }: PageProps) {
 
   if (!product) {
     return (
-      <div style={{ textAlign: 'center', padding: '120px 20px' }}>
+      <div style={{ textAlign: 'center', padding: '120px 20px', position: 'relative' }}>
+        <Link href="/" style={{ position: 'absolute', left: '20px', top: '24px', display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-text-muted)', fontSize: '0.9rem', fontWeight: 600, textDecoration: 'none' }}>
+          <ArrowLeft size={16} /> Home
+        </Link>
         <div style={{ fontSize: '4rem', marginBottom: '16px' }}>📖</div>
         <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.5rem', marginBottom: '8px' }}>Product Not Found</h1>
         <p style={{ color: 'var(--color-text-muted)', marginBottom: '24px' }}>The product you are looking for does not exist.</p>
@@ -67,21 +70,15 @@ export default function ProductDetailPage({ params }: PageProps) {
   const scrollToSlide = (index: number) => {
     if (galleryRef.current) {
       const width = galleryRef.current.offsetWidth;
-      galleryRef.current.scrollTo({
-        left: index * width,
-        behavior: 'smooth'
-      });
+      galleryRef.current.scrollTo({ left: width * index, behavior: 'smooth' });
       setCurrentSlide(index);
     }
   };
 
   const handleAddToCart = () => {
-    if (!selectedLang) {
+    if (product.languages && product.languages.length > 0 && !selectedLang) {
       setLangError(true);
-      toast.warning('Please select a medium before adding to cart');
-      if (mediumSectionRef.current) {
-        mediumSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+      mediumSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
     setLangError(false);
@@ -90,12 +87,9 @@ export default function ProductDetailPage({ params }: PageProps) {
   };
 
   const handleBuyNow = () => {
-    if (!selectedLang) {
+    if (product.languages && product.languages.length > 0 && !selectedLang) {
       setLangError(true);
-      toast.warning('Please select a medium before proceeding');
-      if (mediumSectionRef.current) {
-        mediumSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+      mediumSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
     setLangError(false);
@@ -110,11 +104,11 @@ export default function ProductDetailPage({ params }: PageProps) {
 
   return (
     <div className={styles.container}>
-      {/* Breadcrumb */}
-      <div className={`container ${styles.breadcrumbWrap}`}>
-        <div className={styles.breadcrumb}>
-          <Link href="/" className={styles.breadcrumbLink}>Home</Link>
-          <span>/</span>
+      <div className={`container ${styles.breadcrumbWrap}`} style={{ position: 'relative' }}>
+        <Link href="/" style={{ position: 'absolute', left: '20px', top: '16px', display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-text-muted)', fontSize: '0.9rem', fontWeight: 600, textDecoration: 'none' }}>
+          <ArrowLeft size={16} /> Home
+        </Link>
+        <div className={styles.breadcrumb} style={{ marginLeft: '80px' }}>
           <Link href="/study-materials" className={styles.breadcrumbLink}>Study Materials</Link>
           <span>/</span>
           <span className={styles.breadcrumbCurrent}>{product.name}</span>

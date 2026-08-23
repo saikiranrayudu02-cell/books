@@ -11,7 +11,8 @@ import {
   Mail, 
   ShieldCheck, 
   ShoppingBag, 
-  History 
+  History,
+  ArrowLeft
 } from 'lucide-react';
 
 export default function OrderConfirmationPage(): React.JSX.Element {
@@ -32,8 +33,12 @@ export default function OrderConfirmationPage(): React.JSX.Element {
       padding: '40px 20px 80px 20px',
       maxWidth: '600px',
       margin: '0 auto',
-      animation: 'fadeIn 0.4s ease'
+      animation: 'fadeIn 0.4s ease',
+      position: 'relative'
     }}>
+      <Link href="/" style={{ position: 'absolute', left: '20px', top: '16px', display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-text-muted)', fontSize: '0.9rem', fontWeight: 600, textDecoration: 'none' }}>
+        <ArrowLeft size={16} /> Home
+      </Link>
       <style>{`
         @keyframes successScalePop {
           0% { transform: scale(0.5); opacity: 0; }

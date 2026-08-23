@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/contexts/ToastContext';
 import { formatPrice, getLanguageDisplay } from '@/lib/utils';
 import { DELIVERY_CHARGE, ORIGINAL_DELIVERY_CHARGE } from '@/lib/data';
-import { ShoppingBag, Sparkles } from 'lucide-react';
+import { ShoppingBag, Sparkles, ArrowLeft } from 'lucide-react';
 import styles from './cart.module.css';
 
 export default function CartPage() {
@@ -33,7 +33,10 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '100px 20px' }}>
+      <div style={{ textAlign: 'center', padding: '100px 20px', position: 'relative' }}>
+        <Link href="/" style={{ position: 'absolute', left: '20px', top: '24px', display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-text-muted)', fontSize: '0.9rem', fontWeight: 600, textDecoration: 'none' }}>
+          <ArrowLeft size={16} /> Home
+        </Link>
         <div style={{
           width: '72px',
           height: '72px',
@@ -60,7 +63,10 @@ export default function CartPage() {
 
   return (
     <div className={styles.cartContainer}>
-      <div className="page-header">
+      <div className="page-header" style={{ position: 'relative' }}>
+        <Link href="/study-materials" style={{ position: 'absolute', left: '20px', top: '24px', display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-text-muted)', fontSize: '0.9rem', fontWeight: 600, textDecoration: 'none' }}>
+          <ArrowLeft size={16} /> Back
+        </Link>
         <h1 className="page-title">Shopping Cart</h1>
         <p className="page-subtitle">{totalItems} {totalItems === 1 ? 'item' : 'items'} in your cart</p>
       </div>

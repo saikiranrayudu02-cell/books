@@ -16,7 +16,11 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
   const isAdminOrDemo = pathname.startsWith('/admin') || pathname.startsWith('/demo') || pathname.startsWith('/login');
   const isAccount = pathname.startsWith('/account');
   const isCheckout = pathname.startsWith('/checkout');
-  const hideNavbarAndFooter = isAdminOrDemo || isCheckout;
+  const isCart = pathname.startsWith('/cart');
+  const isStudyMaterials = pathname.startsWith('/study-materials');
+  const isOrderConfirmation = pathname.startsWith('/order-confirmation');
+  
+  const hideNavbarAndFooter = isAdminOrDemo || isCheckout || isCart || isStudyMaterials || isOrderConfirmation;
 
   return (
     <AuthProvider>
