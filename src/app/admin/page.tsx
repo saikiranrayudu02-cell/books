@@ -147,30 +147,30 @@ export default function AdminDashboardPage() {
     <div className="flex flex-col gap-8 animate-fadeIn text-(--color-text-primary)">
       
       {/* Premium Dashboard Greeting Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-slate-900 via-zinc-900 to-indigo-950 p-6 sm:p-8 text-white shadow-xl shadow-slate-950/20">
+      <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-gray-100 to-gray-200 dark:from-slate-800 dark:to-slate-900 p-6 sm:p-8 shadow-xs border border-gray-200 dark:border-slate-700/50">
         {/* Abstract vector accents */}
-        <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-indigo-500/15 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-10 w-60 h-60 rounded-full bg-violet-500/8 blur-2xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-gray-300/30 dark:bg-slate-600/10 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-10 w-60 h-60 rounded-full bg-gray-300/30 dark:bg-slate-700/10 blur-2xl pointer-events-none" />
         
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs uppercase tracking-widest mb-2" style={{ color: '#818cf8' }}>
-              <Sparkles size={14} className="animate-pulse" />
+            <div className="flex items-center gap-2 text-slate-500 dark:text-slate-50 font-bold text-xs uppercase tracking-widest mb-2">
+              <Sparkles size={14} className="animate-pulse text-slate-500 dark:text-slate-50" />
               Publisher Portal Control Center
             </div>
-            <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl" style={{ color: '#ffffff' }}>
+            <h1 className="text-3xl font-black tracking-tight text-slate-800 dark:text-slate-50 sm:text-4xl">
               Hello, Administrator!
             </h1>
-            <p className="mt-2 text-sm text-slate-300 max-w-xl leading-relaxed" style={{ color: '#cbd5e1' }}>
+            <p className="mt-2 text-sm text-slate-600 dark:text-slate-50 max-w-xl leading-relaxed">
               Monitor customer activity, review incoming book order packages, manage product stock levels, and track checkout statistics.
             </p>
           </div>
           
-          <div className="shrink-0 flex items-center gap-3 bg-white/5 backdrop-blur-md border border-white/10 px-5 py-3 rounded-2xl">
-            <Calendar size={18} className="text-indigo-400" style={{ color: '#818cf8' }} />
+          <div className="shrink-0 flex items-center gap-3 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md border border-gray-300/50 dark:border-slate-700/50 px-5 py-3 rounded-2xl">
+            <Calendar size={18} className="text-slate-500 dark:text-slate-50" />
             <div className="text-right">
-              <span className="block text-[10px] uppercase font-extrabold tracking-wider text-slate-400" style={{ color: '#94a3b8' }}>Current Date</span>
-              <span className="block text-xs font-bold text-slate-200" style={{ color: '#e2e8f0' }}>{getTodayDateString()}</span>
+              <span className="block text-[10px] uppercase font-extrabold tracking-wider text-slate-500 dark:text-slate-50">Current Date</span>
+              <span className="block text-xs font-bold text-slate-700 dark:text-slate-50">{getTodayDateString()}</span>
             </div>
           </div>
         </div>
@@ -556,8 +556,27 @@ export default function AdminDashboardPage() {
                       <span className="block text-sm font-bold text-(--color-text-primary) truncate pr-2">
                         {prod.name}
                       </span>
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-(--color-text-muted) mt-1 uppercase tracking-wider">
-                        {prod.sold} units sold
+                      <span className="inline-flex items-center gap-2 text-[10px] font-bold text-(--color-text-muted) mt-1 uppercase tracking-wider">
+                        <span>{prod.sold} units sold</span>
+                        {prod.stock !== undefined && prod.stock !== null && (
+                          <>
+                            <span>•</span>
+                            <span className={prod.stock < 10 ? 'text-rose-500' : 'text-emerald-500'}>
+                              {prod.languages ? (
+                                (() => {
+                                  try {
+                                    const langs = typeof prod.languages === 'string' ? JSON.parse(prod.languages) : prod.languages;
+                                    return langs.map((l: any) => `${l.code.toUpperCase()}: ${l.stock || 0}`).join(' | ') + ' stock left';
+                                  } catch (e) {
+                                    return `${prod.stock} in stock`;
+                                  }
+                                })()
+                              ) : (
+                                `${prod.stock} in stock`
+                              )}
+                            </span>
+                          </>
+                        )}
                       </span>
                     </div>
                     <span className="text-sm font-black text-(--color-text-primary) shrink-0 ml-4 bg-(--color-bg-hover) px-3 py-1 rounded-lg">

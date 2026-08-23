@@ -34,9 +34,10 @@ export async function GET() {
 
     // 7. Top Selling Products
     const topProducts = await sql`
-      SELECT oi.product_name as "name", SUM(oi.quantity) as "sold", SUM(oi.price * oi.quantity) as "revenue"
+      SELECT oi.product_name as "name", SUM(oi.quantity) as "sold", SUM(oi.price * oi.quantity) as "revenue", p.stock, p.languages
       FROM order_items oi
-      GROUP BY oi.product_name
+      INNER JOIN products p ON oi.product_id = p.id
+      GROUP BY oi.product_name, p.stock, p.languages
       ORDER BY sold DESC
       LIMIT 4
     `;

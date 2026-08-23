@@ -245,8 +245,8 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
                 <Menu size={22} />
               </button>
 
-              <h1 className="text-lg font-black tracking-tight text-(--color-text-primary) mr-2 hidden md:block">
-                {pathname === '/admin' ? 'Dashboard' : 
+              <h1 className="text-lg font-medium tracking-tight text-(--color-text-primary) mr-2 hidden md:block">
+                {pathname === '/admin' ? 'TENALI EXAMS PUBLISHERS' : 
                  pathname.startsWith('/admin/orders') ? 'Orders Management' :
                  pathname.startsWith('/admin/products') ? 'Products Management' :
                  pathname.startsWith('/admin/profile') ? 'Admin Profile' : 'Admin Panel'}

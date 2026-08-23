@@ -6,20 +6,36 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
     const params = await context.params;
     const productId = params.id;
     const body = await request.json();
-    const { name, price, stock, description, image, category, bundleTitle, booksIncluded, badge } = body;
+    const { name, price, stockEn, stockTe, stockHi, description, image, category, bundleTitle, booksIncluded, badge } = body;
+
+    const en = parseInt(stockEn) !== undefined && !isNaN(parseInt(stockEn)) ? parseInt(stockEn) : null;
+    const te = parseInt(stockTe) !== undefined && !isNaN(parseInt(stockTe)) ? parseInt(stockTe) : null;
+    const hi = parseInt(stockHi) !== undefined && !isNaN(parseInt(stockHi)) ? parseInt(stockHi) : null;
+
+    let languagesJson = null;
+    let totalStock = null;
+    if (en !== null && te !== null && hi !== null) {
+      totalStock = en + te + hi;
+      languagesJson = JSON.stringify([
+        { code: 'en', name: 'English', stock: en },
+        { code: 'te', name: 'Telugu', stock: te },
+        { code: 'hi', name: 'Hindi', stock: hi }
+      ]);
+    }
 
     const result = await sql`
       UPDATE products
       SET 
         name = COALESCE(${name}, name),
         price = COALESCE(${price}, price),
-        stock = COALESCE(${stock}, stock),
+        stock = COALESCE(${totalStock}, stock),
         description = COALESCE(${description}, description),
         image = COALESCE(${image}, image),
         category = COALESCE(${category}, category),
         bundle_title = COALESCE(${bundleTitle}, bundle_title),
         books_included = COALESCE(${booksIncluded}, books_included),
         badge = COALESCE(${badge}, badge),
+        languages = COALESCE(${languagesJson}::jsonb, languages),
         updated_at = NOW()
       WHERE id = ${productId}
       RETURNING id, name, stock

@@ -20,7 +20,9 @@ export default function EditProductPage({ params }: PageProps) {
     name: '',
     category: '',
     price: '',
-    stock: '',
+    stockEn: '',
+    stockTe: '',
+    stockHi: '',
     description: '',
     image: '',
     bundleTitle: '',
@@ -35,11 +37,16 @@ export default function EditProductPage({ params }: PageProps) {
         if (!res.ok) throw new Error('Failed to load product');
         const data = await res.json();
         const p = data.product;
+        const langs = p.languages || [];
+        const getStock = (code: string) => langs.find((l: any) => l.code === code)?.stock?.toString() || '0';
+
         setFormData({
           name: p.name || '',
           category: p.category || 'books',
           price: p.price?.toString() || '0',
-          stock: p.stock?.toString() || '0',
+          stockEn: getStock('en'),
+          stockTe: getStock('te'),
+          stockHi: getStock('hi'),
           description: p.description || '',
           image: p.image || '',
           bundleTitle: p.bundleTitle || '',
@@ -69,7 +76,9 @@ export default function EditProductPage({ params }: PageProps) {
       const payload = {
         ...formData,
         price: parseFloat(formData.price),
-        stock: parseInt(formData.stock),
+        stockEn: parseInt(formData.stockEn),
+        stockTe: parseInt(formData.stockTe),
+        stockHi: parseInt(formData.stockHi),
         booksIncluded: parseInt(formData.booksIncluded)
       };
 
@@ -154,19 +163,29 @@ export default function EditProductPage({ params }: PageProps) {
 
         {/* Section 2: Pricing & Inventory */}
         <div className="admin-form-section">
-          <h3 className="admin-form-section__title">Pricing & Stock Level</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <h3 className="admin-form-section__title">Pricing & Stock Levels</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-5">
             <div className="form-group">
               <label className="form-label">Price (₹)</label>
               <input required type="number" step="0.01" name="price" value={formData.price} onChange={handleChange} className="form-input" />
             </div>
 
             <div className="form-group">
-              <label className="form-label">Current Stock</label>
-              <input required type="number" name="stock" value={formData.stock} onChange={handleChange} className="form-input" />
+              <label className="form-label">English Stock</label>
+              <input required type="number" name="stockEn" value={formData.stockEn} onChange={handleChange} className="form-input" />
             </div>
 
             <div className="form-group">
+              <label className="form-label">Telugu Stock</label>
+              <input required type="number" name="stockTe" value={formData.stockTe} onChange={handleChange} className="form-input" />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Hindi Stock</label>
+              <input required type="number" name="stockHi" value={formData.stockHi} onChange={handleChange} className="form-input" />
+            </div>
+
+            <div className="form-group sm:col-span-4">
               <label className="form-label">Books Included Count</label>
               <input required type="number" name="booksIncluded" value={formData.booksIncluded} onChange={handleChange} className="form-input" />
             </div>

@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { formatPrice } from '@/lib/utils';
-import { ShoppingCart, Package, RefreshCw, Copy, Check } from 'lucide-react';
+import { ShoppingCart, Package, RefreshCw, Copy, Check, Search, Calendar as CalendarIcon, Eye, X } from 'lucide-react';
 import { useToast } from '@/contexts/ToastContext';
 
 export default function AdminOrdersPage() {
@@ -9,6 +9,9 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterDate, setFilterDate] = useState('');
+  const [detailsModalOrder, setDetailsModalOrder] = useState<any | null>(null);
   const toast = useToast();
 
   const fetchOrders = async () => {
@@ -59,9 +62,26 @@ export default function AdminOrdersPage() {
 
   const statusOptions = ['placed', 'processing', 'packed', 'dispatched', 'out_for_delivery', 'delivered'];
 
-  const filteredOrders = selectedStatus === 'all'
-    ? orders
-    : orders.filter(o => o.status === selectedStatus);
+  const filteredOrders = orders.filter(o => {
+    // Status Filter
+    if (selectedStatus !== 'all' && o.status !== selectedStatus) return false;
+    
+    // Search Filter (by Order ID or Customer Name)
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      const orderId = (o.orderNumber || '').toLowerCase();
+      const customer = (o.userName || '').toLowerCase();
+      if (!orderId.includes(term) && !customer.includes(term)) return false;
+    }
+
+    // Date Filter (by created_at)
+    if (filterDate) {
+      const orderDate = new Date(o.createdAt).toISOString().split('T')[0];
+      if (orderDate !== filterDate) return false;
+    }
+
+    return true;
+  });
 
   const getStatusCount = (status: string) => {
     if (status === 'all') return orders.length;
@@ -95,7 +115,7 @@ export default function AdminOrdersPage() {
   return (
     <div className="space-y-8">
       {/* Page Header */}
-      <div className="admin-page-header">
+      <div className="admin-page-header flex-col md:flex-row gap-4 md:items-center items-start">
         <div>
           <h2 className="admin-page-title">
             <ShoppingCart size={24} />
@@ -103,9 +123,45 @@ export default function AdminOrdersPage() {
           </h2>
           <p className="admin-page-desc">Review and update customer order statuses</p>
         </div>
-        <button onClick={() => { setLoading(true); fetchOrders(); }} className="btn btn-ghost btn-sm">
-          <RefreshCw size={16} /> Refresh
-        </button>
+        
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+          {/* Search Input */}
+          <div className="relative w-full sm:w-72 group">
+            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+              <Search size={16} className="text-(--color-text-muted) group-focus-within:text-blue-500 transition-colors" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search by Order ID or Name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-10 py-2.5 bg-(--color-bg-page) hover:bg-(--color-bg-hover) border border-(--color-border) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 rounded-xl text-sm font-medium text-(--color-text-primary) placeholder-(--color-text-muted) transition-all outline-none"
+            />
+            {searchTerm && (
+              <button 
+                onClick={() => setSearchTerm('')}
+                className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-(--color-text-muted) hover:text-rose-500 transition-colors"
+                aria-label="Clear search"
+              >
+                <X size={14} strokeWidth={2.5} />
+              </button>
+            )}
+          </div>
+
+          {/* Date Filter */}
+          <div className="relative w-full sm:w-44 group">
+            <input
+              type="date"
+              value={filterDate}
+              onChange={(e) => setFilterDate(e.target.value)}
+              className="w-full px-4 py-2.5 bg-(--color-bg-page) hover:bg-(--color-bg-hover) border border-(--color-border) focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 rounded-xl text-sm font-medium text-(--color-text-primary) transition-all outline-none cursor-pointer"
+            />
+          </div>
+
+          <button onClick={() => { setLoading(true); fetchOrders(); }} className="btn btn-ghost btn-sm shrink-0">
+            <RefreshCw size={16} /> Refresh
+          </button>
+        </div>
       </div>
 
       {/* Category Wise Status Tabs */}
@@ -230,50 +286,12 @@ export default function AdminOrdersPage() {
                         </td>
                         <td>
                           {order.deliveryAddress ? (
-                            <div style={{ 
-                              fontSize: '0.75rem', 
-                              lineHeight: 1.4, 
-                              color: 'var(--color-text-secondary)', 
-                              maxWidth: '220px', 
-                              background: 'var(--color-bg-page)', 
-                              padding: '12px 28px 12px 12px', 
-                              borderRadius: '12px', 
-                              border: '1px solid var(--color-border-light)',
-                              position: 'relative',
-                              userSelect: 'text'
-                            }}>
-                              <button
-                                onClick={() => handleCopyDetails(order)}
-                                style={{
-                                  position: 'absolute',
-                                  top: '8px',
-                                  right: '8px',
-                                  background: 'var(--color-white)',
-                                  border: '1px solid var(--color-border-light)',
-                                  borderRadius: '6px',
-                                  padding: '4px',
-                                  cursor: 'pointer',
-                                  color: copiedId === order.id ? '#10B981' : 'var(--color-text-muted)',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
-                                  transition: 'all 0.2s'
-                                }}
-                                title="Copy Address for Dispatch"
-                              >
-                                {copiedId === order.id ? <Check size={14} strokeWidth={3} /> : <Copy size={14} />}
-                              </button>
-                              <strong style={{ color: 'var(--color-text-primary)' }}>{order.orderNumber}</strong><br/>
-                              <span style={{ color: 'var(--color-text-muted)' }}>{order.userName || 'Guest'}</span>
-                              <div style={{ marginTop: '6px', paddingTop: '6px', borderTop: '1px dashed var(--color-border-light)', whiteSpace: 'pre-wrap' }}>
-                                <strong style={{ color: 'var(--color-text-primary)' }}>{order.deliveryAddress.fullName}</strong><br/>
-                                {order.deliveryAddress.houseOrFlat}, {order.deliveryAddress.street}<br/>
-                                {order.deliveryAddress.area && <>{order.deliveryAddress.area}<br/></>}
-                                {order.deliveryAddress.city}, {order.deliveryAddress.state} - {order.deliveryAddress.pinCode}<br/>
-                                Mob: {order.deliveryAddress.mobile}
-                              </div>
-                            </div>
+                            <button
+                              onClick={() => setDetailsModalOrder(order)}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 dark:text-blue-400 rounded-lg text-xs font-bold transition-colors shadow-sm"
+                            >
+                              <Eye size={14} strokeWidth={2.5} /> View Details
+                            </button>
                           ) : (
                             <span className="col-muted">N/A</span>
                           )}
@@ -311,6 +329,64 @@ export default function AdminOrdersPage() {
           </>
         )}
       </div>
+      {/* Order Details Modal */}
+      {detailsModalOrder && (
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-(--color-bg-card) border border-(--color-border) rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-slideUp">
+            
+            <div className="flex items-center justify-between p-4 border-b border-(--color-border) bg-(--color-bg-hover)">
+              <h3 className="font-bold text-(--color-text-primary) flex items-center gap-2">
+                <Package size={18} className="text-blue-500" />
+                Order Details
+              </h3>
+              <button 
+                onClick={() => setDetailsModalOrder(null)}
+                className="p-1.5 text-(--color-text-muted) hover:text-(--color-text-primary) hover:bg-(--color-bg-page) rounded-lg transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-5">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <div className="text-xs font-bold text-(--color-text-muted) uppercase tracking-wider mb-1">Order ID</div>
+                  <div className="font-bold text-(--color-text-primary)">{detailsModalOrder.orderNumber}</div>
+                </div>
+                <button
+                  onClick={() => handleCopyDetails(detailsModalOrder)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-(--color-bg-page) border border-(--color-border) hover:bg-(--color-bg-hover) text-(--color-text-secondary) rounded-lg text-xs font-bold transition-all shadow-sm"
+                >
+                  {copiedId === detailsModalOrder.id ? (
+                    <><Check size={14} className="text-emerald-500" strokeWidth={3} /> <span className="text-emerald-500">Copied</span></>
+                  ) : (
+                    <><Copy size={14} /> Copy</>
+                  )}
+                </button>
+              </div>
+
+              <div className="mb-4">
+                <div className="text-xs font-bold text-(--color-text-muted) uppercase tracking-wider mb-1">Customer</div>
+                <div className="font-medium text-(--color-text-primary)">{detailsModalOrder.userName || 'Guest'}</div>
+              </div>
+
+              <div>
+                <div className="text-xs font-bold text-(--color-text-muted) uppercase tracking-wider mb-2">Delivery Address</div>
+                <div className="p-4 bg-(--color-bg-page) border border-(--color-border-light) rounded-xl text-sm text-(--color-text-secondary) leading-relaxed">
+                  <strong className="text-(--color-text-primary) block mb-1">{detailsModalOrder.deliveryAddress?.fullName}</strong>
+                  {detailsModalOrder.deliveryAddress?.houseOrFlat}, {detailsModalOrder.deliveryAddress?.street}<br/>
+                  {detailsModalOrder.deliveryAddress?.area && <>{detailsModalOrder.deliveryAddress?.area}<br/></>}
+                  {detailsModalOrder.deliveryAddress?.city}, {detailsModalOrder.deliveryAddress?.state} - {detailsModalOrder.deliveryAddress?.pinCode}<br/>
+                  <div className="mt-3 pt-3 border-t border-(--color-border-light) border-dashed">
+                    <span className="font-medium">Mob:</span> {detailsModalOrder.deliveryAddress?.mobile}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -3,6 +3,7 @@ export type LanguageCode = 'en' | 'te' | 'hi';
 export interface ProductLanguage {
   code: LanguageCode;
   name: string;
+  stock?: number;
 }
 
 export interface TableOfContentSection {

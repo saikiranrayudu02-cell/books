@@ -110,11 +110,25 @@ export default function AdminProductsPage() {
                     <td className="capitalize">{product.category}</td>
                     <td className="col-bold">{formatPrice(product.price)}</td>
                     <td>
-                      <span className={`status-badge ${
-                        product.stock > 0 ? 'status-badge--success' : 'status-badge--error'
-                      }`}>
-                        {product.stock > 0 ? `In Stock (${product.stock})` : 'Out of Stock'}
-                      </span>
+                      <div className="flex flex-col gap-1 items-start">
+                        <span className={`status-badge ${
+                          product.stock > 0 ? 'status-badge--success' : 'status-badge--error'
+                        }`}>
+                          {product.stock > 0 ? `In Stock (${product.stock})` : 'Out of Stock'}
+                        </span>
+                        {product.languages && (
+                          <span className="text-[10px] font-bold text-(--color-text-muted) uppercase tracking-wider pl-1">
+                            {(() => {
+                              try {
+                                const langs = typeof product.languages === 'string' ? JSON.parse(product.languages) : product.languages;
+                                return langs.map((l: any) => `${l.code.toUpperCase()}: ${l.stock || 0}`).join(' | ');
+                              } catch (e) {
+                                return null;
+                              }
+                            })()}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td>
                       <span className={`status-badge ${

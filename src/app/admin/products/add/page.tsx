@@ -16,7 +16,9 @@ export default function AddProductPage() {
     name: '',
     category: 'books',
     price: '',
-    stock: '100',
+    stockEn: '0',
+    stockTe: '0',
+    stockHi: '0',
     description: '',
     image: '',
     bundleTitle: '',
@@ -56,7 +58,9 @@ export default function AddProductPage() {
       const payload = {
         ...formData,
         price: parseFloat(formData.price),
-        stock: parseInt(formData.stock),
+        stockEn: parseInt(formData.stockEn),
+        stockTe: parseInt(formData.stockTe),
+        stockHi: parseInt(formData.stockHi),
         booksIncluded: parseInt(formData.booksIncluded)
       };
 
@@ -142,19 +146,29 @@ export default function AddProductPage() {
 
         {/* Section 2: Pricing & Inventory */}
         <div className="admin-form-section">
-          <h3 className="admin-form-section__title">Pricing & Stock Level</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <h3 className="admin-form-section__title">Pricing & Stock Levels</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-5">
             <div className="form-group">
               <label className="form-label">Base Price (₹)</label>
               <input required type="number" step="0.01" name="price" value={formData.price} onChange={handleChange} placeholder="500" className="form-input" />
             </div>
 
             <div className="form-group">
-              <label className="form-label">Initial Inventory</label>
-              <input required type="number" name="stock" value={formData.stock} onChange={handleChange} className="form-input" />
+              <label className="form-label">English Stock</label>
+              <input required type="number" name="stockEn" value={formData.stockEn} onChange={handleChange} className="form-input" />
             </div>
 
             <div className="form-group">
+              <label className="form-label">Telugu Stock</label>
+              <input required type="number" name="stockTe" value={formData.stockTe} onChange={handleChange} className="form-input" />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Hindi Stock</label>
+              <input required type="number" name="stockHi" value={formData.stockHi} onChange={handleChange} className="form-input" />
+            </div>
+            
+            <div className="form-group sm:col-span-4">
               <label className="form-label">Books Included Count</label>
               <input required type="number" name="booksIncluded" value={formData.booksIncluded} onChange={handleChange} className="form-input" />
             </div>
