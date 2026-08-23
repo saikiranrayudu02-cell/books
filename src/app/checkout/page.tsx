@@ -178,7 +178,7 @@ export default function CheckoutPage() {
       deliveryCharge: DELIVERY_CHARGE,
       total,
       deliveryAddress: address,
-      status: 'payment_confirmed',
+      status: 'placed',
       paymentStatus: 'paid',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
