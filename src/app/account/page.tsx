@@ -160,7 +160,7 @@ export default function AccountPage(): React.JSX.Element {
               lineHeight: 1.5,
               maxWidth: '560px'
             }}>
-              Your personal dashboard for managing study materials, purchases, and tracking active postal exam guides.
+              Manage your orders, wishlist, and account details.
             </p>
           </div>
         </div>
