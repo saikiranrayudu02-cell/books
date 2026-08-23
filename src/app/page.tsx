@@ -83,7 +83,7 @@ const EXAM_CATEGORIES: ExamCategoryItem[] = [
   {
     name: 'MTS',
     cadre: 'Multi-Tasking Staff',
-    tag: 'Departmental LDCE',
+    tag: 'MTS LDCE',
     desc: 'Postal Manual Vol V, Office Organization, Mathematics & General Awareness syllabus.',
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -94,7 +94,7 @@ const EXAM_CATEGORIES: ExamCategoryItem[] = [
   {
     name: 'POSTMAN / MAIL GUARD',
     cadre: 'Postman & Mail Guard (MG)',
-    tag: 'Delivery & RMS Cadre',
+    tag: 'POSTMAN / MAILGUARD LDCE',
     desc: 'Postal Manual Vol VI & VII, India Post Products, Sorting Rules, Arithmetics & Reasoning.',
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -105,7 +105,7 @@ const EXAM_CATEGORIES: ExamCategoryItem[] = [
   {
     name: 'PA / SA',
     cadre: 'Postal Assistant / Sorting Assistant',
-    tag: 'PA / SA Cadre',
+    tag: 'PA / SA LDCE',
     desc: 'Comprehensive syllabus for Postal Operations, SB Rules, POSB, PO Guide Part I & II, and RMS Logistics.',
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
