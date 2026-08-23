@@ -474,7 +474,7 @@
     right: 0;
     background: #FFFFFF;
     border-top: 1.5px solid var(--color-border);
-    padding: 10px 16px;
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
     z-index: 1000;
     box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
     animation: fadeInUp 0.25s ease;
@@ -510,7 +510,7 @@
 
   .stickyCartBtn {
     padding: 8px 12px;
-    min-height: 42px;
+    min-height: 44px;
     font-size: 0.84rem;
     font-weight: 600;
     border-radius: var(--radius-sm);
@@ -521,11 +521,17 @@
 
   .stickyBuyBtn {
     padding: 8px 16px;
-    min-height: 42px;
+    min-height: 44px;
     font-size: 0.88rem;
     font-weight: 700;
     border-radius: var(--radius-sm);
     flex: 1.2;
     text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .galleryNavBtn {
+    display: none !important;
   }
 }

@@ -461,6 +461,13 @@
   padding: 16px var(--space-6) 20px;
   box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
   animation: slideDown 0.25s ease forwards;
+  max-height: calc(100dvh - 80px);
+  overflow-y: auto;
+  position: absolute;
+  top: 80px;
+  left: 0;
+  right: 0;
+  z-index: 999;
 }
 
 @keyframes slideDown {
@@ -608,6 +615,7 @@
   }
   
   .logoText {
-    font-size: 0.88rem;
+    font-size: clamp(0.72rem, 3.5vw, 0.88rem);
+    white-space: nowrap;
   }
 }

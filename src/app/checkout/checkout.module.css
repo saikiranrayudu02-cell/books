@@ -110,6 +110,16 @@
   }
 }
 
+@media (max-width: 360px) {
+  .stepLabel {
+    display: none;
+  }
+  .stepDivider {
+    width: 40px;
+    margin: 0 12px;
+  }
+}
+
 @media (min-width: 480px) {
   .stepDivider {
     width: 60px;

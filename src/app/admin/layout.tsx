@@ -119,7 +119,7 @@ export default function AdminLayout({ children }: { children: ReactNode }): Reac
         )}
 
         <nav
-          className={`fixed md:sticky top-0 h-dvh shrink-0 border-r transition-all duration-300 ease-in-out z-50 border-(--color-border) bg-(--color-bg-card) p-3 shadow-sm flex flex-col ${
+          className={`fixed md:sticky top-0 h-dvh shrink-0 border-r transition-all duration-300 ease-in-out z-50 border-(--color-border) bg-(--color-bg-card) p-3 shadow-sm flex flex-col overflow-y-auto ${
             mobileOpen ? 'w-64' : (open ? 'w-64' : 'w-20')
           } ${mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}
         >
