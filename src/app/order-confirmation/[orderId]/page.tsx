@@ -12,7 +12,8 @@ import {
   ShieldCheck, 
   ShoppingBag, 
   History,
-  ArrowLeft
+  ArrowLeft,
+  FileText
 } from 'lucide-react';
 
 export default function OrderConfirmationPage(): React.JSX.Element {
@@ -249,6 +250,20 @@ export default function OrderConfirmationPage(): React.JSX.Element {
         }}>
           <Truck size={18} />
           Track My Order
+        </Link>
+        <Link href={`/invoice/${orderId}`} className="btn btn-lg" style={{ 
+          justifyContent: 'center', 
+          borderRadius: '16px', 
+          minHeight: '52px',
+          gap: '8px',
+          background: 'linear-gradient(135deg, #065f46 0%, #10b981 100%)',
+          color: '#ffffff',
+          fontWeight: 700,
+          border: 'none',
+          boxShadow: '0 4px 14px rgba(16, 185, 129, 0.25)',
+        }}>
+          <FileText size={18} />
+          View Invoice & Download PDF
         </Link>
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <Link href="/account/orders" className="btn btn-secondary" style={{ 

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { formatPrice } from '@/lib/utils';
 import { 
-  DollarSign, 
+  IndianRupee, 
   ShoppingBag, 
   Users, 
   AlertCircle, 
@@ -183,7 +183,7 @@ export default function AdminDashboardPage() {
         <div className="group relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-bg-card) p-6 md:p-7 shadow-xs transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-emerald-500/20">
           <div className="flex items-center justify-between mb-5">
             <div className="p-3 bg-(--color-success-bg) text-(--color-success) rounded-xl transition-colors group-hover:bg-emerald-500 group-hover:text-white">
-              <DollarSign className="h-5 w-5" />
+              <IndianRupee className="h-5 w-5" />
             </div>
             <div className="flex items-center gap-1 text-xs font-extrabold text-(--color-success) bg-(--color-success-bg) px-2 py-0.5 rounded-full">
               <TrendingUp className="h-3 w-3" /> Live
@@ -439,7 +439,7 @@ export default function AdminDashboardPage() {
                 <p className="text-center py-6 text-(--color-text-muted)">No activity recorded yet.</p>
               ) : (
                 data.recentActivity.map((activity: any, i: number) => {
-                  const Icon = activity.type === 'sale' ? DollarSign : User;
+                  const Icon = activity.type === 'sale' ? IndianRupee : User;
                   const isSale = activity.type === 'sale';
                   return (
                     <div key={i} className="relative flex items-start space-x-4 p-4 rounded-2xl bg-(--color-bg-hover) hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-all border border-(--color-border)">

@@ -52,8 +52,16 @@ export default function OrderDetailPage({ params }: PageProps): React.JSX.Elemen
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
         <Link href="/account/orders" style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>← Back to Orders</Link>
+        <Link href={`/invoice/${order?.orderNumber || id}`} className="btn btn-sm" style={{
+          display: 'inline-flex', alignItems: 'center', gap: '6px',
+          background: 'linear-gradient(135deg, #065f46 0%, #10b981 100%)',
+          color: '#ffffff', fontWeight: 700, border: 'none', borderRadius: '10px', padding: '6px 14px', fontSize: '0.8rem',
+          textDecoration: 'none',
+        }}>
+          📄 Download Invoice
+        </Link>
       </div>
 
       <div className="card" style={{ padding: '28px', marginBottom: '20px' }}>
