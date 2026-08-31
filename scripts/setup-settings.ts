@@ -1,13 +1,20 @@
 import { config } from 'dotenv';
 import { resolve } from 'path';
+import postgres from 'postgres';
 
 config({ path: resolve(process.cwd(), '.env.local') });
 
-const { neon } = require('@neondatabase/serverless');
-const sql = neon(process.env.DATABASE_URL!);
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  console.error('❌ Error: DATABASE_URL not found in .env.local');
+  process.exit(1);
+}
+
+const sql = postgres(databaseUrl, { ssl: 'require' });
 
 async function setup() {
-  console.log('Creating settings table...');
+  console.log('Creating settings table in Supabase...');
   await sql`
     CREATE TABLE IF NOT EXISTS settings (
       key VARCHAR PRIMARY KEY,
@@ -22,6 +29,10 @@ async function setup() {
   `;
   
   console.log('Done!');
+  await sql.end();
 }
 
-setup().catch(console.error);
+setup().catch(async (err) => {
+  console.error(err);
+  await sql.end();
+});

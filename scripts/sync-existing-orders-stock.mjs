@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
-import { neon } from '@neondatabase/serverless';
+import postgres from 'postgres';
 
 const databaseUrl = process.env.DATABASE_URL;
 
@@ -9,7 +9,7 @@ if (!databaseUrl) {
   process.exit(1);
 }
 
-const sql = neon(databaseUrl);
+const sql = postgres(databaseUrl, { ssl: 'require' });
 
 async function syncStock() {
   console.log('🔄 Fetching all ordered items to deduct from stock...');

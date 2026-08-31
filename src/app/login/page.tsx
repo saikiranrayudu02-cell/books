@@ -10,7 +10,7 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get('redirect') || '/';
 
-  const { login } = useAuth();
+  const { login, loginWithEmail, registerWithEmail, loginWithGoogle } = useAuth();
   const toast = useToast();
   
   const [isLoginMode, setIsLoginMode] = useState(true);
@@ -52,31 +52,43 @@ function LoginContent() {
     setLoading(true);
     
     try {
-      const endpoint = isLoginMode ? '/api/auth/login' : '/api/auth/register';
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          identifier: formData.identifier,
-          password: formData.password,
-          // Only send name if registering (can be extracted from identifier if missing)
-          ...( !isLoginMode && { name: formData.identifier.split('@')[0] } )
-        }),
-      });
+      // Determine email — if no @ sign, append @gmail.com as a convenience
+      const email = formData.identifier.includes('@') 
+        ? formData.identifier.trim() 
+        : `${formData.identifier.trim()}@gmail.com`;
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Something went wrong');
-      }
-
-      login(data.user);
-      toast.success(isLoginMode ? 'Logged in successfully!' : 'Account created successfully!');
-      
-      if (data.user.role === 'admin') {
-        router.push('/admin');
+      if (isLoginMode) {
+        // Try Supabase Auth first, then fallback to legacy API
+        const result = await loginWithEmail(email, formData.password);
+        if (result.error) {
+          throw new Error(result.error);
+        }
+        toast.success('Logged in successfully!');
       } else {
-        router.push(redirectUrl === '/' ? '/account' : redirectUrl);
+        // Register with Supabase Auth
+        const name = formData.identifier.split('@')[0];
+        const result = await registerWithEmail(email, formData.password, name);
+        if (result.error) {
+          throw new Error(result.error);
+        }
+        toast.success('Account created successfully! Please check your email to verify.');
+      }
+      
+      // Note: for Supabase Auth, the redirect happens after onAuthStateChange fires
+      // For legacy login, redirect immediately
+      const currentUser = localStorage.getItem('tenali_user');
+      if (currentUser) {
+        const parsed = JSON.parse(currentUser);
+        if (parsed.role === 'admin') {
+          router.push('/admin');
+        } else {
+          router.push(redirectUrl === '/' ? '/account' : redirectUrl);
+        }
+      } else {
+        // Supabase Auth - redirect after a short delay to allow auth state to propagate
+        setTimeout(() => {
+          router.push(redirectUrl === '/' ? '/account' : redirectUrl);
+        }, 1000);
       }
     } catch (err: any) {
       setFormError(err.message || 'Authentication failed');
@@ -88,16 +100,13 @@ function LoginContent() {
 
   const handleGoogleLogin = async () => {
     setLoading(true);
-    setTimeout(async () => {
-      await login({
-        id: `user_${Date.now()}`,
-        name: 'Postal Aspirant',
-        email: 'aspirant@gmail.com',
-        role: 'customer'
-      });
-      toast.success('Logged in with Google successfully!');
-      router.push(redirectUrl);
-    }, 800);
+    try {
+      await loginWithGoogle();
+      // The page will redirect to Google OAuth, so no need for toast here
+    } catch (err: any) {
+      toast.error('Google login failed. Please try again.');
+      setLoading(false);
+    }
   };
 
   return (

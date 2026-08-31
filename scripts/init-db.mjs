@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
-import { neon } from '@neondatabase/serverless';
+import postgres from 'postgres';
 
 const databaseUrl = process.env.DATABASE_URL;
 
@@ -9,120 +9,124 @@ if (!databaseUrl) {
   process.exit(1);
 }
 
-const sql = neon(databaseUrl);
+const sql = postgres(databaseUrl, { ssl: 'require' });
 
 async function initDatabase() {
-  console.log('🔄 Connecting to Neon Database...');
+  console.log('🔄 Connecting to Supabase Database...');
   
   try {
     // Test basic query
     const versionResult = await sql`SELECT version()`;
-    console.log('✅ Connected successfully to Neon PostgreSQL!');
+    console.log('✅ Connected successfully to Supabase PostgreSQL!');
     console.log('🐘 PostgreSQL Version:', versionResult[0].version);
 
     // Create Users Table
     console.log('📦 Creating tables...');
     await sql`
       CREATE TABLE IF NOT EXISTS users (
-        id VARCHAR(255) PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        email VARCHAR(255) UNIQUE,
-        phone VARCHAR(50),
-        role VARCHAR(50) DEFAULT 'customer',
+        id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        name character varying NOT NULL,
+        email character varying UNIQUE,
+        phone character varying,
+        role character varying DEFAULT 'customer',
         image TEXT,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        password_hash character varying,
+        created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+        updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP
       )
     `;
 
     // Create Addresses Table
     await sql`
       CREATE TABLE IF NOT EXISTS addresses (
-        id VARCHAR(255) PRIMARY KEY,
-        user_id VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
-        full_name VARCHAR(255) NOT NULL,
-        mobile VARCHAR(50) NOT NULL,
-        email VARCHAR(255) NOT NULL,
-        house_flat VARCHAR(255) NOT NULL,
-        street VARCHAR(255) NOT NULL,
-        area VARCHAR(255),
-        city VARCHAR(100) NOT NULL,
-        state VARCHAR(100) NOT NULL,
-        pin_code VARCHAR(20) NOT NULL,
-        is_default BOOLEAN DEFAULT FALSE,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id uuid REFERENCES users(id) ON DELETE CASCADE,
+        full_name character varying NOT NULL,
+        mobile character varying NOT NULL,
+        email character varying NOT NULL,
+        house_flat character varying NOT NULL,
+        street character varying NOT NULL,
+        area character varying,
+        city character varying NOT NULL,
+        state character varying NOT NULL,
+        pin_code character varying NOT NULL,
+        is_default boolean DEFAULT FALSE,
+        created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP
       )
     `;
 
     // Create Products Table
     await sql`
       CREATE TABLE IF NOT EXISTS products (
-        id VARCHAR(255) PRIMARY KEY,
-        slug VARCHAR(255) UNIQUE NOT NULL,
-        name VARCHAR(255) NOT NULL,
-        bundle_title VARCHAR(255),
-        books_included INT DEFAULT 2,
-        edition VARCHAR(100) DEFAULT 'First Edition',
-        short_description TEXT,
-        description TEXT,
-        price NUMERIC(10, 2) NOT NULL,
-        languages JSONB NOT NULL DEFAULT '[]',
-        image TEXT NOT NULL,
-        images JSONB NOT NULL DEFAULT '[]',
-        category VARCHAR(100) NOT NULL,
-        exam_coverage TEXT,
-        features JSONB DEFAULT '[]',
-        brand VARCHAR(100) DEFAULT 'Tenali Exams Publishers',
-        badge VARCHAR(100),
-        stock INT DEFAULT 100,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        id character varying PRIMARY KEY,
+        slug character varying UNIQUE NOT NULL,
+        name character varying NOT NULL,
+        bundle_title character varying,
+        books_included integer DEFAULT 1,
+        edition character varying,
+        short_description text,
+        description text NOT NULL,
+        price numeric NOT NULL,
+        image character varying NOT NULL,
+        images jsonb,
+        category character varying NOT NULL,
+        exam_coverage character varying,
+        badges jsonb,
+        features jsonb,
+        table_of_contents jsonb,
+        brand character varying,
+        badge character varying,
+        stock integer DEFAULT 0,
+        languages jsonb,
+        created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+        updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP
       )
     `;
 
     // Create Orders Table
     await sql`
       CREATE TABLE IF NOT EXISTS orders (
-        id VARCHAR(255) PRIMARY KEY,
-        order_number VARCHAR(100) UNIQUE NOT NULL,
-        user_id VARCHAR(255),
-        subtotal NUMERIC(10, 2) NOT NULL,
-        delivery_charge NUMERIC(10, 2) DEFAULT 0,
-        total NUMERIC(10, 2) NOT NULL,
-        shipping_address JSONB NOT NULL,
-        status VARCHAR(50) DEFAULT 'placed',
-        payment_status VARCHAR(50) DEFAULT 'pending',
-        tracking_number VARCHAR(100),
-        carrier VARCHAR(100) DEFAULT 'India Post Speed Post',
-        notes TEXT,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        order_number character varying UNIQUE NOT NULL,
+        user_id uuid REFERENCES users(id) ON DELETE SET NULL,
+        subtotal numeric NOT NULL,
+        delivery_charge numeric NOT NULL,
+        total numeric NOT NULL,
+        delivery_address jsonb NOT NULL,
+        status character varying DEFAULT 'placed',
+        payment_status character varying DEFAULT 'pending',
+        tracking_number character varying,
+        carrier character varying,
+        notes text,
+        created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+        updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP
       )
     `;
 
     // Create Order Items Table
     await sql`
       CREATE TABLE IF NOT EXISTS order_items (
-        id VARCHAR(255) PRIMARY KEY,
-        order_id VARCHAR(255) REFERENCES orders(id) ON DELETE CASCADE,
-        product_id VARCHAR(255) NOT NULL,
-        product_name VARCHAR(255) NOT NULL,
-        product_slug VARCHAR(255) NOT NULL,
-        product_image TEXT,
-        price NUMERIC(10, 2) NOT NULL,
-        language VARCHAR(50) NOT NULL,
-        quantity INT NOT NULL DEFAULT 1,
-        bundle_title VARCHAR(255),
-        books_included INT DEFAULT 2
+        id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        order_id uuid REFERENCES orders(id) ON DELETE CASCADE,
+        product_id character varying,
+        product_name character varying NOT NULL,
+        product_slug character varying NOT NULL,
+        product_image character varying NOT NULL,
+        price numeric NOT NULL,
+        language character varying NOT NULL,
+        quantity integer NOT NULL DEFAULT 1,
+        bundle_title character varying,
+        books_included integer
       )
     `;
 
     // Create Wishlist Table
     await sql`
       CREATE TABLE IF NOT EXISTS wishlist (
-        id VARCHAR(255) PRIMARY KEY,
-        user_id VARCHAR(255) NOT NULL,
-        product_id VARCHAR(255) NOT NULL,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id uuid REFERENCES users(id) ON DELETE CASCADE,
+        product_id character varying REFERENCES products(id) ON DELETE CASCADE,
+        created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
         UNIQUE (user_id, product_id)
       )
     `;
@@ -177,7 +181,7 @@ async function initDatabase() {
       console.log('✅ Seeded 2 product bundles.');
     }
 
-    console.log('🎉 Neon database initialization completed successfully!');
+    console.log('🎉 Supabase database initialization completed successfully!');
   } catch (error) {
     console.error('❌ Database initialization error:', error);
     process.exit(1);

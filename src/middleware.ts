@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { updateSession } from '@/utils/supabase/middleware';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -9,6 +10,7 @@ export async function middleware(request: NextRequest) {
   // - /api/admin: Admin APIs
   // - /login: So admins can log in to turn it off
   // - /api/auth: Auth endpoints
+  // - /auth/callback: Supabase OAuth callback
   // - /api/settings/maintenance: The endpoint we're calling below
   // - /maintenance: The actual maintenance page
   // - /_next, /favicon.ico, static assets (images, css)
@@ -18,24 +20,22 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/api/admin') ||
     pathname.startsWith('/login') ||
     pathname.startsWith('/api/auth') ||
+    pathname.startsWith('/auth/callback') ||
     pathname === '/api/settings/maintenance' ||
     pathname === '/maintenance' ||
     pathname.startsWith('/_next') ||
     pathname.match(/\.(ico|png|jpg|jpeg|svg|css|js)$/)
   ) {
-    return NextResponse.next();
+    // Still refresh Supabase session on these routes
+    return await updateSession(request);
   }
 
   try {
     // 2. Check the maintenance mode status using our cached API endpoint
-    // Using absolute URL for fetch in middleware
     const baseUrl = request.nextUrl.origin;
     
-    // We add cache: 'no-store' if we want to rely on the endpoint's own Next.js caching or Edge caching.
-    // However, in Next.js middleware, fetch is not always fully cached like in server components.
-    // It's safer to just fetch it. The route itself has revalidate = 10.
     const res = await fetch(`${baseUrl}/api/settings/maintenance`, {
-      cache: 'no-store' // The route segment config `revalidate = 10` handles the caching.
+      cache: 'no-store'
     });
     
     if (res.ok) {
@@ -43,7 +43,6 @@ export async function middleware(request: NextRequest) {
       
       // 3. If maintenance mode is ON, rewrite to the maintenance page
       if (data.maintenanceMode === true) {
-        // Rewrite keeps the URL the same for the user, but shows the maintenance page
         return NextResponse.rewrite(new URL('/maintenance', request.url));
       }
     }
@@ -52,8 +51,8 @@ export async function middleware(request: NextRequest) {
     console.error('Middleware fetch error:', error);
   }
 
-  // 4. Otherwise, continue normally
-  return NextResponse.next();
+  // 4. Refresh Supabase auth session and continue normally
+  return await updateSession(request);
 }
 
 // Ensure middleware runs on all paths to properly intercept
@@ -61,7 +60,6 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - api (API routes) -> We handle API logic inside middleware if needed, but mostly we let them pass
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)

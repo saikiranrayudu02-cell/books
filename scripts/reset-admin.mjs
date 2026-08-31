@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
-import { neon } from '@neondatabase/serverless';
+import postgres from 'postgres';
 import bcrypt from 'bcryptjs';
 
 const databaseUrl = process.env.DATABASE_URL;
@@ -10,7 +10,7 @@ if (!databaseUrl) {
   process.exit(1);
 }
 
-const sql = neon(databaseUrl);
+const sql = postgres(databaseUrl, { ssl: 'require' });
 
 async function resetPassword() {
   const email = 'rayudusaikiran02@gmail.com';
