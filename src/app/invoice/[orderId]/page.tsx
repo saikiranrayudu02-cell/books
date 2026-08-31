@@ -4,12 +4,19 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { formatPrice, formatDate } from '@/lib/utils';
 import { COMPANY_ADDRESS, SUPPORT_EMAIL, COMPANY_PHONE } from '@/lib/data';
+import { downloadInvoicePDF, numberToWordsInRupees } from '@/utils/invoicePdf';
 import {
   Download,
   ArrowLeft,
   Loader2,
   AlertCircle,
   Printer,
+  CheckCircle2,
+  ShieldCheck,
+  Building2,
+  Phone,
+  Mail,
+  FileText
 } from 'lucide-react';
 
 interface OrderItem {
@@ -56,6 +63,7 @@ export default function InvoicePage(): React.JSX.Element {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isDownloading, setIsDownloading] = useState(false);
   const invoiceRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -75,15 +83,28 @@ export default function InvoicePage(): React.JSX.Element {
     fetchOrder();
   }, [orderId]);
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
+    if (!order) return;
+    setIsDownloading(true);
+    try {
+      await downloadInvoicePDF('invoice-printable', `Tenali_Invoice_${order.orderNumber}.pdf`);
+    } catch (err) {
+      console.error('Error generating PDF:', err);
+      window.print();
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const handlePrint = () => {
     window.print();
   };
 
   if (loading) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '12px' }}>
-        <Loader2 className="animate-spin" size={24} style={{ color: 'var(--color-primary)' }} />
-        <span style={{ color: 'var(--color-text-muted)', fontWeight: 600 }}>Loading invoice...</span>
+        <Loader2 className="animate-spin text-blue-600" size={28} />
+        <span style={{ color: 'var(--color-text-muted)', fontWeight: 600 }}>Generating official invoice...</span>
       </div>
     );
   }
@@ -91,7 +112,7 @@ export default function InvoicePage(): React.JSX.Element {
   if (error || !order) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', gap: '16px', padding: '20px' }}>
-        <AlertCircle size={40} style={{ color: '#ef4444' }} />
+        <AlertCircle size={44} className="text-red-500" />
         <p style={{ color: 'var(--color-text-primary)', fontWeight: 700, fontSize: '1.1rem' }}>{error || 'Order not found'}</p>
         <Link href="/account/orders" className="btn btn-primary btn-sm">Back to Orders</Link>
       </div>
@@ -103,13 +124,14 @@ export default function InvoicePage(): React.JSX.Element {
   const orderDate = new Date(order.createdAt);
   const formattedDate = formatDate(order.createdAt);
   const formattedTime = orderDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  const totalNum = typeof order.total === 'string' ? parseFloat(order.total) : order.total;
+  const amountInWords = numberToWordsInRupees(totalNum);
 
   return (
     <>
-      {/* Print-specific styles */}
+      {/* High-Definition Print Styles */}
       <style>{`
         @media print {
-          /* Hide everything except the invoice */
           body * { visibility: hidden !important; }
           #invoice-printable, #invoice-printable * { visibility: visible !important; }
           #invoice-printable {
@@ -119,23 +141,24 @@ export default function InvoicePage(): React.JSX.Element {
             width: 100% !important;
             padding: 0 !important;
             margin: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
           }
           .no-print { display: none !important; }
-          /* Clean backgrounds for print */
           #invoice-printable {
             background: white !important;
-            color: #000 !important;
+            color: #0f172a !important;
           }
           @page {
-            margin: 12mm;
+            margin: 10mm;
             size: A4;
           }
         }
       `}</style>
 
-      <div style={{ maxWidth: '900px', margin: '0 auto', padding: '20px 16px 80px 16px' }}>
+      <div style={{ maxWidth: '920px', margin: '0 auto', padding: '24px 16px 80px 16px' }}>
         
-        {/* Action Bar (hidden in print) */}
+        {/* Action Top Bar */}
         <div className="no-print" style={{
           display: 'flex',
           alignItems: 'center',
@@ -145,171 +168,233 @@ export default function InvoicePage(): React.JSX.Element {
           flexWrap: 'wrap',
         }}>
           <Link href={`/order-confirmation/${order.orderNumber}`} style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            color: 'var(--color-text-muted)', fontWeight: 600, fontSize: '0.9rem', textDecoration: 'none'
+            display: 'inline-flex', alignItems: 'center', gap: '6px',
+            color: 'var(--color-text-secondary)', fontWeight: 700, fontSize: '0.9rem', textDecoration: 'none'
           }}>
-            <ArrowLeft size={16} /> Back to Order
+            <ArrowLeft size={16} /> Back to Order Confirmation
           </Link>
+
           <div style={{ display: 'flex', gap: '10px' }}>
             <button
+              type="button"
               onClick={handleDownloadPDF}
+              disabled={isDownloading}
               className="btn btn-primary btn-sm"
-              style={{ display: 'flex', alignItems: 'center', gap: '6px', borderRadius: '12px', padding: '8px 18px' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', borderRadius: '12px', padding: '9px 20px', fontWeight: 700 }}
             >
-              <Download size={16} /> Download PDF
+              {isDownloading ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
+              {isDownloading ? 'Generating High-Res PDF...' : 'Download PDF'}
             </button>
+            
             <button
-              onClick={handleDownloadPDF}
+              type="button"
+              onClick={handlePrint}
               className="btn btn-secondary btn-sm"
-              style={{ display: 'flex', alignItems: 'center', gap: '6px', borderRadius: '12px', padding: '8px 18px' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', borderRadius: '12px', padding: '9px 18px', fontWeight: 700 }}
             >
               <Printer size={16} /> Print
             </button>
           </div>
         </div>
 
-        {/* ======== INVOICE DOCUMENT ======== */}
+        {/* ======== REAL-WORLD CORPORATE TAX INVOICE DOCUMENT ======== */}
         <div
           id="invoice-printable"
           ref={invoiceRef}
           style={{
-            background: 'var(--color-white)',
-            border: '1px solid var(--color-border-light)',
-            borderRadius: '20px',
+            background: '#ffffff',
+            color: '#0f172a',
+            border: '1px solid #cbd5e1',
+            borderRadius: '24px',
             overflow: 'hidden',
-            boxShadow: '0 4px 24px rgba(0,0,0,0.04)',
+            boxShadow: '0 20px 50px -12px rgba(15, 23, 42, 0.08)',
+            fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
           }}
         >
-          {/* Header */}
+          {/* Header Banner */}
           <div style={{
-            background: 'linear-gradient(135deg, #1a2b4c 0%, #1e3a8a 100%)',
+            background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
             color: '#ffffff',
-            padding: '32px 36px',
+            padding: '36px 40px',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'flex-start',
             flexWrap: 'wrap',
-            gap: '20px',
+            gap: '24px',
+            borderBottom: '4px solid #2563eb',
           }}>
+            {/* Publisher Brand Column */}
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                <img src="/icon.png" alt="Tenali Exam Publisher" style={{ width: '40px', height: '40px', objectFit: 'contain', borderRadius: '8px' }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px' }}>
+                <div style={{
+                  width: '52px',
+                  height: '52px',
+                  borderRadius: '14px',
+                  background: '#ffffff',
+                  padding: '6px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: '0 6px 16px rgba(0,0,0,0.3)',
+                  border: '1px solid rgba(255,255,255,0.8)'
+                }}>
+                  <img src="/images/logo.png" alt="Tenali Exams Publishers Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                </div>
+
                 <div>
-                  <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.5px' }}>INVOICE</h1>
-                  <div style={{ fontSize: '0.72rem', fontWeight: 600, opacity: 0.7, textTransform: 'uppercase', letterSpacing: '1px', marginTop: '2px' }}>
-                    Tenali Exams Publishers
+                  <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.3px', color: '#ffffff' }}>
+                    TENALI EXAMS PUBLISHERS
+                  </h1>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#fbbf24', textTransform: 'uppercase', letterSpacing: '1.5px', marginTop: '2px' }}>
+                    Excellence in Every Page
                   </div>
                 </div>
               </div>
-              <div style={{ fontSize: '0.78rem', lineHeight: 1.6, opacity: 0.8 }}>
-                <div>{COMPANY_ADDRESS.line1}</div>
-                <div>{COMPANY_ADDRESS.line2}</div>
-                <div>{COMPANY_ADDRESS.line3}</div>
-                <div style={{ marginTop: '4px' }}>Phone: {COMPANY_PHONE}</div>
-                <div>Email: {SUPPORT_EMAIL}</div>
+
+              <div style={{ fontSize: '0.78rem', color: '#cbd5e1', lineHeight: 1.65 }}>
+                <div>Main Road, Near Head Post Office</div>
+                <div>Tenali, Guntur District, Andhra Pradesh - 522201</div>
+                <div style={{ marginTop: '4px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span>📱 Phone: {COMPANY_PHONE}</span>
+                  <span>✉️ Email: {SUPPORT_EMAIL}</span>
+                </div>
+                <div style={{ marginTop: '4px', fontSize: '0.72rem', fontWeight: 700, color: '#94a3b8' }}>
+                  GSTIN / HSN STATUS: <span style={{ color: '#60a5fa' }}>EXEMPTED (Educational Printed Books under HSN 4901)</span>
+                </div>
               </div>
             </div>
 
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '0.72rem', fontWeight: 700, opacity: 0.6, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>
-                Invoice Details
-              </div>
-              <div style={{ fontSize: '0.88rem', fontWeight: 700, marginBottom: '4px' }}>
-                {invoiceNumber}
-              </div>
-              <div style={{ fontSize: '0.78rem', opacity: 0.8 }}>
-                Date: {formattedDate}
-              </div>
-              <div style={{ fontSize: '0.78rem', opacity: 0.8 }}>
-                Time: {formattedTime}
-              </div>
+            {/* Document Details Column */}
+            <div style={{ textAlign: 'right', minWidth: '220px' }}>
               <div style={{
                 display: 'inline-block',
-                marginTop: '10px',
                 padding: '4px 14px',
-                borderRadius: '20px',
-                fontSize: '0.72rem',
-                fontWeight: 700,
+                borderRadius: '8px',
+                background: 'rgba(37, 99, 235, 0.25)',
+                border: '1px solid rgba(96, 165, 250, 0.4)',
+                fontSize: '0.75rem',
+                fontWeight: 900,
                 textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-                background: order.paymentStatus === 'paid' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
-                color: order.paymentStatus === 'paid' ? '#6ee7b7' : '#fca5a5',
+                letterSpacing: '1px',
+                color: '#93c5fd',
+                marginBottom: '12px'
               }}>
-                {order.paymentStatus === 'paid' ? '✓ PAID' : order.paymentStatus.toUpperCase()}
+                TAX INVOICE / BILL OF SUPPLY
+              </div>
+
+              <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#ffffff', letterSpacing: '-0.5px', marginBottom: '4px', fontFamily: 'monospace' }}>
+                {invoiceNumber}
+              </div>
+
+              <div style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.5 }}>
+                <div><strong>Invoice Date:</strong> {formattedDate}</div>
+                <div><strong>Invoice Time:</strong> {formattedTime}</div>
+              </div>
+
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                marginTop: '12px',
+                padding: '5px 14px',
+                borderRadius: '9999px',
+                fontSize: '0.72rem',
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                letterSpacing: '0.8px',
+                background: order.paymentStatus === 'paid' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                color: order.paymentStatus === 'paid' ? '#34d399' : '#fca5a5',
+                border: `1px solid ${order.paymentStatus === 'paid' ? '#10b981' : '#ef4444'}`,
+              }}>
+                <CheckCircle2 size={13} /> {order.paymentStatus === 'paid' ? 'PAYMENT RECEIVED' : order.paymentStatus.toUpperCase()}
               </div>
             </div>
           </div>
 
-          {/* Bill To / Ship To Section */}
+          {/* Billed To & Supplier Information Box */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
             gap: '24px',
-            padding: '28px 36px',
-            borderBottom: '1px solid var(--color-border-light)',
-            background: 'var(--color-bg-page)',
+            padding: '28px 40px',
+            background: '#f8fafc',
+            borderBottom: '1px solid #e2e8f0',
           }}>
+            {/* Customer Information */}
             <div>
               <div style={{
                 fontSize: '0.68rem',
-                fontWeight: 800,
+                fontWeight: 900,
                 textTransform: 'uppercase',
                 letterSpacing: '1.5px',
-                color: 'var(--color-text-muted)',
+                color: '#64748b',
                 marginBottom: '10px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
               }}>
-                Bill To
+                <FileText size={13} className="text-blue-600" /> Billed To & Delivery Address
               </div>
-              <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '4px' }}>
+              <div style={{ fontSize: '1rem', fontWeight: 800, color: '#0f172a', marginBottom: '4px' }}>
                 {addr.fullName}
               </div>
-              <div style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
+              <div style={{ fontSize: '0.84rem', color: '#475569', lineHeight: 1.6 }}>
                 <div>{addr.houseOrFlat}, {addr.street}</div>
                 {addr.area && <div>{addr.area}</div>}
-                <div>{addr.city}, {addr.state} - {addr.pinCode}</div>
-                <div style={{ marginTop: '6px' }}>📱 {addr.mobile}</div>
-                <div>✉️ {addr.email}</div>
+                <div>{addr.city}, {addr.state} - <strong style={{ color: '#0f172a' }}>{addr.pinCode}</strong></div>
+                <div style={{ marginTop: '6px', fontWeight: 600, color: '#334155' }}>
+                  📱 Phone: {addr.mobile}
+                </div>
+                {addr.email && (
+                  <div style={{ fontWeight: 600, color: '#334155' }}>
+                    ✉️ Email: {addr.email}
+                  </div>
+                )}
               </div>
             </div>
 
+            {/* Order & Shipment Information */}
             <div>
               <div style={{
                 fontSize: '0.68rem',
-                fontWeight: 800,
+                fontWeight: 900,
                 textTransform: 'uppercase',
                 letterSpacing: '1.5px',
-                color: 'var(--color-text-muted)',
+                color: '#64748b',
                 marginBottom: '10px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
               }}>
-                Order Information
+                <Building2 size={13} className="text-blue-600" /> Order & Shipping Details
               </div>
-              <div style={{ fontSize: '0.82rem', color: 'var(--color-text-secondary)', lineHeight: 1.8 }}>
-                <div><strong style={{ color: 'var(--color-text-primary)' }}>Order No:</strong> {order.orderNumber}</div>
-                <div><strong style={{ color: 'var(--color-text-primary)' }}>Order Date:</strong> {formattedDate}</div>
-                <div><strong style={{ color: 'var(--color-text-primary)' }}>Status:</strong>{' '}
+              <div style={{ fontSize: '0.84rem', color: '#475569', lineHeight: 1.8 }}>
+                <div><strong style={{ color: '#0f172a' }}>Order Reference:</strong> #{order.orderNumber}</div>
+                <div><strong style={{ color: '#0f172a' }}>Order Date:</strong> {formattedDate}</div>
+                <div><strong style={{ color: '#0f172a' }}>Fulfillment Status:</strong>{' '}
                   <span style={{
                     display: 'inline-block',
                     padding: '2px 10px',
-                    borderRadius: '12px',
+                    borderRadius: '8px',
                     fontSize: '0.72rem',
-                    fontWeight: 700,
+                    fontWeight: 800,
                     textTransform: 'capitalize',
-                    background: order.status === 'dispatched' ? '#dbeafe' : '#e0e7ff',
-                    color: order.status === 'dispatched' ? '#1d4ed8' : '#4338ca',
+                    background: '#dbeafe',
+                    color: '#1d4ed8',
                   }}>
                     {order.status}
                   </span>
                 </div>
-                <div><strong style={{ color: 'var(--color-text-primary)' }}>Carrier:</strong> {order.carrier || 'India Post Speed Post'}</div>
+                <div><strong style={{ color: '#0f172a' }}>Shipping Carrier:</strong> {order.carrier || 'India Post (Speed Post Parcel)'}</div>
                 {order.trackingNumber && (
-                  <div><strong style={{ color: 'var(--color-text-primary)' }}>Tracking:</strong> {order.trackingNumber}</div>
+                  <div><strong style={{ color: '#0f172a' }}>Tracking ID:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 800, color: '#2563eb' }}>{order.trackingNumber}</span></div>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Items Table */}
-          <div style={{ padding: '28px 36px' }}>
+          {/* Itemized Goods Table */}
+          <div style={{ padding: '32px 40px' }}>
             <table style={{
               width: '100%',
               borderCollapse: 'collapse',
@@ -317,14 +402,17 @@ export default function InvoicePage(): React.JSX.Element {
             }}>
               <thead>
                 <tr style={{
-                  borderBottom: '2px solid var(--color-border-light)',
+                  borderBottom: '2px solid #0f172a',
+                  background: '#f1f5f9',
                 }}>
-                  <th style={{ textAlign: 'left', padding: '10px 8px', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--color-text-muted)' }}>#</th>
-                  <th style={{ textAlign: 'left', padding: '10px 8px', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--color-text-muted)' }}>Item Description</th>
-                  <th style={{ textAlign: 'center', padding: '10px 8px', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--color-text-muted)' }}>Language</th>
-                  <th style={{ textAlign: 'center', padding: '10px 8px', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--color-text-muted)' }}>Qty</th>
-                  <th style={{ textAlign: 'right', padding: '10px 8px', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--color-text-muted)' }}>Unit Price</th>
-                  <th style={{ textAlign: 'right', padding: '10px 8px', fontSize: '0.7rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--color-text-muted)' }}>Amount</th>
+                  <th style={{ textAlign: 'left', padding: '12px 10px', fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', color: '#334155' }}>#</th>
+                  <th style={{ textAlign: 'left', padding: '12px 10px', fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', color: '#334155' }}>Item Description & Details</th>
+                  <th style={{ textAlign: 'center', padding: '12px 10px', fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', color: '#334155' }}>HSN Code</th>
+                  <th style={{ textAlign: 'center', padding: '12px 10px', fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', color: '#334155' }}>Language</th>
+                  <th style={{ textAlign: 'center', padding: '12px 10px', fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', color: '#334155' }}>Qty</th>
+                  <th style={{ textAlign: 'right', padding: '12px 10px', fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', color: '#334155' }}>Unit Rate (₹)</th>
+                  <th style={{ textAlign: 'right', padding: '12px 10px', fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', color: '#334155' }}>Taxable Amt</th>
+                  <th style={{ textAlign: 'right', padding: '12px 10px', fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', color: '#334155' }}>Total (₹)</th>
                 </tr>
               </thead>
               <tbody>
@@ -333,41 +421,45 @@ export default function InvoicePage(): React.JSX.Element {
                   const lineTotal = unitPrice * item.quantity;
                   return (
                     <tr key={item.id} style={{
-                      borderBottom: '1px solid var(--color-border-light)',
+                      borderBottom: '1px solid #e2e8f0',
                     }}>
-                      <td style={{ padding: '14px 8px', color: 'var(--color-text-muted)', fontWeight: 600 }}>{idx + 1}</td>
-                      <td style={{ padding: '14px 8px' }}>
-                        <div style={{ fontWeight: 700, color: 'var(--color-text-primary)', marginBottom: '2px' }}>
+                      <td style={{ padding: '16px 10px', color: '#64748b', fontWeight: 700 }}>{idx + 1}</td>
+                      <td style={{ padding: '16px 10px' }}>
+                        <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.9rem', marginBottom: '2px' }}>
                           {item.productName}
                         </div>
-                        {item.bundleTitle && (
-                          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
-                            {item.bundleTitle} • {item.booksIncluded || 1} book{(item.booksIncluded || 1) > 1 ? 's' : ''}
-                          </div>
-                        )}
+                        <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                          Tenali Exams Publications • Departmental Postal Exam Guide
+                        </div>
                       </td>
-                      <td style={{ padding: '14px 8px', textAlign: 'center' }}>
+                      <td style={{ padding: '16px 10px', textAlign: 'center', fontFamily: 'monospace', fontWeight: 700, color: '#475569' }}>
+                        4901
+                      </td>
+                      <td style={{ padding: '16px 10px', textAlign: 'center' }}>
                         <span style={{
                           display: 'inline-block',
-                          padding: '2px 10px',
-                          borderRadius: '8px',
+                          padding: '3px 10px',
+                          borderRadius: '6px',
                           fontSize: '0.72rem',
                           fontWeight: 700,
-                          background: 'var(--color-bg-page)',
-                          border: '1px solid var(--color-border-light)',
-                          color: 'var(--color-text-secondary)',
+                          background: '#f1f5f9',
+                          border: '1px solid #cbd5e1',
+                          color: '#334155',
                           textTransform: 'capitalize',
                         }}>
                           {item.language}
                         </span>
                       </td>
-                      <td style={{ padding: '14px 8px', textAlign: 'center', fontWeight: 600, color: 'var(--color-text-primary)' }}>
+                      <td style={{ padding: '16px 10px', textAlign: 'center', fontWeight: 800, color: '#0f172a' }}>
                         {item.quantity}
                       </td>
-                      <td style={{ padding: '14px 8px', textAlign: 'right', fontWeight: 600, color: 'var(--color-text-secondary)' }}>
+                      <td style={{ padding: '16px 10px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>
                         {formatPrice(unitPrice)}
                       </td>
-                      <td style={{ padding: '14px 8px', textAlign: 'right', fontWeight: 700, color: 'var(--color-text-primary)' }}>
+                      <td style={{ padding: '16px 10px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>
+                        {formatPrice(lineTotal)}
+                      </td>
+                      <td style={{ padding: '16px 10px', textAlign: 'right', fontWeight: 800, color: '#0f172a' }}>
                         {formatPrice(lineTotal)}
                       </td>
                     </tr>
@@ -377,123 +469,158 @@ export default function InvoicePage(): React.JSX.Element {
             </table>
           </div>
 
-          {/* Totals Section */}
+          {/* Amount in Words & Totals Box */}
           <div style={{
-            padding: '0 36px 28px 36px',
-            display: 'flex',
-            justifyContent: 'flex-end',
+            padding: '0 40px 32px 40px',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '32px',
+            alignItems: 'flex-start',
           }}>
-            <div style={{ minWidth: '280px' }}>
+            
+            {/* Left Column: Amount in Words & Payment Note */}
+            <div style={{
+              background: '#f8fafc',
+              padding: '20px',
+              borderRadius: '16px',
+              border: '1px solid #e2e8f0',
+            }}>
+              <div style={{ fontSize: '0.68rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', color: '#64748b', marginBottom: '4px' }}>
+                Total Amount In Words
+              </div>
+              <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#1e293b', fontStyle: 'italic' }}>
+                {amountInWords}
+              </div>
+
+              <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px dashed #cbd5e1', fontSize: '0.78rem', color: '#475569', lineHeight: 1.6 }}>
+                <div><strong style={{ color: '#0f172a' }}>Payment Method:</strong> Online Payment (Razorpay / UPI)</div>
+                <div><strong style={{ color: '#0f172a' }}>Tax Status:</strong> Exempted (0% GST on HSN 4901 Educational Books)</div>
+              </div>
+            </div>
+
+            {/* Right Column: Calculation Summary */}
+            <div style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #cbd5e1', padding: '20px' }}>
               <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                padding: '10px 0',
-                borderBottom: '1px solid var(--color-border-light)',
+                padding: '8px 0',
+                borderBottom: '1px solid #f1f5f9',
                 fontSize: '0.88rem',
               }}>
-                <span style={{ color: 'var(--color-text-secondary)', fontWeight: 500 }}>Subtotal</span>
-                <span style={{ color: 'var(--color-text-primary)', fontWeight: 600 }}>{formatPrice(order.subtotal)}</span>
+                <span style={{ color: '#64748b', fontWeight: 600 }}>Subtotal (Taxable Value)</span>
+                <span style={{ color: '#0f172a', fontWeight: 700 }}>{formatPrice(order.subtotal)}</span>
               </div>
 
               <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                padding: '10px 0',
-                borderBottom: '1px solid var(--color-border-light)',
+                padding: '8px 0',
+                borderBottom: '1px solid #f1f5f9',
                 fontSize: '0.88rem',
               }}>
-                <span style={{ color: 'var(--color-text-secondary)', fontWeight: 500 }}>Delivery Charges</span>
+                <span style={{ color: '#64748b', fontWeight: 600 }}>Shipping & Delivery Fee</span>
                 <span style={{
-                  fontWeight: 600,
-                  color: parseFloat(String(order.deliveryCharge)) === 0 ? '#10b981' : 'var(--color-text-primary)',
+                  fontWeight: 800,
+                  color: parseFloat(String(order.deliveryCharge)) === 0 ? '#10b981' : '#0f172a',
                 }}>
-                  {parseFloat(String(order.deliveryCharge)) === 0 ? 'FREE' : formatPrice(order.deliveryCharge)}
+                  {parseFloat(String(order.deliveryCharge)) === 0 ? 'FREE DELIVERY' : formatPrice(order.deliveryCharge)}
                 </span>
               </div>
 
               <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                padding: '14px 0',
-                fontSize: '1.1rem',
+                padding: '8px 0',
+                borderBottom: '1px solid #cbd5e1',
+                fontSize: '0.88rem',
               }}>
-                <span style={{ fontWeight: 800, color: 'var(--color-text-primary)' }}>Total Amount</span>
-                <span style={{ fontWeight: 900, color: 'var(--color-primary)', fontSize: '1.2rem', letterSpacing: '-0.5px' }}>
+                <span style={{ color: '#64748b', fontWeight: 600 }}>Integrated Tax / GST (0%)</span>
+                <span style={{ color: '#10b981', fontWeight: 700 }}>₹0.00 (Exempt)</span>
+              </div>
+
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                padding: '14px 0 6px 0',
+                fontSize: '1.15rem',
+              }}>
+                <span style={{ fontWeight: 900, color: '#0f172a' }}>Grand Total</span>
+                <span style={{ fontWeight: 900, color: '#2563eb', fontSize: '1.3rem', letterSpacing: '-0.5px' }}>
                   {formatPrice(order.total)}
                 </span>
               </div>
-
-              {/* Payment Badge */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                padding: '10px 16px',
-                borderRadius: '12px',
-                background: order.paymentStatus === 'paid' ? '#ecfdf5' : '#fef2f2',
-                border: `1px solid ${order.paymentStatus === 'paid' ? '#a7f3d0' : '#fecaca'}`,
-                fontSize: '0.82rem',
-                fontWeight: 700,
-                color: order.paymentStatus === 'paid' ? '#065f46' : '#991b1b',
-              }}>
-                {order.paymentStatus === 'paid' ? '✓ Payment Received' : `Payment ${order.paymentStatus}`}
-              </div>
             </div>
+
           </div>
 
-          {/* Footer Section */}
+          {/* Footer & Digital Signatory Seal */}
           <div style={{
-            borderTop: '2px solid var(--color-border-light)',
-            padding: '24px 36px',
-            background: 'var(--color-bg-page)',
+            borderTop: '2px solid #e2e8f0',
+            padding: '28px 40px',
+            background: '#f8fafc',
           }}>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: '20px',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: '24px',
               fontSize: '0.78rem',
-              color: 'var(--color-text-muted)',
+              color: '#64748b',
               lineHeight: 1.6,
             }}>
               <div>
-                <div style={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.68rem', marginBottom: '6px', color: 'var(--color-text-secondary)' }}>
+                <div style={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.68rem', marginBottom: '6px', color: '#334155' }}>
                   Terms & Conditions
                 </div>
-                <div>• This is a computer-generated invoice.</div>
-                <div>• Delivery expected in 5-7 working days.</div>
-                <div>• For queries, contact our support team.</div>
+                <div>• This is an official computer-generated Tax Invoice / Bill of Supply.</div>
+                <div>• Printed books are exempt from GST under HSN Code 4901.</div>
+                <div>• Express Postal dispatch via India Post Speed Post.</div>
               </div>
 
               <div>
-                <div style={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.68rem', marginBottom: '6px', color: 'var(--color-text-secondary)' }}>
-                  Contact Support
+                <div style={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.68rem', marginBottom: '6px', color: '#334155' }}>
+                  Customer Support
                 </div>
-                <div>📱 {COMPANY_PHONE}</div>
-                <div>✉️ {SUPPORT_EMAIL}</div>
+                <div>📱 Phone: {COMPANY_PHONE}</div>
+                <div>✉️ Email: {SUPPORT_EMAIL}</div>
                 <div>🌐 www.tenaliexamspublishers.com</div>
               </div>
 
+              {/* Digital Seal Stamp Box */}
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.68rem', marginBottom: '6px', color: 'var(--color-text-secondary)' }}>
-                  Authorized Signatory
-                </div>
-                <div style={{ marginTop: '20px', borderTop: '1px solid var(--color-border-light)', paddingTop: '6px', fontWeight: 600, color: 'var(--color-text-secondary)' }}>
-                  Tenali Exams Publishers
+                <div style={{
+                  display: 'inline-block',
+                  textAlign: 'center',
+                  padding: '12px 18px',
+                  borderRadius: '12px',
+                  border: '2px dashed #94a3b8',
+                  background: '#ffffff',
+                }}>
+                  <div style={{ fontSize: '0.68rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px', color: '#1e293b' }}>
+                    Tenali Exams Publishers
+                  </div>
+                  <div style={{ fontSize: '0.65rem', color: '#16a34a', fontWeight: 800, marginTop: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                    <ShieldCheck size={14} /> DIGITAL SEAL VERIFIED
+                  </div>
+                  <div style={{ fontSize: '0.68rem', color: '#64748b', marginTop: '4px', fontWeight: 700 }}>
+                    Authorized Signatory
+                  </div>
                 </div>
               </div>
             </div>
 
             <div style={{
-              marginTop: '20px',
+              marginTop: '24px',
+              paddingTop: '16px',
+              borderTop: '1px solid #e2e8f0',
               textAlign: 'center',
-              fontSize: '0.72rem',
-              color: 'var(--color-text-muted)',
-              fontWeight: 600,
+              fontSize: '0.75rem',
+              color: '#475569',
+              fontWeight: 700,
             }}>
-              Thank you for your purchase! We appreciate your trust in Tenali Exams Publishers.
+              Thank you for ordering with Tenali Exams Publishers! Wish you all the best for your competitive examinations.
             </div>
           </div>
+
         </div>
       </div>
     </>
