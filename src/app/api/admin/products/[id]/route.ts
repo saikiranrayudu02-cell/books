@@ -12,15 +12,15 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
     const te = parseInt(stockTe) !== undefined && !isNaN(parseInt(stockTe)) ? parseInt(stockTe) : null;
     const hi = parseInt(stockHi) !== undefined && !isNaN(parseInt(stockHi)) ? parseInt(stockHi) : null;
 
-    let languagesJson = null;
+    let languagesArr = null;
     let totalStock = null;
     if (en !== null && te !== null && hi !== null) {
       totalStock = en + te + hi;
-      languagesJson = JSON.stringify([
+      languagesArr = [
         { code: 'en', name: 'English', stock: en },
         { code: 'te', name: 'Telugu', stock: te },
         { code: 'hi', name: 'Hindi', stock: hi }
-      ]);
+      ];
     }
 
     const result = await sql`
@@ -35,7 +35,7 @@ export async function PUT(request: Request, context: { params: Promise<{ id: str
         bundle_title = COALESCE(${bundleTitle}, bundle_title),
         books_included = COALESCE(${booksIncluded}, books_included),
         badge = COALESCE(${badge}, badge),
-        languages = COALESCE(${languagesJson}::jsonb, languages),
+        languages = COALESCE(${languagesArr ? sql.json(languagesArr) : null}, languages),
         updated_at = NOW()
       WHERE id = ${productId}
       RETURNING id, name, stock

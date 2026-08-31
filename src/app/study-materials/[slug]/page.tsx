@@ -75,8 +75,21 @@ export default function ProductDetailPage({ params }: PageProps) {
     }
   };
 
+  const getProductLanguages = () => {
+    let raw: any = product?.languages;
+    if (typeof raw === 'string') {
+      try {
+        raw = JSON.parse(raw);
+        if (typeof raw === 'string') raw = JSON.parse(raw);
+      } catch (e) { raw = []; }
+    }
+    return Array.isArray(raw) ? raw : [];
+  };
+
+  const productLangs = getProductLanguages();
+
   const handleAddToCart = () => {
-    if (product.languages && product.languages.length > 0 && !selectedLang) {
+    if (productLangs.length > 0 && !selectedLang) {
       setLangError(true);
       mediumSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
@@ -87,7 +100,7 @@ export default function ProductDetailPage({ params }: PageProps) {
   };
 
   const handleBuyNow = () => {
-    if (product.languages && product.languages.length > 0 && !selectedLang) {
+    if (productLangs.length > 0 && !selectedLang) {
       setLangError(true);
       mediumSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
@@ -104,14 +117,44 @@ export default function ProductDetailPage({ params }: PageProps) {
 
   return (
     <div className={styles.container}>
-      <div className={`container ${styles.breadcrumbWrap}`} style={{ position: 'relative' }}>
-        <Link href="/" style={{ position: 'absolute', left: '20px', top: '16px', display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--color-text-muted)', fontSize: '0.9rem', fontWeight: 600, textDecoration: 'none' }}>
-          <ArrowLeft size={16} /> Home
-        </Link>
-        <div className={styles.breadcrumb} style={{ marginLeft: '80px' }}>
-          <Link href="/study-materials" className={styles.breadcrumbLink}>Study Materials</Link>
-          <span>/</span>
-          <span className={styles.breadcrumbCurrent}>{product.name}</span>
+      <div className={styles.breadcrumbWrap} style={{ padding: '14px 0', borderBottom: '1px solid var(--color-border-light)', marginBottom: '24px', background: 'var(--color-bg-page)' }}>
+        <div className="container" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+          <button
+            type="button"
+            onClick={() => {
+              if (typeof window !== 'undefined' && window.history.length > 1) {
+                router.back();
+              } else {
+                router.push('/study-materials');
+              }
+            }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '8px 16px',
+              borderRadius: '10px',
+              background: 'var(--color-bg-card)',
+              border: '1px solid var(--color-border)',
+              color: 'var(--color-text-primary)',
+              fontSize: '0.875rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.04)',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <ArrowLeft size={18} style={{ color: '#2563eb' }} />
+            <span>Back to Books & Study Materials</span>
+          </button>
+
+          <div className={styles.breadcrumb} style={{ margin: 0 }}>
+            <Link href="/" className={styles.breadcrumbLink}>Home</Link>
+            <span>/</span>
+            <Link href="/study-materials" className={styles.breadcrumbLink}>Study Materials</Link>
+            <span>/</span>
+            <span className={styles.breadcrumbCurrent}>{product.name}</span>
+          </div>
         </div>
       </div>
 
@@ -270,7 +313,7 @@ export default function ProductDetailPage({ params }: PageProps) {
                 Select Medium <span style={{ color: 'var(--color-error)' }}>*</span>
               </h3>
               <div className={styles.langButtons}>
-                {((product.languages && product.languages.length > 0) ? product.languages : [{ code: 'en', name: 'English', stock: product.stock }]).map(lang => {
+                {(productLangs.length > 0 ? productLangs : [{ code: 'en', name: 'English', stock: product.stock }]).map(lang => {
                   const isOutOfStock = lang.stock === 0;
                   return (
                     <button

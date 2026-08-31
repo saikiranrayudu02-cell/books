@@ -47,18 +47,18 @@ export async function POST(request: Request) {
     const hi = parseInt(stockHi) || 0;
     const totalStock = en + te + hi;
 
-    const languagesJson = JSON.stringify([
+    const languagesArr = [
       { code: 'en', name: 'English', stock: en },
       { code: 'te', name: 'Telugu', stock: te },
       { code: 'hi', name: 'Hindi', stock: hi }
-    ]);
+    ];
 
     const result = await sql`
       INSERT INTO products (
         id, slug, name, price, stock, category, description, image, bundle_title, books_included, badge, languages
       ) VALUES (
         ${id}, ${cleanSlug}, ${name}, ${price}, ${totalStock}, ${category}, ${description}, ${image},
-        ${bundleTitle || null}, ${booksIncluded || 1}, ${badge || null}, ${languagesJson}::jsonb
+        ${bundleTitle || null}, ${booksIncluded || 1}, ${badge || null}, ${sql.json(languagesArr)}
       )
       RETURNING id, name
     `;

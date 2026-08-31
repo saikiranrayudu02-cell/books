@@ -11,7 +11,7 @@ export async function GET(request: Request) {
 
     const items = await sql`
       SELECT w.id, w.product_id as "productId", p.name as "productName", p.slug as "productSlug",
-             p.image as "productImage", p.price, p.badge, w.added_at as "addedAt"
+             p.image as "productImage", p.price, p.badge, w.created_at as "addedAt"
       FROM wishlist_items w
       JOIN products p ON w.product_id = p.id
       WHERE w.user_id = ${userId}
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
         ${userId}, ${productId}
       )
       ON CONFLICT (user_id, product_id) DO NOTHING
-      RETURNING id, product_id as "productId", added_at as "addedAt"
+      RETURNING id, product_id as "productId", created_at as "addedAt"
     `;
 
     return NextResponse.json({ success: true, item: result[0] }, { status: 201 });

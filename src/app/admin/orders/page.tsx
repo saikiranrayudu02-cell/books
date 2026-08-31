@@ -1,8 +1,9 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { formatPrice } from '@/lib/utils';
-import { ShoppingCart, Package, RefreshCw, Copy, Check, Search, Calendar as CalendarIcon, Eye, X, Filter, Download } from 'lucide-react';
+import { ShoppingCart, Package, RefreshCw, Copy, Check, Search, Calendar as CalendarIcon, Eye, X, Filter, Download, Printer } from 'lucide-react';
 import { useToast } from '@/contexts/ToastContext';
+import PostalSlipCard from '@/components/admin/PostalSlipCard';
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -108,13 +109,110 @@ export default function AdminOrdersPage() {
   const handleCopyDetails = (order: any) => {
     if (!order.deliveryAddress) return;
     const addr = order.deliveryAddress;
-    const text = `Order ID: ${order.orderNumber}\nCustomer: ${order.userName || 'Guest'}\n\nDelivery Address:\n${addr.fullName}\n${addr.houseOrFlat}, ${addr.street}\n${addr.area ? addr.area + '\n' : ''}${addr.city}, ${addr.state} - ${addr.pinCode}\nMob: ${addr.mobile}`;
+    const text = `BY INDIA POST PARCEL(CONTRACTUAL)\nCONTRACT NO.41120154-TENALI EXAMS PUBLISHERS\nCUSTOMER ID:${order.orderNumber}\n\nTo\n${addr.fullName}\n${addr.houseOrFlat}, ${addr.street}${addr.area ? '\n' + addr.area : ''}\n${addr.city}, ${addr.state} - ${addr.pinCode}\nCELL: ${addr.mobile}\n\nFrom:\nTENALI EXAMS PUBLISHERS\nD.NO.19-308\nNAMBURU-522508\nGUNTUR-DIST\nCELL 7396977544`;
+
     navigator.clipboard.writeText(text);
     setCopiedId(order.id);
+    toast.success('Postal Slip format copied to clipboard!');
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const statusOptions = ['placed', 'dispatched'];
+  const handlePrintSlip = (order: any) => {
+    if (!order.deliveryAddress) return;
+    const addr = order.deliveryAddress;
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Postal Slip - ${order.orderNumber}</title>
+          <style>
+            @page { size: auto; margin: 10mm; }
+            body {
+              font-family: 'Courier New', Courier, monospace;
+              padding: 24px;
+              color: #000;
+              background: #fff;
+              max-width: 650px;
+              margin: 0 auto;
+              border: 2px dashed #000;
+            }
+            .header {
+              font-weight: bold;
+              font-size: 14px;
+              text-transform: uppercase;
+              line-height: 1.5;
+              margin-bottom: 24px;
+            }
+            .to-section {
+              margin-bottom: 40px;
+              padding-left: 20px;
+              font-size: 15px;
+              line-height: 1.6;
+            }
+            .to-title {
+              font-weight: bold;
+              font-size: 16px;
+              margin-bottom: 8px;
+            }
+            .from-section {
+              font-size: 13px;
+              line-height: 1.5;
+              font-weight: bold;
+            }
+            @media print {
+              body { border: none; padding: 0; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            BY INDIA POST PARCEL(CONTRACTUAL)<br/>
+            CONTRACT NO.41120154-TENALI EXAMS PUBLISHERS<br/>
+            CUSTOMER ID:${order.orderNumber}
+          </div>
+
+          <div class="to-section">
+            <div class="to-title">To</div>
+            <div style="font-weight: bold;">${addr.fullName}</div>
+            <div>${addr.houseOrFlat}, ${addr.street}</div>
+            ${addr.area ? `<div>${addr.area}</div>` : ''}
+            <div>${addr.city}, ${addr.state} - ${addr.pinCode}</div>
+            <div style="margin-top: 6px;">CELL: ${addr.mobile}</div>
+          </div>
+
+          <div class="from-section">
+            From:<br/>
+            TENALI EXAMS PUBLISHERS<br/>
+            D.NO.19-308<br/>
+            NAMBURU-522508<br/>
+            GUNTUR-DIST<br/>
+            CELL 7396977544
+          </div>
+
+          <script>
+            window.onload = function() {
+              window.print();
+            };
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
+  const statusOptions = [
+    'placed',
+    'processing',
+    'dispatched',
+    'out_for_delivery',
+    'delivered',
+    'cancelled',
+    'returned',
+    'refunded',
+  ];
 
   const filteredOrders = orders.filter(o => {
     // Status Filter
@@ -160,7 +258,40 @@ export default function AdminOrdersPage() {
 
   const getStatusLabel = (status: string) => {
     if (status === 'all') return 'All Orders';
-    return status.charAt(0).toUpperCase() + status.slice(1).replace(/_/g, ' ');
+    switch (status) {
+      case 'placed': return 'Placed';
+      case 'processing': return 'Processing';
+      case 'dispatched': return 'Dispatched';
+      case 'out_for_delivery': return 'Out for Delivery';
+      case 'delivered': return 'Delivered';
+      case 'cancelled': return 'Cancelled';
+      case 'returned': return 'Returned';
+      case 'refunded': return 'Refunded';
+      default: return status.charAt(0).toUpperCase() + status.slice(1).replace(/_/g, ' ');
+    }
+  };
+
+  const getStatusBadgeStyle = (status: string) => {
+    switch (status) {
+      case 'placed':
+        return { background: 'rgba(59, 130, 246, 0.12)', color: '#2563eb', border: '1px solid rgba(59, 130, 246, 0.3)' };
+      case 'processing':
+        return { background: 'rgba(168, 85, 247, 0.12)', color: '#9333ea', border: '1px solid rgba(168, 85, 247, 0.3)' };
+      case 'dispatched':
+        return { background: 'rgba(99, 102, 241, 0.12)', color: '#4f46e5', border: '1px solid rgba(99, 102, 241, 0.3)' };
+      case 'out_for_delivery':
+        return { background: 'rgba(14, 165, 233, 0.12)', color: '#0284c7', border: '1px solid rgba(14, 165, 233, 0.3)' };
+      case 'delivered':
+        return { background: 'rgba(16, 185, 129, 0.12)', color: '#059669', border: '1px solid rgba(16, 185, 129, 0.3)' };
+      case 'cancelled':
+        return { background: 'rgba(239, 68, 68, 0.12)', color: '#dc2626', border: '1px solid rgba(239, 68, 68, 0.3)' };
+      case 'returned':
+        return { background: 'rgba(249, 115, 22, 0.12)', color: '#ea580c', border: '1px solid rgba(249, 115, 22, 0.3)' };
+      case 'refunded':
+        return { background: 'rgba(100, 116, 139, 0.12)', color: '#475569', border: '1px solid rgba(100, 116, 139, 0.3)' };
+      default:
+        return { background: 'var(--color-bg-page)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border-light)' };
+    }
   };
 
   const getPaymentBadgeClass = (status: string) => {
@@ -475,7 +606,7 @@ export default function AdminOrdersPage() {
                           </span>
                         </td>
                         <td>
-                          <span className="status-badge" style={{ background: 'var(--color-bg-page)', color: 'var(--color-text-secondary)', border: '1px solid var(--color-border-light)' }}>
+                          <span className="status-badge font-semibold" style={getStatusBadgeStyle(order.status)}>
                             {getStatusLabel(order.status)}
                           </span>
                         </td>
@@ -504,12 +635,12 @@ export default function AdminOrdersPage() {
       {/* Order Details Modal */}
       {detailsModalOrder && (
         <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-(--color-bg-card) border border-(--color-border) rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-slideUp">
+          <div className="bg-(--color-bg-card) border border-(--color-border) rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden animate-slideUp">
             
             <div className="flex items-center justify-between p-4 border-b border-(--color-border) bg-(--color-bg-hover)">
               <h3 className="font-bold text-(--color-text-primary) flex items-center gap-2">
                 <Package size={18} className="text-blue-500" />
-                Order Details
+                Order Details & Postal Slip
               </h3>
               <button 
                 onClick={() => setDetailsModalOrder(null)}
@@ -519,30 +650,25 @@ export default function AdminOrdersPage() {
               </button>
             </div>
 
-            <div className="p-5">
-              <div className="flex items-center justify-between mb-4">
+            <div className="p-5 max-h-[80vh] overflow-y-auto space-y-5">
+              {/* Order Actions Header Bar */}
+              <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-(--color-bg-page) rounded-xl border border-(--color-border)">
                 <div>
-                  <div className="text-xs font-bold text-(--color-text-muted) uppercase tracking-wider mb-1">Order ID</div>
-                  <div className="font-bold text-(--color-text-primary)">{detailsModalOrder.orderNumber}</div>
+                  <div className="text-[11px] font-bold text-(--color-text-muted) uppercase tracking-wider">Order ID</div>
+                  <div className="font-bold text-sm text-(--color-text-primary)">{detailsModalOrder.orderNumber}</div>
                 </div>
-                <button
-                  onClick={() => handleCopyDetails(detailsModalOrder)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-(--color-bg-page) border border-(--color-border) hover:bg-(--color-bg-hover) text-(--color-text-secondary) rounded-lg text-xs font-bold transition-all shadow-sm"
-                >
-                  {copiedId === detailsModalOrder.id ? (
-                    <><Check size={14} className="text-emerald-500" strokeWidth={3} /> <span className="text-emerald-500">Copied</span></>
-                  ) : (
-                    <><Copy size={14} /> Copy</>
-                  )}
-                </button>
+                <div>
+                  <div className="text-[11px] font-bold text-(--color-text-muted) uppercase tracking-wider">Customer</div>
+                  <div className="font-bold text-sm text-(--color-text-primary)">{detailsModalOrder.userName || 'Guest'}</div>
+                </div>
+                <div>
+                  <div className="text-[11px] font-bold text-(--color-text-muted) uppercase tracking-wider">Total</div>
+                  <div className="font-bold text-sm text-emerald-600 dark:text-emerald-400">{formatPrice(detailsModalOrder.total)}</div>
+                </div>
               </div>
 
-              <div className="mb-4">
-                <div className="text-xs font-bold text-(--color-text-muted) uppercase tracking-wider mb-1">Customer</div>
-                <div className="font-medium text-(--color-text-primary)">{detailsModalOrder.userName || 'Guest'}</div>
-              </div>
-
-              <div className="mb-4">
+              {/* Items Ordered */}
+              <div>
                 <div className="text-xs font-bold text-(--color-text-muted) uppercase tracking-wider mb-2">Items Ordered</div>
                 <div className="p-3 bg-(--color-bg-page) border border-(--color-border-light) rounded-xl">
                   {detailsModalOrder.items && detailsModalOrder.items.length > 0 ? (
@@ -565,18 +691,14 @@ export default function AdminOrdersPage() {
                 </div>
               </div>
 
-              <div>
-                <div className="text-xs font-bold text-(--color-text-muted) uppercase tracking-wider mb-2">Delivery Address</div>
-                <div className="p-4 bg-(--color-bg-page) border border-(--color-border-light) rounded-xl text-sm text-(--color-text-secondary) leading-relaxed">
-                  <strong className="text-(--color-text-primary) block mb-1">{detailsModalOrder.deliveryAddress?.fullName}</strong>
-                  {detailsModalOrder.deliveryAddress?.houseOrFlat}, {detailsModalOrder.deliveryAddress?.street}<br/>
-                  {detailsModalOrder.deliveryAddress?.area && <>{detailsModalOrder.deliveryAddress?.area}<br/></>}
-                  {detailsModalOrder.deliveryAddress?.city}, {detailsModalOrder.deliveryAddress?.state} - {detailsModalOrder.deliveryAddress?.pinCode}<br/>
-                  <div className="mt-3 pt-3 border-t border-(--color-border-light) border-dashed">
-                    <span className="font-medium">Mob:</span> {detailsModalOrder.deliveryAddress?.mobile}
-                  </div>
-                </div>
-              </div>
+              {/* India Post Parcel Slip Preview Card (19cm x 9.5cm) */}
+              {detailsModalOrder.deliveryAddress && (
+                <PostalSlipCard
+                  orderNumber={detailsModalOrder.orderNumber}
+                  deliveryAddress={detailsModalOrder.deliveryAddress}
+                />
+              )}
+
             </div>
 
           </div>

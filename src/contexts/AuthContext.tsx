@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode, useRef } from 'react';
 import { User } from '@/types';
 import { createClient } from '@/utils/supabase/client';
 import type { Session, AuthChangeEvent } from '@supabase/supabase-js';
@@ -19,90 +19,111 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 const supabase = createClient();
 
+// In-memory set of user IDs that have been synced during this browser session
+const syncedUserIds = new Set<string>();
+
 /**
  * Sync Supabase auth user to the app's `users` table.
- * This ensures Google OAuth users get a row in `users` for orders, wishlist, etc.
+ * Runs in background to ensure database row exists for orders/wishlist.
  */
-async function syncUserToDatabase(supabaseUser: { id: string; email?: string; user_metadata?: Record<string, unknown> }): Promise<User | null> {
-  try {
-    const name = (supabaseUser.user_metadata?.full_name as string) 
+async function syncUserToDatabase(supabaseUser: { id: string; email?: string; user_metadata?: Record<string, unknown> }): Promise<User> {
+  const fallbackUser: User = {
+    id: supabaseUser.id,
+    name: (supabaseUser.user_metadata?.full_name as string) 
       || (supabaseUser.user_metadata?.name as string) 
       || supabaseUser.email?.split('@')[0] 
-      || 'User';
-    const email = supabaseUser.email || '';
+      || 'User',
+    email: supabaseUser.email || '',
+    image: (supabaseUser.user_metadata?.avatar_url as string) || null,
+    role: 'customer',
+  };
 
-    // Check if user exists in our app's users table
+  // If already synced during this session, return cached or fallback
+  if (syncedUserIds.has(supabaseUser.id)) {
+    const stored = localStorage.getItem('tenali_user');
+    if (stored) {
+      try { return JSON.parse(stored); } catch { /* ignore */ }
+    }
+    return fallbackUser;
+  }
+
+  syncedUserIds.add(supabaseUser.id);
+
+  try {
     const res = await fetch('/api/auth/sync', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         id: supabaseUser.id,
-        name,
-        email,
-        image: (supabaseUser.user_metadata?.avatar_url as string) || null,
+        name: fallbackUser.name,
+        email: fallbackUser.email,
+        image: fallbackUser.image,
       }),
     });
 
     if (res.ok) {
       const data = await res.json();
-      return data.user;
+      const synced = data.user || fallbackUser;
+      localStorage.setItem('tenali_user', JSON.stringify(synced));
+      return synced;
     }
-
-    // Fallback: return a basic user object
-    return {
-      id: supabaseUser.id,
-      name,
-      email,
-      role: 'customer',
-    };
   } catch (err) {
-    console.error('Failed to sync user to database:', err);
-    return {
-      id: supabaseUser.id,
-      name: supabaseUser.email?.split('@')[0] || 'User',
-      email: supabaseUser.email || '',
-      role: 'customer',
-    };
+    console.error('Background user sync error:', err);
   }
+
+  localStorage.setItem('tenali_user', JSON.stringify(fallbackUser));
+  return fallbackUser;
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const isMounted = useRef(false);
 
-  // Initialize auth state from Supabase session
   useEffect(() => {
+    isMounted.current = true;
+
+    // Load initial stored user optimistically
+    const storedUser = localStorage.getItem('tenali_user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch {
+        localStorage.removeItem('tenali_user');
+      }
+    }
+
     const initAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user) {
-          const appUser = await syncUserToDatabase(session.user);
-          setUser(appUser);
-        } else {
-          // Fallback: check localStorage for users who logged in via the old email/password API
-          const storedUser = localStorage.getItem('tenali_user');
-          if (storedUser) {
-            try {
-              setUser(JSON.parse(storedUser));
-            } catch {
-              localStorage.removeItem('tenali_user');
-            }
+          // Set optimistic user immediately
+          const optimisticUser: User = {
+            id: session.user.id,
+            name: (session.user.user_metadata?.full_name as string) || session.user.email?.split('@')[0] || 'User',
+            email: session.user.email || '',
+            image: (session.user.user_metadata?.avatar_url as string) || null,
+            role: 'customer',
+          };
+
+          if (isMounted.current) {
+            setUser(prev => prev || optimisticUser);
+            setIsLoading(false);
           }
+
+          // Sync in background without blocking UI
+          syncUserToDatabase(session.user).then(syncedUser => {
+            if (isMounted.current && syncedUser) {
+              setUser(syncedUser);
+            }
+          });
+        } else {
+          if (isMounted.current) setIsLoading(false);
         }
       } catch (e) {
         console.error('Failed to initialize auth:', e);
-        // Fallback to localStorage
-        const storedUser = localStorage.getItem('tenali_user');
-        if (storedUser) {
-          try {
-            setUser(JSON.parse(storedUser));
-          } catch {
-            localStorage.removeItem('tenali_user');
-          }
-        }
-      } finally {
-        setIsLoading(false);
+        if (isMounted.current) setIsLoading(false);
       }
     };
 
@@ -110,27 +131,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // Listen for auth state changes (login, logout, token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event: AuthChangeEvent, session: Session | null) => {
+      (event: AuthChangeEvent, session: Session | null) => {
         if (event === 'SIGNED_IN' && session?.user) {
-          const appUser = await syncUserToDatabase(session.user);
-          setUser(appUser);
-          // Also store in localStorage for backward compatibility
-          if (appUser) {
-            localStorage.setItem('tenali_user', JSON.stringify(appUser));
-          }
+          const optimisticUser: User = {
+            id: session.user.id,
+            name: (session.user.user_metadata?.full_name as string) || session.user.email?.split('@')[0] || 'User',
+            email: session.user.email || '',
+            image: (session.user.user_metadata?.avatar_url as string) || null,
+            role: 'customer',
+          };
+
+          setUser(optimisticUser);
+          setIsLoading(false);
+
+          // Sync in background
+          syncUserToDatabase(session.user).then(syncedUser => {
+            if (syncedUser) setUser(syncedUser);
+          });
         } else if (event === 'SIGNED_OUT') {
           setUser(null);
           localStorage.removeItem('tenali_user');
+          syncedUserIds.clear();
+          setIsLoading(false);
         }
       }
     );
 
     return () => {
+      isMounted.current = false;
       subscription.unsubscribe();
     };
   }, []);
 
-  // Legacy login (for existing email/password API route)
+  // Legacy login
   const login = useCallback((userData: User) => {
     setUser(userData);
     localStorage.setItem('tenali_user', JSON.stringify(userData));
@@ -140,7 +173,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loginWithEmail = useCallback(async (email: string, password: string): Promise<{ error?: string }> => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-      // Fallback to legacy API for users not yet in Supabase Auth
       try {
         const res = await fetch('/api/auth/login', {
           method: 'POST',
@@ -179,14 +211,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Google OAuth login
   const loginWithGoogle = useCallback(async () => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${origin}/auth/callback`,
       },
     });
     if (error) {
       console.error('Google login error:', error);
+      throw error;
     }
   }, []);
 
@@ -195,6 +229,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
     setUser(null);
     localStorage.removeItem('tenali_user');
+    syncedUserIds.clear();
   }, []);
 
   const isAuthenticated = !!user;

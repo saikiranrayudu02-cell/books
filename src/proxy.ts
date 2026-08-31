@@ -2,7 +2,12 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { updateSession } from '@/utils/supabase/middleware';
 
-export async function middleware(request: NextRequest) {
+/**
+ * Next.js 16 Proxy Convention
+ * Replaces deprecated `middleware.ts` with `proxy.ts`.
+ * Handles maintenance mode redirects and Supabase session refreshes.
+ */
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. Define paths that should ALWAYS be accessible, even in maintenance mode
@@ -48,14 +53,14 @@ export async function middleware(request: NextRequest) {
     }
   } catch (error) {
     // If something goes wrong checking maintenance mode, fail OPEN (allow traffic)
-    console.error('Middleware fetch error:', error);
+    console.error('Proxy fetch error:', error);
   }
 
   // 4. Refresh Supabase auth session and continue normally
   return await updateSession(request);
 }
 
-// Ensure middleware runs on all paths to properly intercept
+// Ensure proxy runs on all paths to properly intercept
 export const config = {
   matcher: [
     /*

@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/contexts/ToastContext';
 import { Package, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import ImageUpload from '@/components/admin/ImageUpload';
 
 export default function AddProductPage() {
   const router = useRouter();
@@ -132,10 +133,11 @@ export default function AddProductPage() {
               </select>
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Image URL / Path</label>
-              <input required name="image" value={formData.image} onChange={handleChange} placeholder="e.g. /images/products/mts.jpg" className="form-input" />
-            </div>
+            <ImageUpload
+              value={formData.image}
+              onChange={(url) => setFormData(prev => ({ ...prev, image: url }))}
+              required
+            />
 
             <div className="form-group sm:col-span-2">
               <label className="form-label">Detailed Description</label>

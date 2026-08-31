@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWishlist } from '@/contexts/WishlistContext';
+import { useToast } from '@/contexts/ToastContext';
 import { 
   Package, 
   Heart, 
@@ -13,25 +14,18 @@ import {
   Mail, 
   Phone, 
   Shield, 
-  ShoppingBag,
-  ExternalLink,
-  Edit2,
-  Save,
-  X as XIcon,
-  Loader2
+  Edit2, 
+  Save, 
+  X as XIcon, 
+  Loader2,
+  ArrowUpRight
 } from 'lucide-react';
-
-interface QuickLinkCard {
-  icon: React.ReactNode;
-  title: string;
-  desc: string;
-  href: string;
-  color: string;
-}
 
 export default function AccountPage(): React.JSX.Element {
   const { user, login } = useAuth();
   const { items: wishlistItems } = useWishlist();
+  const toast = useToast();
+
   const [ordersCount, setOrdersCount] = useState<number>(0);
   const [addressesCount, setAddressesCount] = useState<number>(0);
   const [loadingStats, setLoadingStats] = useState<boolean>(true);
@@ -61,12 +55,13 @@ export default function AccountPage(): React.JSX.Element {
       if (res.ok && data.success) {
         login({ ...user, name: editName, phone: editPhone });
         setIsEditingProfile(false);
+        toast.success('Profile updated successfully!');
       } else {
-        alert(data.error || 'Failed to update profile');
+        toast.error(data.error || 'Failed to update profile');
       }
     } catch (err) {
       console.error(err);
-      alert('Error saving profile');
+      toast.error('Error saving profile');
     } finally {
       setIsSavingProfile(false);
     }
@@ -100,394 +95,256 @@ export default function AccountPage(): React.JSX.Element {
     fetchStats();
   }, [user?.id]);
 
-  const cards: QuickLinkCard[] = [
-    { 
-      icon: <Package size={24} strokeWidth={1.5} />, 
-      title: 'My Orders', 
-      desc: 'Track, view, and manage your purchases', 
-      href: '/account/orders',
-      color: '#3b82f6'
-    },
-    { 
-      icon: <Heart size={24} strokeWidth={1.5} />, 
-      title: 'Wishlist', 
-      desc: 'View and buy your saved study materials', 
-      href: '/account/wishlist',
-      color: '#ec4899'
-    },
-    { 
-      icon: <MapPin size={24} strokeWidth={1.5} />, 
-      title: 'Addresses', 
-      desc: 'Manage your primary and shipping addresses', 
-      href: '/account/addresses',
-      color: '#10b981'
-    },
-    { 
-      icon: <Truck size={24} strokeWidth={1.5} />, 
-      title: 'Track Order', 
-      desc: 'Get live shipping updates for active orders', 
-      href: '/track-order',
-      color: '#8b5cf6'
-    },
-  ];
-
   const firstLetter = user?.name ? user.name.charAt(0).toUpperCase() : 'U';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+    <div className="space-y-6">
       
-      {/* Premium Banner Profile Card */}
-      <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-gray-100 to-gray-200 dark:from-slate-800 dark:to-slate-900 p-6 sm:p-8 shadow-xs border border-gray-200 dark:border-slate-700/50">
-        <div style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: '24px',
-          flexWrap: 'wrap',
-          position: 'relative',
-          zIndex: 2,
-        }}>
-          {/* Avatar container */}
-          <div style={{
-            width: '80px',
-            height: '80px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '2rem',
-            fontWeight: 800,
-            color: '#ffffff',
-            boxShadow: '0 8px 20px rgba(59, 130, 246, 0.25)',
-          }}>
+      {/* Sleek Soft Grey Welcome Card */}
+      <div className="p-6 sm:p-7 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 shadow-xs">
+        <div className="flex flex-wrap items-center gap-5">
+          
+          {/* Avatar Container */}
+          <div className="w-16 h-16 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center text-xl font-bold shadow-sm shrink-0">
             {firstLetter}
           </div>
 
-          <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-              <h1 style={{ 
-                margin: 0, 
-                fontSize: '1.4rem', 
-                fontWeight: 800, 
-                fontFamily: 'var(--font-heading)',
-                letterSpacing: '-0.5px',
-                color: 'var(--color-text-primary)'
-              }}>
+          <div className="flex-1 min-w-55">
+            <div className="flex items-center gap-2.5 flex-wrap mb-1">
+              <h1 className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                 Welcome back, {user?.name || 'User'}!
               </h1>
-              <span style={{
-                background: 'var(--color-bg-page)',
-                border: '1px solid var(--color-border-light)',
-                padding: '4px 12px',
-                borderRadius: '9999px',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                color: 'var(--color-text-secondary)'
-              }}>
-                <Shield size={12} /> {user?.role || 'Customer'}
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 inline-flex items-center gap-1">
+                <Shield size={11} className="text-blue-600 dark:text-blue-400" /> {user?.role || 'Customer'}
               </span>
             </div>
-            <p style={{ 
-              margin: '8px 0 0 0', 
-              color: 'var(--color-text-secondary)', 
-              fontSize: '0.95rem',
-              lineHeight: 1.5,
-              maxWidth: '560px'
-            }}>
-              Manage your orders, wishlist, and account details.
+
+            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed max-w-xl">
+              Manage your orders, addresses, wishlist, and profile information from your personal dashboard.
             </p>
           </div>
+
         </div>
       </div>
 
+      {/* Live Dashboard Quick Stats Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* Stat 1: Total Orders */}
+        <Link href="/account/orders" className="group block p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-slate-400 transition-all shadow-2xs">
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-9 h-9 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+              <Package size={18} />
+            </div>
+            <ArrowUpRight size={16} className="text-slate-400 group-hover:text-blue-600 transition-colors" />
+          </div>
+          <div className="text-xl font-black text-slate-900 dark:text-white">
+            {loadingStats ? <Loader2 size={18} className="animate-spin text-slate-400" /> : ordersCount}
+          </div>
+          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Total Orders</div>
+        </Link>
 
-      {/* Two Column Section: Personal Information & Dashboard Quick Links */}
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', 
-        gap: '24px' 
-      }}>
+        {/* Stat 2: Saved Wishlist */}
+        <Link href="/account/wishlist" className="group block p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-slate-400 transition-all shadow-2xs">
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-9 h-9 rounded-xl bg-pink-100 dark:bg-pink-950 text-pink-600 dark:text-pink-400 flex items-center justify-center">
+              <Heart size={18} />
+            </div>
+            <ArrowUpRight size={16} className="text-slate-400 group-hover:text-pink-600 transition-colors" />
+          </div>
+          <div className="text-xl font-black text-slate-900 dark:text-white">
+            {wishlistItems.length}
+          </div>
+          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Wishlist Items</div>
+        </Link>
+
+        {/* Stat 3: Saved Addresses */}
+        <Link href="/account/addresses" className="group block p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-slate-400 transition-all shadow-2xs">
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <MapPin size={18} />
+            </div>
+            <ArrowUpRight size={16} className="text-slate-400 group-hover:text-emerald-600 transition-colors" />
+          </div>
+          <div className="text-xl font-black text-slate-900 dark:text-white">
+            {loadingStats ? <Loader2 size={18} className="animate-spin text-slate-400" /> : addressesCount}
+          </div>
+          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">Saved Addresses</div>
+        </Link>
+      </div>
+
+      {/* Two Column Section: Profile Details & Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        {/* Left Side: Personal Information Card */}
-        <div className="card" style={{ padding: '28px', border: '1px solid var(--color-border-light)', borderRadius: '24px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-            <h2 style={{ 
-              fontFamily: 'var(--font-heading)', 
-              fontSize: '1.15rem', 
-              fontWeight: 700, 
-              color: 'var(--color-text-primary)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              margin: 0
-            }}>
-              <UserIcon size={20} color="var(--color-primary)" />
-              Profile Information
+        {/* Profile Details Card */}
+        <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-4">
+          <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-800">
+            <h2 className="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+              <UserIcon size={16} className="text-blue-600 dark:text-blue-400" />
+              Profile Details
             </h2>
             
             {isEditingProfile ? (
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div className="flex items-center gap-2">
                 <button 
+                  type="button"
                   onClick={() => setIsEditingProfile(false)}
                   disabled={isSavingProfile}
-                  className="btn btn-secondary btn-sm"
-                  style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+                  className="px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-all"
                 >
-                  <XIcon size={14} className="mr-1" /> Cancel
+                  Cancel
                 </button>
                 <button 
+                  type="button"
                   onClick={handleSaveProfile}
                   disabled={isSavingProfile}
-                  className="btn btn-primary btn-sm"
-                  style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+                  className="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition-all flex items-center gap-1"
                 >
-                  {isSavingProfile ? <Loader2 size={14} className="animate-spin mr-1" /> : <Save size={14} className="mr-1" />} Save
+                  {isSavingProfile ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />} Save
                 </button>
               </div>
             ) : (
               <button 
+                type="button"
                 onClick={() => setIsEditingProfile(true)}
-                className="btn btn-secondary btn-sm"
-                style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+                className="px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-800 transition-all flex items-center gap-1"
               >
-                <Edit2 size={14} className="mr-1" /> Edit
+                <Edit2 size={12} /> Edit Profile
               </button>
             )}
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            
-            {/* Field: Name */}
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '16px',
-              padding: '12px 16px',
-              borderRadius: '16px',
-              background: 'var(--color-bg-page)',
-              border: '1px solid var(--color-border-light)',
-            }}>
-              <div style={{ 
-                width: '40px', 
-                height: '40px', 
-                borderRadius: '10px', 
-                background: 'var(--color-white)', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                color: 'var(--color-primary)',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
-              }}>
-                <UserIcon size={18} />
+          <div className="divide-y divide-slate-200 dark:divide-slate-800">
+            {/* Name */}
+            <div className="py-3 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0">
+                <UserIcon size={15} />
               </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Full Name</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Full Name</div>
                 {isEditingProfile ? (
                   <input
                     type="text"
                     value={editName}
                     onChange={(e) => setEditName(e.target.value)}
-                    className="form-input mt-1"
-                    style={{ padding: '6px 12px', fontSize: '0.9rem', width: '100%' }}
-                    placeholder="Enter your name"
+                    className="w-full mt-1 px-3 py-1 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+                    placeholder="Enter full name"
                   />
                 ) : (
-                  <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-text-primary)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div className="font-semibold text-xs text-slate-900 dark:text-white truncate mt-0.5">
                     {user?.name || '—'}
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Field: Email */}
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '16px',
-              padding: '12px 16px',
-              borderRadius: '16px',
-              background: 'var(--color-bg-page)',
-              border: '1px solid var(--color-border-light)',
-            }}>
-              <div style={{ 
-                width: '40px', 
-                height: '40px', 
-                borderRadius: '10px', 
-                background: 'var(--color-white)', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                color: 'var(--color-primary)',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
-              }}>
-                <Mail size={18} />
+            {/* Email */}
+            <div className="py-3 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0">
+                <Mail size={15} />
               </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Email Address</div>
-                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-text-primary)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Email Address</div>
+                <div className="font-semibold text-xs text-slate-900 dark:text-white truncate mt-0.5">
                   {user?.email || '—'}
                 </div>
               </div>
             </div>
 
-            {/* Field: Phone */}
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '16px',
-              padding: '12px 16px',
-              borderRadius: '16px',
-              background: 'var(--color-bg-page)',
-              border: '1px solid var(--color-border-light)',
-            }}>
-              <div style={{ 
-                width: '40px', 
-                height: '40px', 
-                borderRadius: '10px', 
-                background: 'var(--color-white)', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                color: 'var(--color-primary)',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
-              }}>
-                <Phone size={18} />
+            {/* Phone */}
+            <div className="py-3 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0">
+                <Phone size={15} />
               </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Mobile Number</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Mobile Number</div>
                 {isEditingProfile ? (
                   <input
                     type="tel"
                     value={editPhone}
                     onChange={(e) => setEditPhone(e.target.value)}
-                    className="form-input mt-1"
-                    style={{ padding: '6px 12px', fontSize: '0.9rem', width: '100%' }}
+                    className="w-full mt-1 px-3 py-1 text-xs rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
                     placeholder="Enter mobile number"
                   />
                 ) : (
-                  <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-text-primary)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {user?.phone || '—'}
+                  <div className="font-semibold text-xs text-slate-900 dark:text-white truncate mt-0.5">
+                    {user?.phone || 'Not provided'}
                   </div>
                 )}
               </div>
             </div>
-
-            {/* Field: Role */}
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '16px',
-              padding: '12px 16px',
-              borderRadius: '16px',
-              background: 'var(--color-bg-page)',
-              border: '1px solid var(--color-border-light)',
-            }}>
-              <div style={{ 
-                width: '40px', 
-                height: '40px', 
-                borderRadius: '10px', 
-                background: 'var(--color-white)', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                color: 'var(--color-primary)',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
-              }}>
-                <Shield size={18} />
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Account Authority</div>
-                <div style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--color-text-primary)', marginTop: '2px', textTransform: 'capitalize', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {user?.role || 'Customer'}
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
 
-        {/* Right Side: Quick Links Navigation */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <h2 style={{ 
-            fontFamily: 'var(--font-heading)', 
-            fontSize: '1.15rem', 
-            fontWeight: 700, 
-            margin: '0 0 4px 0',
-            color: 'var(--color-text-primary)'
-          }}>
+        {/* Quick Actions Shortcuts */}
+        <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-2xs space-y-4">
+          <h2 className="font-bold text-sm text-slate-900 dark:text-white pb-3 border-b border-slate-200 dark:border-slate-800">
             Quick Actions
           </h2>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {cards.map(card => (
-              <Link 
-                key={card.href} 
-                href={card.href} 
-                className="card card-interactive" 
-                style={{
-                  padding: '16px 20px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '16px',
-                  textDecoration: 'none',
-                  border: '1px solid var(--color-border-light)',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
-                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                  borderRadius: '20px'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,0,0,0.06)';
-                  e.currentTarget.style.borderColor = card.color;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'none';
-                  e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.02)';
-                  e.currentTarget.style.borderColor = 'var(--color-border-light)';
-                }}
-              >
-                {/* Icon Container with dynamic colored BG */}
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  width: '42px', 
-                  height: '42px', 
-                  borderRadius: '10px',
-                  background: `${card.color}15`, 
-                  color: card.color 
-                }}>
-                  {card.icon}
+          <div className="space-y-2.5">
+            <Link
+              href="/account/orders"
+              className="flex items-center justify-between p-3.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 hover:border-slate-400 transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                  <Package size={16} />
                 </div>
-                
-                <div style={{ flex: 1 }}>
-                  <div style={{ 
-                    fontWeight: 650, 
-                    fontSize: '0.95rem', 
-                    color: 'var(--color-text-primary)'
-                  }}>
-                    {card.title}
-                  </div>
-                  <div style={{ 
-                    fontSize: '0.8rem', 
-                    color: 'var(--color-text-muted)',
-                    marginTop: '2px'
-                  }}>
-                    {card.desc}
-                  </div>
+                <div>
+                  <div className="font-bold text-xs text-slate-900 dark:text-white">My Orders</div>
+                  <div className="text-[11px] text-slate-500">View history, tracking numbers & order details</div>
                 </div>
-                
-                <div style={{ color: 'var(--color-text-muted)', opacity: 0.7 }}>
-                  <ChevronRight size={18} />
+              </div>
+              <ChevronRight size={16} className="text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors" />
+            </Link>
+
+            <Link
+              href="/account/wishlist"
+              className="flex items-center justify-between p-3.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 hover:border-slate-400 transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-pink-100 dark:bg-pink-950 text-pink-600 dark:text-pink-400 flex items-center justify-center shrink-0">
+                  <Heart size={16} />
                 </div>
-              </Link>
-            ))}
+                <div>
+                  <div className="font-bold text-xs text-slate-900 dark:text-white">Saved Wishlist</div>
+                  <div className="text-[11px] text-slate-500">Check saved study materials and books</div>
+                </div>
+              </div>
+              <ChevronRight size={16} className="text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors" />
+            </Link>
+
+            <Link
+              href="/account/addresses"
+              className="flex items-center justify-between p-3.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 hover:border-slate-400 transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <MapPin size={16} />
+                </div>
+                <div>
+                  <div className="font-bold text-xs text-slate-900 dark:text-white">Shipping Addresses</div>
+                  <div className="text-[11px] text-slate-500">Manage delivery addresses for faster checkout</div>
+                </div>
+              </div>
+              <ChevronRight size={16} className="text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors" />
+            </Link>
+
+            <Link
+              href="/track-order"
+              className="flex items-center justify-between p-3.5 rounded-xl bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 hover:border-slate-400 transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
+                  <Truck size={16} />
+                </div>
+                <div>
+                  <div className="font-bold text-xs text-slate-900 dark:text-white">Track Active Shipment</div>
+                  <div className="text-[11px] text-slate-500">Get live postal delivery status updates</div>
+                </div>
+              </div>
+              <ChevronRight size={16} className="text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors" />
+            </Link>
           </div>
         </div>
 

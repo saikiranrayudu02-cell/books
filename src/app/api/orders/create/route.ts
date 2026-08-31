@@ -98,7 +98,7 @@ export async function POST(request: Request) {
         await sql`
           UPDATE products
           SET stock = ${newStock},
-              languages = ${JSON.stringify(currentLanguages)}::jsonb
+              languages = ${sql.json(currentLanguages)}
           WHERE id = ${productId}
         `;
       }

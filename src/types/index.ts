@@ -75,7 +75,13 @@ export interface Address {
 
 export type OrderStatus =
   | 'placed'
-  | 'dispatched';
+  | 'processing'
+  | 'dispatched'
+  | 'out_for_delivery'
+  | 'delivered'
+  | 'cancelled'
+  | 'returned'
+  | 'refunded';
 
 export type PaymentStatus =
   | 'pending'
@@ -119,6 +125,8 @@ export interface User {
   name: string;
   email?: string;
   phone?: string;
+  image?: string | null;
+  avatar_url?: string;
   role?: 'customer' | 'admin';
   address?: Address;
 }

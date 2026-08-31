@@ -20,7 +20,10 @@ interface OrderTimelineProps {
 
 const STATUS_STEPS = [
   { key: 'placed', label: 'Order Placed', Icon: Package },
+  { key: 'processing', label: 'Processing & Packing', Icon: Clock },
   { key: 'dispatched', label: 'Dispatched via Speed Post', Icon: Truck },
+  { key: 'out_for_delivery', label: 'Out for Delivery', Icon: Truck },
+  { key: 'delivered', label: 'Delivered Successfully', Icon: CheckCircle },
 ];
 
 const SPECIAL_STATUSES: Record<string, { label: string; color: string; Icon: any }> = {

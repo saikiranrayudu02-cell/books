@@ -86,14 +86,25 @@ export default function ProductCard({ product }: ProductCardProps) {
           <div className={styles.highlightItem}>
             <Globe size={13} className={styles.highlightIcon} />
             <div className={styles.langPills}>
-              {product.languages && product.languages.length > 0 
-                ? product.languages.map(l => (
-                    <span key={l.code} className={styles.langPill}>
-                      {l.name}
+              {(() => {
+                let raw: any = product.languages;
+                if (typeof raw === 'string') {
+                  try {
+                    raw = JSON.parse(raw);
+                    if (typeof raw === 'string') raw = JSON.parse(raw);
+                  } catch (e) { raw = []; }
+                }
+                const list = Array.isArray(raw) ? raw : [];
+                return list.length > 0 ? (
+                  list.map((l: any) => (
+                    <span key={l.code || l.name} className={styles.langPill}>
+                      {l.name || l.code}
                     </span>
                   ))
-                : <span className={styles.langPill}>English</span>
-              }
+                ) : (
+                  <span className={styles.langPill}>English</span>
+                );
+              })()}
             </div>
           </div>
         </div>
