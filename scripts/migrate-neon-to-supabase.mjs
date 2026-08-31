@@ -18,6 +18,7 @@ async function createTables() {
   await supabaseSql`DROP TABLE IF EXISTS orders CASCADE`;
   await supabaseSql`DROP TABLE IF EXISTS addresses CASCADE`;
   await supabaseSql`DROP TABLE IF EXISTS wishlist CASCADE`;
+  await supabaseSql`DROP TABLE IF EXISTS wishlist_items CASCADE`;
   await supabaseSql`DROP TABLE IF EXISTS users CASCADE`;
   await supabaseSql`DROP TABLE IF EXISTS products CASCADE`;
   await supabaseSql`DROP TABLE IF EXISTS app_settings CASCADE`;
@@ -124,12 +125,12 @@ async function createTables() {
     )
   `;
 
-  // Create Wishlist Table
+  // Create Wishlist Items Table
   await supabaseSql`
-    CREATE TABLE IF NOT EXISTS wishlist (
+    CREATE TABLE IF NOT EXISTS wishlist_items (
       id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
       user_id uuid REFERENCES users(id) ON DELETE CASCADE,
-      product_id character varying,
+      product_id character varying REFERENCES products(id) ON DELETE CASCADE,
       created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
       UNIQUE(user_id, product_id)
     )
@@ -155,7 +156,7 @@ async function fetchFromNeon(tableName) {
       case 'addresses': return await neonSql`SELECT * FROM addresses`;
       case 'orders': return await neonSql`SELECT * FROM orders`;
       case 'order_items': return await neonSql`SELECT * FROM order_items`;
-      case 'wishlist': return await neonSql`SELECT * FROM wishlist`;
+      case 'wishlist_items': return await neonSql`SELECT * FROM wishlist_items`;
       case 'settings': return await neonSql`SELECT * FROM settings`;
       case 'app_settings': return null; // fallback / deprecated
       default: return [];
@@ -236,7 +237,7 @@ async function main() {
   await createTables();
 
   console.log('\n4️⃣  Migrating data...');
-  const tables = ['users', 'products', 'addresses', 'orders', 'order_items', 'wishlist', 'settings'];
+  const tables = ['users', 'products', 'addresses', 'orders', 'order_items', 'wishlist_items', 'settings'];
   let total = 0;
   for (const t of tables) {
     total += await migrateTable(t);

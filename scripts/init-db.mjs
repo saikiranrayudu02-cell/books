@@ -120,9 +120,9 @@ async function initDatabase() {
       )
     `;
 
-    // Create Wishlist Table
+    // Create Wishlist Items Table
     await sql`
-      CREATE TABLE IF NOT EXISTS wishlist (
+      CREATE TABLE IF NOT EXISTS wishlist_items (
         id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id uuid REFERENCES users(id) ON DELETE CASCADE,
         product_id character varying REFERENCES products(id) ON DELETE CASCADE,
