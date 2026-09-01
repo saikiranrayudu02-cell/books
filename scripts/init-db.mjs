@@ -154,15 +154,15 @@ async function initDatabase() {
           '["/images/book-mts-postman.jpg", "/images/common-guide-2027.jpg"]'::jsonb,
           'Combo Pack',
           'MTS, Postman & Mail Guard (MG) Examinations',
-          '["Exam-focused coverage for MTS, Postman & Mail Guard (MG)", "Coverage of relevant postal subjects, rules, and concepts", "Previous-year question papers included", "Concept-based notes, tables, and important rules", "Useful study material for revision and exam preparation"]'::jsonb,
+          '["Exam-focused coverage for MTS, Postman & Mail Guard (MG)", "Coverage of relevant postal subjects, rules, and concepts", "Concept-based notes, tables, and important rules", "Useful study material for revision and exam preparation"]'::jsonb,
           'Best Seller',
           100
         ),
         (
           'p2',
           'pa-sa',
-          'PA / SA',
-          '3-Book Preparation Set',
+          'PA / SA (LGO)',
+          'PA/SA (LGO) Guide Set',
           3,
           'First Edition',
           'Complete 3-book preparation bundle for PA / SA examination.',
@@ -173,7 +173,7 @@ async function initDatabase() {
           '["/images/book-pa-sa.jpg"]'::jsonb,
           'Study Guide',
           'Postal Assistant (PA) & Sorting Assistant (SA) Examinations',
-          '["PA / SA exam-focused study material", "Coverage of relevant postal subjects, manuals, and concepts", "Previous-year solved questions/papers", "Topic-wise practice questions and MCQs", "Concept-based explanations for easier preparation", "Useful revision material for exam preparation"]'::jsonb,
+          '["PA / SA exam-focused study material", "Coverage of relevant postal subjects, manuals, and concepts", "Topic-wise practice questions and MCQs", "Concept-based explanations for easier preparation", "Useful revision material for exam preparation"]'::jsonb,
           NULL,
           100
         )

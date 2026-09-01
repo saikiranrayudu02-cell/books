@@ -22,7 +22,7 @@ export const products: Product[] = [
     booksIncluded: 2,
     edition: 'First Edition',
     shortDescription: 'Comprehensive 2-book preparation bundle covering MTS, Postman, and Mail Guard syllabi. Updated with latest department rules.',
-    description: 'Prepare for MTS, Postman, and Mail Guard (MG) examinations with this complete 2-book preparation set. This bundle combines essential exam-focused study material covering the key subjects, concepts, rules, and postal-related topics required for your preparation.\n\nThe content is presented in a simple and easy-to-understand format, helping you learn important concepts, revise efficiently, and practice with previous-year questions.',
+    description: 'Prepare for MTS, Postman, and Mail Guard (MG) examinations with this complete 2-book preparation set. This bundle combines essential exam-focused study material covering the key subjects, concepts, rules, and postal-related topics required for your preparation.\n\nThe content is presented in a simple and easy-to-understand format, helping you learn important concepts, revise efficiently, and practice key topics.',
     price: 800,
     languages: [
       { code: 'en', name: 'English' },
@@ -39,7 +39,6 @@ export const products: Product[] = [
     features: [
       'Exam-focused coverage for MTS, Postman & Mail Guard (MG)',
       'Coverage of relevant postal subjects, rules, and concepts',
-      'Previous-year question papers included',
       'Concept-based notes, tables, and important rules',
       'Useful study material for revision and exam preparation'
     ],
@@ -50,8 +49,8 @@ export const products: Product[] = [
   {
     id: 'p2',
     slug: 'pa-sa',
-    name: 'PA / SA',
-    bundleTitle: '3-Book Preparation Set',
+    name: 'PA / SA (LGO)',
+    bundleTitle: 'PA/SA (LGO) Guide Set',
     booksIncluded: 3,
     edition: 'First Edition',
     shortDescription: 'Complete 3-book preparation bundle for PA / SA examination.',
@@ -71,7 +70,6 @@ export const products: Product[] = [
     features: [
       'PA / SA exam-focused study material',
       'Coverage of relevant postal subjects, manuals, and concepts',
-      'Previous-year solved questions/papers',
       'Topic-wise practice questions and MCQs',
       'Concept-based explanations for easier preparation',
       'Useful revision material for exam preparation'

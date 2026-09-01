@@ -24,8 +24,6 @@ export default function ProductCard({ product }: ProductCardProps) {
     toast.success(added ? 'Added to wishlist' : 'Removed from wishlist');
   };
 
-  const isOutOfStock = product.stock <= 0;
-
   return (
     <div className={styles.card}>
       {/* Product Image Section */}
@@ -112,17 +110,12 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Divider */}
         <div className={styles.cardDivider} />
 
-        {/* Price & Stock Status */}
+        {/* Price Row */}
         <div className={styles.priceRow}>
           <div className={styles.priceGroup}>
             <span className={styles.price}>{formatPrice(product.price)}</span>
             <span className={styles.editionBadge}>{product.edition || 'First Edition'}</span>
           </div>
-          
-          <span className={`${styles.stockStatus} ${isOutOfStock ? styles.outOfStock : ''}`}>
-            <span className={`${styles.stockDot} ${isOutOfStock ? styles.outOfStockDot : styles.inStockDot}`} />
-            {isOutOfStock ? 'Out of Stock' : 'In Stock'}
-          </span>
         </div>
 
         {/* Premium Interactive Action Button */}

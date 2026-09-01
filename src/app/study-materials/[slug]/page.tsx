@@ -251,34 +251,6 @@ export default function ProductDetailPage({ params }: PageProps) {
               </div>
             </div>
 
-            {/* Stock Status */}
-            <div className={styles.stockRow}>
-              {(() => {
-                const displayStock = selectedLang 
-                  ? (product.languages?.find(l => l.code === selectedLang)?.stock || 0) 
-                  : product.stock;
-                  
-                return (
-                  <>
-                    <div
-                      className={styles.stockDot}
-                      style={{
-                        background: displayStock > 0 ? 'var(--color-success)' : 'var(--color-error)',
-                      }}
-                    />
-                    <span
-                      className={styles.stockText}
-                      style={{
-                        color: displayStock > 0 ? 'var(--color-success)' : 'var(--color-error)',
-                      }}
-                    >
-                      {displayStock > 0 ? (selectedLang ? `${displayStock} In Stock` : 'In Stock') : 'Out of Stock'}
-                    </span>
-                  </>
-                );
-              })()}
-            </div>
-
             {/* Description */}
             <p className={styles.description}>
               {product.description}
@@ -291,11 +263,13 @@ export default function ProductDetailPage({ params }: PageProps) {
                   What&apos;s Included in This {product.booksIncluded || 2}-Book Bundle
                 </h3>
                 <ul className={styles.featuresList}>
-                  {product.features.map((f, i) => (
-                    <li key={i} className={styles.featureItem}>
-                      <span className={styles.featureCheck}>✓</span> {f}
-                    </li>
-                  ))}
+                  {product.features
+                    .filter((f) => !/previous/i.test(f))
+                    .map((f, i) => (
+                      <li key={i} className={styles.featureItem}>
+                        <span className={styles.featureCheck}>✓</span> {f}
+                      </li>
+                    ))}
                 </ul>
               </div>
             )}
@@ -313,35 +287,26 @@ export default function ProductDetailPage({ params }: PageProps) {
                 Select Medium <span style={{ color: 'var(--color-error)' }}>*</span>
               </h3>
               <div className={styles.langButtons}>
-                {(productLangs.length > 0 ? productLangs : [{ code: 'en', name: 'English', stock: product.stock }]).map(lang => {
-                  const isOutOfStock = lang.stock === 0;
+                {(productLangs.length > 0 ? productLangs : [{ code: 'en', name: 'English' }]).map(lang => {
                   return (
                     <button
                       key={lang.code}
-                      disabled={isOutOfStock}
                       onClick={() => { setSelectedLang(lang.code); setLangError(false); }}
                       className={styles.langBtn}
                       style={{
                         border: `2px solid ${selectedLang === lang.code ? 'var(--color-text-primary)' : langError ? 'var(--color-error)' : 'var(--color-border)'}`,
                         background: selectedLang === lang.code ? 'var(--color-text-primary)' : 'var(--color-white)',
                         color: selectedLang === lang.code ? 'var(--color-text-inverse)' : 'var(--color-text-primary)',
-                        opacity: isOutOfStock ? 0.5 : 1,
-                        cursor: isOutOfStock ? 'not-allowed' : 'pointer',
+                        cursor: 'pointer',
                         display: 'flex',
-                        flexDirection: 'column',
                         alignItems: 'center',
-                        gap: '2px',
-                        padding: '8px 16px'
+                        justifyContent: 'center',
+                        padding: '10px 20px',
+                        borderRadius: '8px',
+                        fontWeight: 600
                       }}
                     >
                       <span>{getLanguageDisplay(lang.code)}</span>
-                      <span style={{ 
-                        fontSize: '0.75rem', 
-                        fontWeight: 'normal', 
-                        color: selectedLang === lang.code ? 'var(--color-text-inverse)' : (isOutOfStock ? 'var(--color-error)' : 'var(--color-text-muted)') 
-                      }}>
-                        {isOutOfStock ? 'Out of Stock' : (lang.stock !== undefined ? `${lang.stock} left` : 'Available')}
-                      </span>
                     </button>
                   );
                 })}

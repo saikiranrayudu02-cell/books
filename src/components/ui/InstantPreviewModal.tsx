@@ -90,7 +90,7 @@ export default function InstantPreviewModal({ product, isOpen, onClose }: Instan
                 <span className={styles.noticeIcon}>💡</span>
                 <div>
                   <strong>Concept-Based Visual Format</strong>
-                  <p>All chapters feature structured comparison tables, rule summaries, bilingual Telugu/English terminology notes, and previous exam question callouts.</p>
+                  <p>All chapters feature structured comparison tables, rule summaries, bilingual Telugu/English terminology notes, and key exam question callouts.</p>
                 </div>
               </div>
 
@@ -124,7 +124,7 @@ export default function InstantPreviewModal({ product, isOpen, onClose }: Instan
         <div className={styles.footer}>
           <div className={styles.priceInfo}>
             <span className={styles.priceVal}>{formatPrice(product.price)}</span>
-            <span className={styles.priceSub}>Complete Set • In Stock</span>
+            <span className={styles.priceSub}>Complete Set</span>
           </div>
           <div className={styles.footerActions}>
             <Link

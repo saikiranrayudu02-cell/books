@@ -634,57 +634,83 @@ export default function AdminOrdersPage() {
       </div>
       {/* Order Details Modal */}
       {detailsModalOrder && (
-        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-(--color-bg-card) border border-(--color-border) rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden animate-slideUp">
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fadeIn">
+          <div className="bg-(--color-bg-card) border border-(--color-border) rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden animate-slideUp">
             
-            <div className="flex items-center justify-between p-4 border-b border-(--color-border) bg-(--color-bg-hover)">
-              <h3 className="font-bold text-(--color-text-primary) flex items-center gap-2">
-                <Package size={18} className="text-blue-500" />
-                Order Details & Postal Slip
-              </h3>
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-4 px-6 border-b border-(--color-border) bg-(--color-bg-hover)">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-500">
+                  <Package size={20} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base text-(--color-text-primary) flex items-center gap-2">
+                    Order Details & Postal Shipping Slip
+                  </h3>
+                  <p className="text-xs text-(--color-text-muted)">
+                    Review order breakdown and print official dispatch slip
+                  </p>
+                </div>
+              </div>
+
               <button 
                 onClick={() => setDetailsModalOrder(null)}
-                className="p-1.5 text-(--color-text-muted) hover:text-(--color-text-primary) hover:bg-(--color-bg-page) rounded-lg transition-colors"
+                className="p-2 text-(--color-text-muted) hover:text-(--color-text-primary) hover:bg-(--color-bg-page) rounded-xl transition-colors cursor-pointer"
               >
                 <X size={20} />
               </button>
             </div>
 
-            <div className="p-5 max-h-[80vh] overflow-y-auto space-y-5">
+            <div className="p-6 max-h-[82vh] overflow-y-auto space-y-6">
               {/* Order Actions Header Bar */}
-              <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 bg-(--color-bg-page) rounded-xl border border-(--color-border)">
-                <div>
-                  <div className="text-[11px] font-bold text-(--color-text-muted) uppercase tracking-wider">Order ID</div>
-                  <div className="font-bold text-sm text-(--color-text-primary)">{detailsModalOrder.orderNumber}</div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-(--color-bg-page) rounded-xl border border-(--color-border)">
+                <div className="space-y-0.5">
+                  <div className="text-[10px] font-bold text-(--color-text-muted) uppercase tracking-wider">Order Reference</div>
+                  <div className="font-mono font-bold text-sm text-(--color-text-primary)">{detailsModalOrder.orderNumber}</div>
                 </div>
-                <div>
-                  <div className="text-[11px] font-bold text-(--color-text-muted) uppercase tracking-wider">Customer</div>
-                  <div className="font-bold text-sm text-(--color-text-primary)">{detailsModalOrder.userName || 'Guest'}</div>
+                <div className="space-y-0.5">
+                  <div className="text-[10px] font-bold text-(--color-text-muted) uppercase tracking-wider">Customer Name</div>
+                  <div className="font-bold text-sm text-(--color-text-primary)">{detailsModalOrder.userName || detailsModalOrder.deliveryAddress?.fullName || 'Guest'}</div>
                 </div>
-                <div>
-                  <div className="text-[11px] font-bold text-(--color-text-muted) uppercase tracking-wider">Total</div>
-                  <div className="font-bold text-sm text-emerald-600 dark:text-emerald-400">{formatPrice(detailsModalOrder.total)}</div>
+                <div className="space-y-0.5">
+                  <div className="text-[10px] font-bold text-(--color-text-muted) uppercase tracking-wider">Order Status</div>
+                  <div>
+                    <span className="inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                      ● {detailsModalOrder.status || 'Confirmed'}
+                    </span>
+                  </div>
+                </div>
+                <div className="space-y-0.5 text-left sm:text-right">
+                  <div className="text-[10px] font-bold text-(--color-text-muted) uppercase tracking-wider">Grand Total</div>
+                  <div className="font-extrabold text-base text-emerald-600 dark:text-emerald-400">{formatPrice(detailsModalOrder.total)}</div>
                 </div>
               </div>
 
               {/* Items Ordered */}
-              <div>
-                <div className="text-xs font-bold text-(--color-text-muted) uppercase tracking-wider mb-2">Items Ordered</div>
-                <div className="p-3 bg-(--color-bg-page) border border-(--color-border-light) rounded-xl">
+              <div className="space-y-2">
+                <div className="text-xs font-bold text-(--color-text-muted) uppercase tracking-wider flex items-center justify-between">
+                  <span>Items Ordered ({detailsModalOrder.items?.length || 0})</span>
+                  <span className="text-[11px] font-normal text-(--color-text-muted)">Verified Purchase</span>
+                </div>
+                <div className="p-3.5 bg-(--color-bg-page) border border-(--color-border-light) rounded-xl">
                   {detailsModalOrder.items && detailsModalOrder.items.length > 0 ? (
-                    <ul className="space-y-2">
+                    <div className="divide-y divide-(--color-border-light)">
                       {detailsModalOrder.items.map((item: any, idx: number) => (
-                        <li key={idx} className="flex justify-between items-start text-sm">
-                          <div>
-                            <span className="font-bold text-(--color-text-primary)">{item.quantity}x</span>{' '}
+                        <div key={idx} className="flex items-center justify-between py-2.5 first:pt-0 last:pb-0 text-sm">
+                          <div className="flex items-center gap-3">
+                            <span className="w-6 h-6 rounded-md bg-(--color-bg-hover) font-mono font-bold text-xs flex items-center justify-center text-(--color-text-primary)">
+                              {item.quantity}x
+                            </span>
                             <span className="font-medium text-(--color-text-primary)">{item.productName}</span>
                           </div>
-                          <span className="text-xs font-bold px-2 py-1 bg-(--color-bg-hover) text-(--color-text-secondary) rounded-md ml-2 shrink-0">
-                            {item.language}
-                          </span>
-                        </li>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold px-2.5 py-0.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 rounded-md uppercase tracking-wider">
+                              Medium: {item.language}
+                            </span>
+                          </div>
+                        </div>
                       ))}
-                    </ul>
+                    </div>
                   ) : (
                     <span className="text-sm text-(--color-text-muted)">No items found</span>
                   )}

@@ -113,7 +113,6 @@ export default function WishlistPage() {
 
                   <div className={styles.priceRow}>
                     <span className={styles.price}>{formatPrice(item.price)}</span>
-                    <span className={styles.stockStatus}>In Stock</span>
                   </div>
 
                   <div className={styles.cardActions}>

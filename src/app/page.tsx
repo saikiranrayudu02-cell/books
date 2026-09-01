@@ -255,7 +255,7 @@ export default function HomePage() {
             <div className={styles.sectionPreTitle}>TARGETED PREPARATION</div>
             <h2 className={styles.sectionTitle}>Prepare for the Exam You’re Targeting</h2>
             <p className={styles.sectionSubtitle}>
-              Select your examination cadre to explore syllabus-aligned guides, previous papers, and comprehensive study materials.
+              Select your examination cadre to explore syllabus-aligned guides and comprehensive study materials.
             </p>
             <div className={styles.titleDivider}></div>
           </div>
