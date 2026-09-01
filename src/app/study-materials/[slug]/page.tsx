@@ -7,7 +7,8 @@ import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useToast } from '@/contexts/ToastContext';
 import { formatPrice, getLanguageDisplay } from '@/lib/utils';
-import { Truck, ShieldCheck, PackageCheck, Mail, Heart, Check, ArrowLeft } from 'lucide-react';
+import { Truck, ShieldCheck, PackageCheck, Mail, Heart, Check, ArrowLeft, BookOpen, FileText } from 'lucide-react';
+import SyllabusModal from '@/components/ui/SyllabusModal';
 import styles from './product-detail.module.css';
 
 interface PageProps {
@@ -26,6 +27,7 @@ export default function ProductDetailPage({ params }: PageProps) {
   const [quantity, setQuantity] = useState(1);
   const [langError, setLangError] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isSyllabusOpen, setIsSyllabusOpen] = useState(false);
   const galleryRef = useRef<HTMLDivElement | null>(null);
   const mediumSectionRef = useRef<HTMLDivElement | null>(null);
 
@@ -274,6 +276,107 @@ export default function ProductDetailPage({ params }: PageProps) {
               </div>
             )}
 
+            {/* Exam Syllabus Section */}
+            <div style={{
+              marginTop: '20px',
+              padding: '18px',
+              borderRadius: '16px',
+              background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%)',
+              border: '1px solid var(--color-border)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '14px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '10px',
+                    background: '#2563eb',
+                    color: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <BookOpen size={18} />
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--color-text-primary)' }}>
+                      Exam Syllabus Coverage
+                    </div>
+                    <div style={{ fontSize: '0.78rem', color: 'var(--color-text-muted)' }}>
+                      Complete Official India Post Syllabus & Topics
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsSyllabusOpen(true)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '10px 18px',
+                    borderRadius: '12px',
+                    background: '#2563eb',
+                    color: '#ffffff',
+                    fontSize: '0.85rem',
+                    fontWeight: 700,
+                    border: 'none',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  <FileText size={16} />
+                  <span>View Detailed Exam Syllabus</span>
+                </button>
+              </div>
+
+              {/* Short & Clean Syllabus Overview Pills */}
+              {product.slug === 'mts-postman-mg' ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ background: 'var(--color-bg-card)', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--color-border-light)' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#2563eb', textTransform: 'uppercase', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>📘 MTS Syllabus Overview</span>
+                    </div>
+                    <p style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', margin: 0, lineHeight: 1.55 }}>
+                      Post Office Guide Part-I • Postal Rules • Post Offices • Postage & Stamps • Packing & Posting • Addressing • Post Boxes & Post Bags • Postal Articles • Postal Services • Banking & Remittances • Insurance • General Knowledge • Indian Geography • Civics • Indian Culture & Freedom Struggle • Ethics & Moral Studies • BODMAS • Percentage • Profit & Loss • Simple Interest • Average • Time & Work • Time & Distance • Unitary Method
+                    </p>
+                  </div>
+
+                  <div style={{ background: 'var(--color-bg-card)', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--color-border-light)' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#059669', textTransform: 'uppercase', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>📗 Postman Syllabus Overview</span>
+                    </div>
+                    <p style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', margin: 0, lineHeight: 1.55 }}>
+                      Post Office Guide Part-I • General Knowledge • Mathematics • Postal Operations • Mail Delivery • Refusal of Articles • e-Money Orders • Redirection • Address Change • Deceased Person Articles • Rural Postman Facilities • Postal Manual Volume VI Part III • Head Postman • Postal Business • Sale of Stamps • Postman&apos;s Book • Delivery Procedures • Registered & Insured Articles • e-MO Payments • Village Postman Duties • Postal Manual Volume VII • Stamps & Seals • Stationery • Mail Abstract • Exchange of Mails • Transit Bags • Mail Guard/Agent Duties • A & B Orders
+                    </p>
+                  </div>
+
+                  <div style={{ background: 'var(--color-bg-card)', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--color-border-light)' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#d97706', textTransform: 'uppercase', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>📙 Mail Guard (MG) Syllabus Overview</span>
+                    </div>
+                    <p style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', margin: 0, lineHeight: 1.55 }}>
+                      Post Office Guide Part-I • General Knowledge • Mathematics • Postal Operations • Mail Handling • Delivery & Refusal of Articles • e-Money Orders • Redirection • Address Change • Postal Manual Volume VI Part III • Postal Business • Postman&apos;s Book • Delivery Procedures • Registered & Insured Articles • Postal Manual Volume VII • Stamps & Seals • Mail Abstract • Exchange of Mails • Transit Bags • Duties & Responsibilities of Mail Guard/Agent • Final Duties Before Leaving Van/Office • A & B Orders
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ background: 'var(--color-bg-card)', padding: '12px 14px', borderRadius: '12px', border: '1px solid var(--color-border-light)' }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#2563eb', textTransform: 'uppercase', marginBottom: '4px' }}>
+                    📘 PA & SA Complete Syllabus Overview
+                  </div>
+                  <p style={{ fontSize: '0.78rem', color: 'var(--color-text-secondary)', margin: 0, lineHeight: 1.55 }}>
+                    PA & SA Complete Syllabus • Departmental Rules • Post Office Guide Part I & II • IT Modernization Terminology • Postal Products & Services • Mails • Banking & Remittances • Insurance • Stamps & Business • Postal Manual Volume VI Part I • Postal Manual Volume VI Part III Chapters 1 & 2 • Updated SB Orders • Postal Manual Volume VII • Foreign Post Manual • Indian Geography • Civics • General Knowledge • Indian Culture & Freedom Struggle • Ethics & Moral Study • BODMAS • Percentage • Profit & Loss • Simple Interest • Average • Time & Work • Time & Distance • Unitary Method • Reasoning & Analytical Ability • Non-Verbal / Pictorial Reasoning • Data Entry Skill Test (DEST) – 1200 Key Depressions (+5%)
+                  </p>
+                </div>
+              )}
+            </div>
+
             <hr className="divider" />
 
             {/* Language Selection */}
@@ -424,6 +527,13 @@ export default function ProductDetailPage({ params }: PageProps) {
           </button>
         </div>
       </div>
+
+      {/* Syllabus Modal */}
+      <SyllabusModal
+        productSlug={product.slug}
+        isOpen={isSyllabusOpen}
+        onClose={() => setIsSyllabusOpen(false)}
+      />
     </div>
   );
 }

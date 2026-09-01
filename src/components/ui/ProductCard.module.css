@@ -352,3 +352,21 @@
 .viewDetailsBtn:hover .btnArrow {
   transform: translateX(4px);
 }
+
+@media (max-width: 640px) {
+  .card {
+    border-radius: 18px;
+  }
+  .imageWrap {
+    height: 220px;
+  }
+  .body {
+    padding: 16px;
+    gap: 10px;
+  }
+  .viewDetailsBtn {
+    min-height: 44px;
+    font-size: 0.85rem;
+    border-radius: 12px;
+  }
+}
