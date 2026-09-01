@@ -10,6 +10,7 @@ import Footer from '@/components/layout/Footer';
 import SearchOverlay from '@/components/ui/SearchOverlay';
 import FloatingSupport from '@/components/ui/FloatingSupport';
 import SplashScreen from '@/components/ui/SplashScreen';
+import CartAddedNotification from '@/components/ui/CartAddedNotification';
 
 export default function ClientLayout({ children }: { children: ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -30,6 +31,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
         <WishlistProvider>
           <ToastProvider>
             <SplashScreen />
+            <CartAddedNotification />
             {!hideNavbarAndFooter && <Navbar onSearchOpen={() => setSearchOpen(true)} />}
             {!hideNavbarAndFooter && <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />}
             <main style={isAdminOrDemo ? {} : { minHeight: 'calc(100dvh - var(--navbar-height))' }}>

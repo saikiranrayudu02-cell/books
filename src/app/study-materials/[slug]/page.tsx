@@ -90,6 +90,8 @@ export default function ProductDetailPage({ params }: PageProps) {
 
   const productLangs = getProductLanguages();
 
+  const [addedToCartSuccess, setAddedToCartSuccess] = useState(false);
+
   const handleAddToCart = () => {
     if (productLangs.length > 0 && !selectedLang) {
       setLangError(true);
@@ -98,6 +100,8 @@ export default function ProductDetailPage({ params }: PageProps) {
     }
     setLangError(false);
     addItem(product, selectedLang, quantity);
+    setAddedToCartSuccess(true);
+    setTimeout(() => setAddedToCartSuccess(false), 3000);
     toast.success(`${product.name} added to cart`);
   };
 
@@ -123,13 +127,7 @@ export default function ProductDetailPage({ params }: PageProps) {
         <div className="container" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
           <button
             type="button"
-            onClick={() => {
-              if (typeof window !== 'undefined' && window.history.length > 1) {
-                router.back();
-              } else {
-                router.push('/study-materials');
-              }
-            }}
+            onClick={() => router.push('/')}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -147,7 +145,7 @@ export default function ProductDetailPage({ params }: PageProps) {
             }}
           >
             <ArrowLeft size={18} style={{ color: '#2563eb' }} />
-            <span>Back to Books & Study Materials</span>
+            <span>Back to Home Page</span>
           </button>
 
           <div className={styles.breadcrumb} style={{ margin: 0 }}>
@@ -451,8 +449,16 @@ export default function ProductDetailPage({ params }: PageProps) {
 
             {/* Actions */}
             <div className={styles.actionRow}>
-              <button onClick={handleAddToCart} className={`btn btn-primary btn-lg ${styles.actionBtn}`}>
-                Add to Cart
+              <button
+                onClick={handleAddToCart}
+                className={`btn btn-primary btn-lg ${styles.actionBtn}`}
+                style={{
+                  background: addedToCartSuccess ? '#10b981' : undefined,
+                  borderColor: addedToCartSuccess ? '#10b981' : undefined,
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                {addedToCartSuccess ? '✓ Added to Cart!' : 'Add to Cart'}
               </button>
               <button onClick={handleBuyNow} className={`btn btn-accent btn-lg ${styles.actionBtn}`}>
                 Buy Now
@@ -516,8 +522,14 @@ export default function ProductDetailPage({ params }: PageProps) {
           <button
             onClick={handleAddToCart}
             className={`btn btn-secondary ${styles.stickyCartBtn}`}
+            style={{
+              background: addedToCartSuccess ? '#10b981' : undefined,
+              color: addedToCartSuccess ? '#ffffff' : undefined,
+              borderColor: addedToCartSuccess ? '#10b981' : undefined,
+              transition: 'all 0.2s ease'
+            }}
           >
-            + Cart
+            {addedToCartSuccess ? '✓ Added!' : '+ Cart'}
           </button>
           <button
             onClick={handleBuyNow}
