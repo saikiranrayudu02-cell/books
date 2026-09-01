@@ -28,6 +28,7 @@ export default function ProductDetailPage({ params }: PageProps) {
   const [langError, setLangError] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isSyllabusOpen, setIsSyllabusOpen] = useState(false);
+  const [addedToCartSuccess, setAddedToCartSuccess] = useState(false);
   const galleryRef = useRef<HTMLDivElement | null>(null);
   const mediumSectionRef = useRef<HTMLDivElement | null>(null);
 
@@ -89,8 +90,6 @@ export default function ProductDetailPage({ params }: PageProps) {
   };
 
   const productLangs = getProductLanguages();
-
-  const [addedToCartSuccess, setAddedToCartSuccess] = useState(false);
 
   const handleAddToCart = () => {
     if (productLangs.length > 0 && !selectedLang) {
